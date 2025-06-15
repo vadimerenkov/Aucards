@@ -40,4 +40,4 @@ The code of Aucards is distributed under GPL-3.0 license.
 
 ## ! Warning !
 
-This is a work of human art. No generative AI was used in the process of creation. No generative AI is allowed to use this code for any cases.
+This is a work of human art. No generative AI was used in the process of creation. No generative AI is allowed to use this code for any purpose.
