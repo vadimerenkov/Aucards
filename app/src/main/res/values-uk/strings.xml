@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="add_card">Додати картку</string>
+	<string name="save">Зберегти</string>
+	<string name="empty_list_prompt">Додайте першу картку!</string>
+	<string name="your_text">Ваш текст…</string>
+	<string name="description">Опис…</string>
+	<string name="choose_color">Обрати колір</string>
+	<string name="delete">Видалити картку</string>
+	<string name="edit">Редагувати картку</string>
+	<string name="open_settings">Відкрити налаштування</string>
+	<string name="settings">Налаштування</string>
+	<string name="go_back">Назад</string>
+	<string name="light">Світла</string>
+	<string name="dark">Темна</string>
+	<string name="device">Як на пристрої</string>
+	<plurals name="delete_confirmation">
+		<item quantity="one">Ви впевнені, що бажаєте видалити %s картку?</item>
+		<item quantity="few">Ви впевнені, що бажаєте видалити %s картки?</item>
+		<item quantity="many">Ви впевнені, що бажаєте видалити %s карток?</item>
+	</plurals>
+	<string name="brightness">Підвищити яскравість до максимуму у момент відкриття картки</string>
+	<string name="theme">Тема</string>
+	<string name="language">Мова</string>
+	<string name="translator">Автор перекладу: Хітч Хайк</string>
+	<string name="source_code">Початковий код: </string>
+	<string name="selected_number">Обрано: %s</string>
+	<string name="delete_button">Видалити</string>
+	<string name="cancel">Скасувати</string>
+</resources>

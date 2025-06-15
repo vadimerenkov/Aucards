@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_card">Добавить карточку</string>
+    <string name="save">Сохранить</string>
+    <string name="empty_list_prompt">Добавьте первую карточку!</string>
+    <string name="your_text">Ваш текст…</string>
+    <string name="description">Описание…</string>
+    <string name="choose_color">Выбрать цвет</string>
+    <string name="delete">Удалить карточку</string>
+    <string name="edit">Редактировать карточку</string>
+    <string name="open_settings">Открыть настройки</string>
+    <string name="settings">Настройки</string>
+    <string name="go_back">Вернуться</string>
+    <string name="light">Светлая</string>
+    <string name="dark">Темная</string>
+    <string name="device">Как на устройстве</string>
+    <plurals name="delete_confirmation">
+        <item quantity="one">Вы уверены, что хотите удалить %s карточку?</item>
+        <item quantity="few">Вы уверены, что хотите удалить %s карточки?</item>
+        <item quantity="many">Вы уверены, что хотите удалить %s карточек?</item>
+    </plurals>
+    <string name="brightness">Повысить яркость до максимума при открытии карточки</string>
+    <string name="theme">Тема</string>
+    <string name="language">Язык</string>
+    <string name="source_code">Исходный код: </string>
+    <string name="selected_number">Выбрано: %s</string>
+    <string name="delete_button">Удалить</string>
+    <string name="cancel">Отмена</string>
+    <string name="landscape">Переходить в горизонтальный режим при открытии карточки</string>
+</resources>
