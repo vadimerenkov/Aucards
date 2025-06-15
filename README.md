@@ -38,6 +38,12 @@ It primarily aims to help people with special needs to quickly communicate their
 
 The code of Aucards is distributed under GPL-3.0 license.
 
+## Used libraries
+
+- [GitHub - skydoves/colorpicker-compose: 🎨 Kotlin Multiplatform color picker library for getting colors from any images by tapping on the desired color.](https://github.com/skydoves/colorpicker-compose)
+
 ## ! Warning !
 
 This is a work of human art. No generative AI was used in the process of creation. No generative AI is allowed to use this code for any purpose.
+
+2025 © [Vadim Erenkov](https://github.com/vadimerenkov)
