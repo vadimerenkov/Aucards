@@ -16,11 +16,11 @@ import vadimerenkov.aucards.settings.Keys.THEME_STRING
 enum class Language(
 	@StringRes val uiText: Int,
 	val code: String,
-	@StringRes val translator: Int?
+	@StringRes val translator: Int? = R.string.translator
 ) {
 	ENGLISH(R.string.english, "en", null),
 	RUSSIAN(R.string.russian, "ru", null),
-	UKRAINIAN(R.string.ukrainian, "uk", R.string.translator)
+	UKRAINIAN(R.string.ukrainian, "uk")
 }
 
 enum class Theme(

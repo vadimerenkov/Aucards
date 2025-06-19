@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.isImeVisible
@@ -51,6 +52,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
@@ -140,6 +142,7 @@ private fun EditScreen(
 	val colorController = rememberColorPickerController()
 	var colorPaletteOpen by remember { mutableStateOf(false) }
 	val focusRequester = remember { FocusRequester() }
+	var hex_color by remember { mutableStateOf("") }
 
 	LaunchedEffect(true) {
 		focusRequester.requestFocus()
@@ -153,8 +156,9 @@ private fun EditScreen(
 			onClick = { colorPaletteOpen = !colorPaletteOpen },
 			modifier = Modifier
 				.align(Alignment.TopStart)
-				.padding(8.dp)
+				.displayCutoutPadding()
 				.statusBarsPadding()
+				.padding(8.dp)
 				.clip(CircleShape)
 				.size(64.dp)
 				.background(Color.White)
@@ -166,21 +170,31 @@ private fun EditScreen(
 				modifier = Modifier
 					.size(64.dp)
 			)
-		}
+
 		DropdownMenu(
 			expanded = colorPaletteOpen,
-			onDismissRequest = { colorPaletteOpen = false }
+			onDismissRequest = { colorPaletteOpen = false },
+			offset = DpOffset(0.dp, 16.dp)
 		) {
 			HsvColorPicker(
 				controller = colorController,
-				onColorChanged = { onColorChange(it.color) },
+				onColorChanged = {
+					onColorChange(it.color)
+					hex_color = it.hexCode
+				},
 				initialColor = state.aucard.color,
 				modifier = Modifier
-					.padding(6.dp)
+					.padding(8.dp)
 					.size(200.dp)
 			)
+			Text(
+				text = hex_color,
+				textAlign = TextAlign.Center,
+				modifier = Modifier
+					.fillMaxWidth()
+			)
 		}
-
+		}
 		Column(
 			verticalArrangement = Arrangement.Center,
 			horizontalAlignment = Alignment.CenterHorizontally,
