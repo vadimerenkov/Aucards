@@ -20,6 +20,7 @@
 		<item quantity="many">Ви впевнені, що бажаєте видалити %s карток?</item>
 	</plurals>
 	<string name="brightness">Підвищити яскравість до максимуму у момент відкриття картки</string>
+	<string name="landscape">Змінити орієнтацію сторінки на альбомну у момент відкриття картки</string>
 	<string name="theme">Тема</string>
 	<string name="language">Мова</string>
 	<string name="translator">Автор перекладу: Хітч Хайк</string>
