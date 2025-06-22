@@ -39,14 +39,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -57,11 +63,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -148,6 +157,37 @@ fun SharedTransitionScope.ListScreen(
 				isDeleteEnabled = listState.selectedList.isNotEmpty()
 			)
 		},
+		bottomBar = {
+			NavigationBar(
+				containerColor = MaterialTheme.colorScheme.primaryContainer,
+				contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+			) {
+				NavigationBarItem(
+					selected = listState.currentPage == 0,
+					onClick = { viewModel.TurnPage(0) },
+					icon = {
+						Icon(
+							imageVector = Icons.AutoMirrored.Filled.List,
+							contentDescription = "Main"
+						)
+					},
+					modifier = Modifier
+						.weight(0.5f)
+				)
+				NavigationBarItem(
+					selected = listState.currentPage == 1,
+					onClick = { viewModel.TurnPage(1) },
+					icon = {
+						Icon(
+							imageVector = Icons.Default.Star,
+							contentDescription = "Favourites"
+						)
+					},
+					modifier = Modifier
+						.weight(0.5f)
+				)
+			}
+		},
 		floatingActionButton = {
 			FloatingActionButton(
 				onClick = {
@@ -176,72 +216,119 @@ fun SharedTransitionScope.ListScreen(
 				.fillMaxSize()
 				.padding(innerPadding)
 		) {
-			LazyVerticalGrid(
-				columns = GridCells.Adaptive(150.dp),
-				horizontalArrangement = Arrangement.SpaceBetween,
+			val pager_state = rememberPagerState(
+				initialPage = 0,
+				pageCount = { 2 }
+			)
+			HorizontalPager(
+				state = pager_state,
 				modifier = Modifier
-					.align(Alignment.TopCenter)
-					.padding(6.dp)
+					//.fillMaxSize()
 			) {
-				items(
-					items = listState.list,
-					key = { item ->
-						item.id
-					}
-				) { card ->
-					val isSelected = listState.selectedList.contains(card.id)
-					AucardItem(
-						aucard = card,
-						onClick = { id ->
-							if (listState.isSelectMode) {
-								if (isSelected) {
-									viewModel.DeselectId(id)
+				LazyVerticalGrid(
+					columns = GridCells.Adaptive(150.dp),
+					horizontalArrangement = Arrangement.SpaceBetween,
+					modifier = Modifier
+						.align(Alignment.TopCenter)
+						.padding(6.dp)
+				) {
+					items(
+						items = listState.list,
+						key = { item ->
+							item.id
+						}
+					) { card ->
+						val isSelected = listState.selectedList.contains(card.id)
+						AucardItem(
+							aucard = card,
+							onClick = { id ->
+								if (listState.isSelectMode) {
+									if (isSelected) {
+										viewModel.DeselectId(id)
+									} else {
+										viewModel.SelectId(id)
+									}
+								} else {
+									onCardClicked(id)
 								}
-								else {
-									viewModel.SelectId(id)
-								}
-							}
-							else {
-								onCardClicked(id)
-							}
-						},
-						onLongPress = {
-							viewModel.EnterSelectMode(card.id)
-						},
-						isSelectMode = listState.isSelectMode,
-						isSelected = isSelected,
-						modifier = Modifier
-							.padding(6.dp)
-							.animateItem()
-							.sharedBounds(
-								sharedContentState = rememberSharedContentState(card.id),
-								animatedVisibilityScope = scope
-							)
+							},
+							onLongPress = {
+								viewModel.EnterSelectMode(card.id)
+							},
+							isSelectMode = listState.isSelectMode,
+							isSelected = isSelected,
+							modifier = Modifier
+								.padding(6.dp)
+								.animateItem()
+								.sharedBounds(
+									sharedContentState = rememberSharedContentState(card.id),
+									animatedVisibilityScope = scope
+								)
 						)
 					}
 				}
-				AnimatedVisibility(
-					visible = listState.list.isEmpty() && !listState.isLoading,
+				LazyVerticalGrid(
+					columns = GridCells.Adaptive(150.dp),
+					horizontalArrangement = Arrangement.SpaceBetween,
 					modifier = Modifier
-						.align(Alignment.Center)
+						.align(Alignment.TopCenter)
+						.padding(6.dp)
 				) {
-					Text(
-						text = stringResource(R.string.empty_list_prompt),
-						style = MaterialTheme.typography.titleLarge,
-						textAlign = TextAlign.Center,
-						color = Color.Gray
-					)
+					items(
+						items = listState.favoritesList
+					) { fav_card ->
+						val isSelected = listState.selectedList.contains(fav_card.id)
+						AucardItem(
+							aucard = fav_card,
+							onClick = { id ->
+								if (listState.isSelectMode) {
+									if (isSelected) {
+										viewModel.DeselectId(id)
+									} else {
+										viewModel.SelectId(id)
+									}
+								} else {
+									onCardClicked(id)
+								}
+							},
+							onLongPress = {
+								viewModel.EnterSelectMode(fav_card.id)
+							},
+							isSelectMode = listState.isSelectMode,
+							isSelected = isSelected,
+							modifier = Modifier
+								.padding(6.dp)
+								.animateItem()
+								.sharedBounds(
+									sharedContentState = rememberSharedContentState(fav_card.id),
+									animatedVisibilityScope = scope
+								)
+						)
+					}
 				}
-				AnimatedVisibility(
-					visible = listState.isLoading,
-					modifier = Modifier
-						.align(Alignment.Center)
-				) {
-					CircularProgressIndicator()
-				}
+			}
+			AnimatedVisibility(
+				visible = listState.list.isEmpty() && !listState.isLoading,
+				modifier = Modifier
+					.align(Alignment.Center)
+			) {
+				Text(
+					text = stringResource(R.string.empty_list_prompt),
+					style = MaterialTheme.typography.titleLarge,
+					textAlign = TextAlign.Center,
+					color = Color.Gray
+				)
+			}
+			AnimatedVisibility(
+				visible = listState.isLoading,
+				modifier = Modifier
+					.align(Alignment.Center)
+			) {
+				CircularProgressIndicator()
 			}
 		}
 	}
+}
 
 
 

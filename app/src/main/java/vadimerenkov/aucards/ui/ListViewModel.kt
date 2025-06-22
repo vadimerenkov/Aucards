@@ -33,6 +33,10 @@ class ListViewModel(
 			initialValue = ListState()
 		)
 
+	fun TurnPage(number: Int) {
+		list_state.update { it.copy(currentPage = number) }
+	}
+
 	fun EnterSelectMode(id: Int) {
 		list_state.update { it.copy(isSelectMode = true) }
 		SelectId(id)
@@ -66,6 +70,8 @@ class ListViewModel(
 data class ListState(
 	val list: List<Aucard> = emptyList(),
 	val selectedList: List<Int> = emptyList(),
+	val favoritesList: List<Aucard> = emptyList(),
+	val currentPage: Int = 0,
 	val isLoading: Boolean = true,
 	val isSelectMode: Boolean = false
 )
