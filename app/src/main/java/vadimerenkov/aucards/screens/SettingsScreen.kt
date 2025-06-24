@@ -2,6 +2,7 @@
 
 package vadimerenkov.aucards.screens
 
+import android.util.Log.v
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,6 +52,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import vadimerenkov.aucards.BuildConfig
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.settings.Language
@@ -64,10 +66,7 @@ fun SettingsScreen(
 	modifier: Modifier = Modifier,
 	viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory.Factory)
 ) {
-	val context = LocalContext.current
-	val name = context.packageName
-	val info = context.packageManager.getPackageInfo(name, 0)
-	val v = info?.versionName ?: "unknown"
+	val version = BuildConfig.VERSION_NAME
 
 	/* Could not make it work; throws ActivityNotFoundException. Will try to
 	fix that in the future.
@@ -173,7 +172,7 @@ fun SettingsScreen(
 					val link = stringResource(R.string.source_code_link)
 
 					Text(
-						text = stringResource(R.string.about, v),
+						text = stringResource(R.string.about, version),
 						style = MaterialTheme.typography.bodyLarge,
 						textAlign = TextAlign.Center,
 						modifier = Modifier
