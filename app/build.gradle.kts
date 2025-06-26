@@ -6,6 +6,7 @@ plugins {
 	alias(libs.plugins.kotlin.compose)
 	id("com.google.devtools.ksp")
 	id("org.jetbrains.kotlin.plugin.serialization")
+	id("androidx.room")
 }
 
 android {
@@ -44,6 +45,9 @@ android {
 	}
 	buildFeatures {
 		compose = true
+	}
+	room {
+		schemaDirectory("$projectDir/schemas")
 	}
 }
 

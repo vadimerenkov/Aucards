@@ -18,6 +18,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -37,6 +39,7 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
@@ -51,6 +54,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -61,6 +65,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -164,7 +169,7 @@ fun SharedTransitionScope.ListScreen(
 					onClick = { viewModel.TurnPage(1) },
 					icon = {
 						Icon(
-							imageVector = Icons.Default.Star,
+							imageVector = Icons.Outlined.Star,
 							contentDescription = "Favourites"
 						)
 					},
@@ -259,6 +264,9 @@ fun SharedTransitionScope.ListScreen(
 								onSelectModeEntered = {
 									viewModel.EnterSelectMode(it)
 								},
+								onFavourited = {
+									viewModel.MarkAsFavourite(it)
+								},
 								scope = scope,
 								isSelectMode = listState.isSelectMode,
 								selectedList = listState.selectedList
@@ -266,7 +274,7 @@ fun SharedTransitionScope.ListScreen(
 						}
 					}
 					1 -> {
-						if (listState.favoritesList.isEmpty()) {
+						if (listState.favouritesList.isEmpty()) {
 							Box(
 								contentAlignment = Alignment.Center,
 								modifier = Modifier
@@ -281,7 +289,7 @@ fun SharedTransitionScope.ListScreen(
 							}
 						} else {
 							GridOfCards(
-								list = listState.favoritesList,
+								list = listState.favouritesList,
 								onSelect = {
 									viewModel.SelectId(it)
 								},
@@ -293,6 +301,9 @@ fun SharedTransitionScope.ListScreen(
 								},
 								onSelectModeEntered = {
 									viewModel.EnterSelectMode(it)
+								},
+								onFavourited = {
+									viewModel.MarkAsFavourite(it)
 								},
 								scope = scope,
 								isSelectMode = listState.isSelectMode,
@@ -313,6 +324,7 @@ fun SharedTransitionScope.GridOfCards(
 	onDeselect: (Int) -> Unit,
 	onCardClicked: (Int) -> Unit,
 	onSelectModeEntered: (Int) -> Unit,
+	onFavourited: (Int) -> Unit,
 	isSelectMode: Boolean,
 	selectedList: List<Int>,
 	scope: AnimatedVisibilityScope,
@@ -352,6 +364,7 @@ fun SharedTransitionScope.GridOfCards(
 					},
 					isSelectMode = isSelectMode,
 					isSelected = isSelected,
+					onFavourited = { onFavourited(card.id) },
 					modifier = Modifier
 						.padding(6.dp)
 						.animateItem()
@@ -370,6 +383,7 @@ fun AucardItem(
 	aucard: Aucard,
 	onClick: (Int) -> Unit,
 	onLongPress: () -> Unit,
+	onFavourited: () -> Unit,
 	modifier: Modifier = Modifier,
 	isSelectMode: Boolean = false,
 	isSelected: Boolean = false,
@@ -379,6 +393,9 @@ fun AucardItem(
 	)
 	val bg_color by animateColorAsState(
 		targetValue = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else Color.Transparent
+	)
+	val fav_color by animateColorAsState(
+		targetValue = if (aucard.isFavourite) Color.Yellow else Color.Transparent
 	)
 	val border by animateDpAsState(
 		targetValue = if (isSelected) 3.dp else 0.dp
@@ -436,6 +453,48 @@ fun AucardItem(
 							shape = CircleShape
 						)
 				)
+			}
+			androidx.compose.animation.AnimatedVisibility(
+				visible = isSelectMode,
+				enter = scaleIn(),
+				exit = scaleOut(),
+				modifier = Modifier
+					.align(Alignment.BottomEnd)
+					.zIndex(10f)
+			) {
+				Box(
+					contentAlignment = Alignment.Center,
+					modifier = Modifier
+						//.padding(8.dp)
+						.minimumInteractiveComponentSize()
+						.clickable(
+							onClick = onFavourited
+						)
+				) {
+					Icon(
+						painter = painterResource(R.drawable.star_border_24dp_1f1f1f),
+						contentDescription = null,
+						tint = Color.White,
+						modifier = Modifier
+							.size(32.dp)
+					)
+					Icon(
+						painter = painterResource(R.drawable.star_border_24dp_1f1f1f),
+						contentDescription = null,
+						tint = Color.Black,
+						modifier = Modifier
+							.size(24.dp)
+					)
+					Icon(
+						imageVector = Icons.Default.Star,
+						contentDescription = null,
+						tint = fav_color,
+						modifier = Modifier
+							.size(12.dp)
+					)
+
+				}
+
 			}
 			Column(
 				verticalArrangement = Arrangement.Center,

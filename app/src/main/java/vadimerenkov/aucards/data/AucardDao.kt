@@ -2,6 +2,7 @@ package vadimerenkov.aucards.data
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Update
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
@@ -18,4 +19,7 @@ interface AucardDao {
 
 	@Query("DELETE FROM aucard WHERE id = :id")
 	suspend fun deleteById(id: Int)
+
+	@Query("SELECT * FROM aucard WHERE isFavourite = 1")
+	fun getFavouriteCards(): Flow<List<Aucard>>
 }

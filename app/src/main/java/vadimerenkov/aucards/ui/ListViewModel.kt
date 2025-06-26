@@ -26,12 +26,32 @@ class ListViewModel(
 		.flowOn(dispatchers.main)
 		.launchIn(viewModelScope)
 
+	private val favourite_cards = aucardDao.getFavouriteCards()
+		.onEach { list ->
+			list_state.update { it.copy(favouritesList = list) }
+		}
+		.flowOn(dispatchers.main)
+		.launchIn(viewModelScope)
+
 	val listState = list_state
 		.stateIn(
 			scope = viewModelScope,
 			started = SharingStarted.WhileSubscribed(5000L),
 			initialValue = ListState()
 		)
+
+	fun MarkAsFavourite(id: Int) {
+		val card = list_state.value.list.find { it -> it.id == id }
+		if (card != null) {
+			SaveAucard(card.copy(isFavourite = !card.isFavourite))
+		}
+	}
+
+	private fun SaveAucard(aucard: Aucard) {
+		viewModelScope.launch(dispatchers.main) {
+			aucardDao.saveAucard(aucard)
+		}
+	}
 
 	fun TurnPage(number: Int) {
 		list_state.update { it.copy(currentPage = number) }
@@ -70,7 +90,7 @@ class ListViewModel(
 data class ListState(
 	val list: List<Aucard> = emptyList(),
 	val selectedList: List<Int> = emptyList(),
-	val favoritesList: List<Aucard> = emptyList(),
+	val favouritesList: List<Aucard> = emptyList(),
 	val currentPage: Int = 0,
 	val isLoading: Boolean = true,
 	val isSelectMode: Boolean = false
