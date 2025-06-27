@@ -83,7 +83,7 @@ fun AucardsTopBar(
 
 						1 -> {
 							Text(
-								"Favourites",
+								stringResource(R.string.favourites),
 								color = MaterialTheme.colorScheme.onPrimaryContainer
 							)
 						}

@@ -49,11 +49,14 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -154,12 +157,17 @@ fun SharedTransitionScope.ListScreen(
 					onClick = { viewModel.TurnPage(0) },
 					icon = {
 						Icon(
-							imageVector = Icons.AutoMirrored.Filled.List,
-							contentDescription = "Main"
+							painterResource(R.drawable.grid),
+							contentDescription = stringResource(R.string.all_cards),
+							tint = if (listState.currentPage == 0) {
+								MaterialTheme.colorScheme.onPrimary
+							} else {
+								MaterialTheme.colorScheme.onPrimaryContainer
+							}
 						)
 					},
 					colors = NavigationBarItemDefaults.colors(
-						selectedIconColor = Color.Yellow
+						indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer
 					),
 					modifier = Modifier
 						.weight(0.5f)
@@ -170,11 +178,16 @@ fun SharedTransitionScope.ListScreen(
 					icon = {
 						Icon(
 							imageVector = Icons.Outlined.Star,
-							contentDescription = "Favourites"
+							contentDescription = stringResource(R.string.favourites),
+							tint = if (listState.currentPage == 1) {
+								MaterialTheme.colorScheme.onPrimary
+							} else {
+								MaterialTheme.colorScheme.onPrimaryContainer
+							}
 						)
 					},
 					colors = NavigationBarItemDefaults.colors(
-						selectedIconColor = Color.Yellow
+						indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer
 					),
 					modifier = Modifier
 						.weight(0.5f)
@@ -281,7 +294,7 @@ fun SharedTransitionScope.ListScreen(
 									.fillMaxSize()
 							) {
 								Text(
-									text = "Mark any card as favourite to see it here!",
+									text = stringResource(R.string.add_to_fav_prompt),
 									style = MaterialTheme.typography.bodyLarge,
 									textAlign = TextAlign.Center,
 									color = Color.Gray
@@ -395,7 +408,7 @@ fun AucardItem(
 		targetValue = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else Color.Transparent
 	)
 	val fav_color by animateColorAsState(
-		targetValue = if (aucard.isFavourite) Color.Yellow else Color.Transparent
+		targetValue = if (aucard.isFavourite) Color.Black else Color.Transparent
 	)
 	val border by animateDpAsState(
 		targetValue = if (isSelected) 3.dp else 0.dp
@@ -468,18 +481,19 @@ fun AucardItem(
 						//.padding(8.dp)
 						.minimumInteractiveComponentSize()
 						.clickable(
-							onClick = onFavourited
+							onClick = onFavourited,
+							onClickLabel = stringResource(R.string.mark_as_favourite)
 						)
 				) {
 					Icon(
-						painter = painterResource(R.drawable.star_border_24dp_1f1f1f),
+						painter = painterResource(R.drawable.star_outlined),
 						contentDescription = null,
 						tint = Color.White,
 						modifier = Modifier
 							.size(32.dp)
 					)
 					Icon(
-						painter = painterResource(R.drawable.star_border_24dp_1f1f1f),
+						painter = painterResource(R.drawable.star_outlined),
 						contentDescription = null,
 						tint = Color.Black,
 						modifier = Modifier
@@ -490,7 +504,7 @@ fun AucardItem(
 						contentDescription = null,
 						tint = fav_color,
 						modifier = Modifier
-							.size(12.dp)
+							.size(24.dp)
 					)
 
 				}

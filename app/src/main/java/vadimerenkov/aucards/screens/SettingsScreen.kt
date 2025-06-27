@@ -194,7 +194,7 @@ fun SettingsScreen(
 									.padding(end = 4.dp)
 							)
 							Icon(
-								painter = painterResource(R.drawable.open_in_new_24dp_1f1f1f_fill0_wght400_grad0_opsz24),
+								painter = painterResource(R.drawable.open_in_new),
 								contentDescription = null
 							)
 						}
