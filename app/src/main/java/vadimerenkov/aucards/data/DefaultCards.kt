@@ -19,7 +19,6 @@ object DefaultCards {
 		),
 		Aucard(
 			text = "I need some rest right now",
-			title = "Rest",
 			color = Color.Cyan
 		),
 		Aucard(

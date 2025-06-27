@@ -69,17 +69,12 @@ class CardViewModel(
 	}
 
 	fun UpdateState(aucard: Aucard) {
-		Log.i(TAG, "Updating state of $aucard...")
 		card_state.update { it.copy(aucard) }
-		card_state.tryEmit(card_state.value)
 		ValidateCard(aucard)
 	}
 
 	private fun ValidateCard(aucard: Aucard) {
-		Log.i(TAG, "Validating a card... $aucard")
 		card_state.update { it.copy(isValid = aucard.text.isNotEmpty()) }
-		Log.i(TAG, "Successfully updated card state to ${card_state.value}")
-		Log.i(TAG, "CardState is now ${cardState.value}")
 	}
 }
 

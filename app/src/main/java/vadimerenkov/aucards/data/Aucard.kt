@@ -1,6 +1,7 @@
 package vadimerenkov.aucards.data
 
 import androidx.compose.ui.graphics.Color
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -8,7 +9,8 @@ import androidx.room.PrimaryKey
 data class Aucard(
 	@PrimaryKey(autoGenerate = true) val id: Int = 0,
 	val text: String,
-	val title: String? = null,
+	@ColumnInfo(defaultValue = "false")
+	val isFavourite: Boolean = false,
 	val description: String? = null,
 	val color: Color = Color.White
 )
