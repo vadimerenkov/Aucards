@@ -57,10 +57,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import vadimerenkov.aucards.CreateStarters
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.data.Aucard
-import vadimerenkov.aucards.data.DefaultCards
 import vadimerenkov.aucards.ui.CardState
 import vadimerenkov.aucards.ui.CardViewModel
 
@@ -313,6 +313,6 @@ private fun PreviewEditScreen() {
 @Preview(device = "spec:parent=pixel_5,orientation=landscape")
 @Composable
 private fun PreviewViewScreen() {
-	ViewScreen(CardState(DefaultCards.defaultCards[4]))
+	ViewScreen(CardState(CreateStarters()[4]))
 }
 

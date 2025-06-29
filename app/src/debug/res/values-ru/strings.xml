@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="help">Мне нужна помощь</string>
+    <string name="hug">Можешь меня обнять?</string>
+    <string name="alone">Я хочу побыть одна</string>
+</resources>

@@ -13,6 +13,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.BorderStroke
@@ -71,8 +72,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.lerp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import vadimerenkov.aucards.R
@@ -413,6 +416,9 @@ fun AucardItem(
 	val border by animateDpAsState(
 		targetValue = if (isSelected) 3.dp else 0.dp
 	)
+	val textSize by animateFloatAsState(
+		if (isSelected) 1f else 0f
+	)
 
 	ElevatedCard(
 		colors = CardDefaults.cardColors(
@@ -518,9 +524,15 @@ fun AucardItem(
 			) {
 				Text(
 					text = aucard.text,
-					style = MaterialTheme.typography.titleMedium,
+					style = lerp(
+						start = MaterialTheme.typography.titleMedium,
+						stop = MaterialTheme.typography.titleSmall,
+						fraction = textSize
+					),
 					color = Color.Black,
-					textAlign = TextAlign.Center
+					textAlign = TextAlign.Center,
+					modifier = Modifier
+						.padding(4.dp)
 				)
 			}
 		}
