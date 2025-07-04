@@ -28,7 +28,7 @@ It primarily aims to help people with special needs to quickly communicate their
 
 - (?) synchronization through Google
 
-- mark as favourites
+- mark as favourites ✅
 
 - categories
 
