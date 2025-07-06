@@ -57,7 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
-import vadimerenkov.aucards.CreateStarters
+//import vadimerenkov.aucards.CreateStarters
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.data.Aucard
@@ -275,6 +275,7 @@ private fun ViewScreen(
 ) {
 	Box(
 		modifier = modifier
+			.padding(16.dp)
 			.fillMaxSize()
 	) {
 		Column(
@@ -290,7 +291,10 @@ private fun ViewScreen(
 			)
 			if (!state.aucard.description.isNullOrBlank()) {
 				Text(
-					text = state.aucard.description
+					text = state.aucard.description,
+					textAlign = TextAlign.Justify,
+					modifier = Modifier
+						.padding(8.dp)
 				)
 			}
 		}
@@ -313,6 +317,6 @@ private fun PreviewEditScreen() {
 @Preview(device = "spec:parent=pixel_5,orientation=landscape")
 @Composable
 private fun PreviewViewScreen() {
-	ViewScreen(CardState(CreateStarters()[4]))
+	//ViewScreen(CardState(CreateStarters()[4]))
 }
 
