@@ -61,6 +61,7 @@ import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.settings.Language
 import vadimerenkov.aucards.settings.Theme
 import vadimerenkov.aucards.ui.SettingsViewModel
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -122,28 +123,23 @@ fun SettingsScreen(
 					.verticalScroll(scroll)
 			) {
 				Column {
-					/* see comment above.
-
-				CheckboxSetting(
-					description = stringResource(R.string.brightness),
-					onCheckedChange = {
-						//activity?.requestPermissions(arrayOf(Manifest.permission.WRITE_SETTINGS), 0)
-						permissionLauncher.launch(Manifest.permission.WRITE_SETTINGS)
-						//viewModel.saveBrightnessSetting(it)
-					},
-					isChecked = state.isMaxBrightness
-				)
-
-				 */
-					Text(
-						text = stringResource(R.string.brightness),
-						modifier=Modifier.clickable{
-							val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
-								data = Uri.parse("package:${context.packageName}")
-								addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+					CheckboxSetting(
+						description = stringResource(R.string.brightness),
+						onCheckedChange = {
+							fun hasPermission(): Boolean {
+								return Settings.System.canWrite(context)
 							}
-							context.startActivity(intent)
-						}
+							if (!hasPermission()) {
+								val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
+									data = "package:${context.packageName}".toUri()
+									addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+								}
+								context.startActivity(intent)
+							} else {
+								viewModel.saveBrightnessSetting(it)
+							}
+						},
+						isChecked = state.isMaxBrightness
 					)
 					HorizontalDivider(
 						modifier = Modifier
@@ -232,7 +228,7 @@ private fun SettingsRow(
 		verticalAlignment = Alignment.CenterVertically,
 		modifier = modifier
 			.fillMaxWidth()
-			.padding(bottom = 8.dp)
+			//.padding(bottom = 8.dp)
 	) {
 		content()
 	}

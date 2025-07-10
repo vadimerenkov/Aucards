@@ -82,21 +82,23 @@ fun CardFullscreen(
 
 	val context = LocalContext.current
 	fun hasPermission(): Boolean {
-		return Settings.System.canWrite(context)
+		return Settings.System.canWrite(context) && state.isMaxBrightness
 	}
 
-	val brightness = Settings.System.getInt(
+	val current_brightness = Settings.System.getInt(
 		context.contentResolver,
 		Settings.System.SCREEN_BRIGHTNESS
 	)
 
 	DisposableEffect(Unit) {
 		onDispose {
-			Settings.System.putInt(
-				activity?.contentResolver,
-				Settings.System.SCREEN_BRIGHTNESS,
-				brightness
-			)
+			if (hasPermission()) {
+				Settings.System.putInt(
+					activity?.contentResolver,
+					Settings.System.SCREEN_BRIGHTNESS,
+					current_brightness
+				)
+			}
 		}
 	}
 
@@ -109,16 +111,6 @@ fun CardFullscreen(
 		activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
 		Log.i(TAG, "Reset back to user preferences, setting is ${state.isLandscapeMode}.")
 	}
-
-	/* Supposed to set brightness to max. See the comment in SettingsScreen.kt
-	if (shouldSetBrightnessToMax == true && viewModel.settings.hasPermission()) {
-		Settings.System.putInt(
-			activity?.contentResolver,
-			Settings.System.SCREEN_BRIGHTNESS,
-			255
-		)
-	}
-	*/
 
 	if (hasPermission()) {
 		Settings.System.putInt(
