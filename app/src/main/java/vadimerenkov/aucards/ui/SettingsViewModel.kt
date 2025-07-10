@@ -129,40 +129,13 @@ class SettingsViewModel(
 		state.update { it.copy(language = language) }
 	}
 
-	/*
-	fun saveBrightnessSetting(brightness: Boolean) {
-		if (brightness == true) {
-			if (!settings.hasPermission()) {
-				AskForPermission()
-				if (!settings.hasPermission()) {
-					return
-				}
-				else {
-					WriteBrightness(true)
-				}
-			}
-		}
-		else {
-			WriteBrightness(false)
-		}
-	}
-
-	 */
-
 	fun saveLandscapeSetting(landscape: Boolean) {
 		viewModelScope.launch {
 			settings.saveBoolSettings(LANDSCAPE_STRING, landscape)
 		}
 	}
 
-	/*
-	private fun AskForPermission() {
-		val intent = Intent(ACTION_MANAGE_WRITE_SETTINGS)
-		settings.context.startActivity(intent)
-	}
-	 */
-
-	private fun WriteBrightness(brightness: Boolean) {
+	fun saveBrightnessSetting(brightness: Boolean) {
 		viewModelScope.launch {
 			settings.saveBoolSettings(
 				key = BRIGHTNESS_STRING,

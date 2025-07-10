@@ -2,6 +2,9 @@
 
 package vadimerenkov.aucards.screens
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.util.Log.v
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -58,6 +61,7 @@ import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.settings.Language
 import vadimerenkov.aucards.settings.Theme
 import vadimerenkov.aucards.ui.SettingsViewModel
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -66,6 +70,7 @@ fun SettingsScreen(
 	modifier: Modifier = Modifier,
 	viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory.Factory)
 ) {
+	val context = LocalContext.current
 	val version = BuildConfig.VERSION_NAME
 
 	/* Could not make it work; throws ActivityNotFoundException. Will try to
@@ -118,19 +123,28 @@ fun SettingsScreen(
 					.verticalScroll(scroll)
 			) {
 				Column {
-					/* see comment above.
-
-				CheckboxSetting(
-					description = stringResource(R.string.brightness),
-					onCheckedChange = {
-						//activity?.requestPermissions(arrayOf(Manifest.permission.WRITE_SETTINGS), 0)
-						permissionLauncher.launch(Manifest.permission.WRITE_SETTINGS)
-						//viewModel.saveBrightnessSetting(it)
-					},
-					isChecked = state.isMaxBrightness
-				)
-
-				 */
+					CheckboxSetting(
+						description = stringResource(R.string.brightness),
+						onCheckedChange = {
+							fun hasPermission(): Boolean {
+								return Settings.System.canWrite(context)
+							}
+							if (!hasPermission()) {
+								val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
+									data = "package:${context.packageName}".toUri()
+									addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+								}
+								context.startActivity(intent)
+							} else {
+								viewModel.saveBrightnessSetting(it)
+							}
+						},
+						isChecked = state.isMaxBrightness
+					)
+					HorizontalDivider(
+						modifier = Modifier
+							.padding(vertical = 8.dp)
+					)
 					CheckboxSetting(
 						description = stringResource(R.string.landscape),
 						onCheckedChange = { viewModel.saveLandscapeSetting(it) },
@@ -214,7 +228,7 @@ private fun SettingsRow(
 		verticalAlignment = Alignment.CenterVertically,
 		modifier = modifier
 			.fillMaxWidth()
-			.padding(bottom = 8.dp)
+			//.padding(bottom = 8.dp)
 	) {
 		content()
 	}
