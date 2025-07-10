@@ -2,8 +2,10 @@ package vadimerenkov.aucards.screens
 
 import android.content.pm.ActivityInfo
 import android.provider.Settings
+import android.graphics.Color.toArgb
 import android.util.Log
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.VectorConverter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +50,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.colorspace.ColorSpace
+import androidx.compose.ui.graphics.colorspace.ColorSpaces
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -146,7 +151,10 @@ fun CardFullscreen(
 					onBackClicked()
 				},
 				onCancelClicked = onBackClicked,
-				onColorChange = { viewModel.UpdateState(state.aucard.copy(color = it)) }
+				onColorChange = { viewModel.UpdateState(state.aucard.copy(color = it)) },
+				requestKeyboardClose = {
+					keyboardController?.hide()
+				}
 			)
 		}
 		else {
@@ -163,12 +171,19 @@ private fun EditScreen(
 	onColorChange: (Color) -> Unit,
 	onSaveClicked: (Aucard) -> Unit,
 	onCancelClicked: () -> Unit,
+	requestKeyboardClose: () -> Unit,
 	modifier: Modifier = Modifier
 ) {
 	val colorController = rememberColorPickerController()
 	var colorPaletteOpen by remember { mutableStateOf(false) }
 	val focusRequester = remember { FocusRequester() }
 	var hex_color by remember { mutableStateOf("") }
+
+	val hsv by remember { mutableStateOf(FloatArray(3)) }
+
+	val textColor = if (hsv[0] in (210f..280f) && hsv[1] in (0.75f..1f)) {
+		Color.White
+	} else Color.Black
 
 	LaunchedEffect(true) {
 		focusRequester.requestFocus()
@@ -178,49 +193,7 @@ private fun EditScreen(
 		modifier = modifier
 			.fillMaxSize()
 	) {
-		IconButton(
-			onClick = { colorPaletteOpen = !colorPaletteOpen },
-			modifier = Modifier
-				.align(Alignment.TopStart)
-				.displayCutoutPadding()
-				.statusBarsPadding()
-				.padding(8.dp)
-				.clip(CircleShape)
-				.size(64.dp)
-				.background(Color.White)
 
-		) {
-			Icon(
-				painter = painterResource(R.drawable.palette),
-				contentDescription = stringResource(R.string.choose_color),
-				modifier = Modifier
-					.size(64.dp)
-			)
-
-		DropdownMenu(
-			expanded = colorPaletteOpen,
-			onDismissRequest = { colorPaletteOpen = false },
-			offset = DpOffset(0.dp, 16.dp)
-		) {
-			HsvColorPicker(
-				controller = colorController,
-				onColorChanged = {
-					onColorChange(it.color)
-					hex_color = it.hexCode
-				},
-				initialColor = state.aucard.color,
-				modifier = Modifier
-					.padding(8.dp)
-					.size(200.dp)
-			)
-			Text(
-				text = hex_color,
-				textAlign = TextAlign.Center,
-				modifier = Modifier
-					.fillMaxWidth()
-			)
-		}
-		}
 		Column(
 			verticalArrangement = Arrangement.Center,
 			horizontalAlignment = Alignment.CenterHorizontally,
@@ -232,7 +205,11 @@ private fun EditScreen(
 				onValueChange = onTextChange,
 				placeholder = { Text(stringResource(R.string.your_text)) },
 				colors = TextFieldDefaults.colors(
-					unfocusedContainerColor = Color.Transparent
+					unfocusedContainerColor = Color.Transparent,
+					focusedContainerColor = Color.Transparent,
+					focusedTextColor = textColor,
+					unfocusedTextColor = textColor
+
 				),
 				keyboardOptions = KeyboardOptions(
 					imeAction = ImeAction.Next
@@ -246,12 +223,60 @@ private fun EditScreen(
 				onValueChange = onDescriptionChange,
 				placeholder = { Text(stringResource(R.string.description)) },
 				colors = TextFieldDefaults.colors(
-					unfocusedContainerColor = Color.Transparent
+					unfocusedContainerColor = Color.Transparent,
+					focusedContainerColor = Color.Transparent,
+					focusedTextColor = textColor,
+					unfocusedTextColor = textColor
 				),
 				keyboardOptions = KeyboardOptions(
 					imeAction = ImeAction.Done
 				)
 			)
+			IconButton(
+				onClick = {
+					requestKeyboardClose()
+					colorPaletteOpen = !colorPaletteOpen
+				},
+				modifier = Modifier
+					.align(Alignment.End)
+					.padding(top = 8.dp)
+					.clip(CircleShape)
+					.size(48.dp)
+					.background(Color.White)
+
+			) {
+				Icon(
+					painter = painterResource(R.drawable.palette),
+					contentDescription = stringResource(R.string.choose_color),
+					modifier = Modifier
+						.size(48.dp)
+				)
+
+				DropdownMenu(
+					expanded = colorPaletteOpen,
+					onDismissRequest = { colorPaletteOpen = false },
+					offset = DpOffset((-60).dp, 300.dp)
+				) {
+					HsvColorPicker(
+						controller = colorController,
+						onColorChanged = {
+							onColorChange(it.color)
+							hex_color = it.hexCode
+							android.graphics.Color.colorToHSV(it.color.toArgb(), hsv)
+						},
+						initialColor = state.aucard.color,
+						modifier = Modifier
+							.padding(8.dp)
+							.size(200.dp)
+					)
+					Text(
+						text = hex_color,
+						textAlign = TextAlign.Center,
+						modifier = Modifier
+							.fillMaxWidth()
+					)
+				}
+			}
 		}
 		Row(
 			horizontalArrangement = Arrangement.SpaceBetween,
@@ -336,7 +361,8 @@ private fun PreviewEditScreen() {
 		onTextChange = {},
 		onDescriptionChange = {},
 		onColorChange = {},
-		onCancelClicked = {}
+		onCancelClicked = {},
+		requestKeyboardClose = {}
 	)
 }
 
