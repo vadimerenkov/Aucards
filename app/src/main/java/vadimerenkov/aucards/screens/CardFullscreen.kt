@@ -1,6 +1,7 @@
 package vadimerenkov.aucards.screens
 
 import android.content.pm.ActivityInfo
+import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
@@ -33,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,6 +47,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -77,6 +80,27 @@ fun CardFullscreen(
 	val keyboardController = LocalSoftwareKeyboardController.current
 	val activity = LocalActivity.current
 
+	val context = LocalContext.current
+	fun hasPermission(): Boolean {
+		return Settings.System.canWrite(context)
+	}
+
+	val brightness = Settings.System.getInt(
+		context.contentResolver,
+		Settings.System.SCREEN_BRIGHTNESS
+	)
+
+	DisposableEffect(Unit) {
+		onDispose {
+			Settings.System.putInt(
+				activity?.contentResolver,
+				Settings.System.SCREEN_BRIGHTNESS,
+				brightness
+			)
+		}
+	}
+
+
 	if (state.isLandscapeMode == true) {
 		activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 		Log.i(TAG, "Requested landscape mode, setting is ${state.isLandscapeMode}.")
@@ -95,6 +119,17 @@ fun CardFullscreen(
 		)
 	}
 	*/
+
+	if (hasPermission()) {
+		Settings.System.putInt(
+			activity?.contentResolver,
+			Settings.System.SCREEN_BRIGHTNESS,
+			255
+		)
+		Log.i(TAG, "Brightness set to maximum")
+	} else {
+		Log.i(TAG, "Permission not granted to change brightness")
+	}
 
 	Surface(
 		color = state.aucard.color,

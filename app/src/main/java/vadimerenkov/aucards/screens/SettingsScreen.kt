@@ -2,6 +2,9 @@
 
 package vadimerenkov.aucards.screens
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.util.Log.v
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -66,6 +69,7 @@ fun SettingsScreen(
 	modifier: Modifier = Modifier,
 	viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory.Factory)
 ) {
+	val context = LocalContext.current
 	val version = BuildConfig.VERSION_NAME
 
 	/* Could not make it work; throws ActivityNotFoundException. Will try to
@@ -131,6 +135,20 @@ fun SettingsScreen(
 				)
 
 				 */
+					Text(
+						text = stringResource(R.string.brightness),
+						modifier=Modifier.clickable{
+							val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
+								data = Uri.parse("package:${context.packageName}")
+								addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+							}
+							context.startActivity(intent)
+						}
+					)
+					HorizontalDivider(
+						modifier = Modifier
+							.padding(vertical = 8.dp)
+					)
 					CheckboxSetting(
 						description = stringResource(R.string.landscape),
 						onCheckedChange = { viewModel.saveLandscapeSetting(it) },
