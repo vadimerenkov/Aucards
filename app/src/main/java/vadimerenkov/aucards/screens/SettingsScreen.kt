@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log.v
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,6 +39,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,6 +64,9 @@ import vadimerenkov.aucards.settings.Language
 import vadimerenkov.aucards.settings.Theme
 import vadimerenkov.aucards.ui.SettingsViewModel
 import androidx.core.net.toUri
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,6 +77,7 @@ fun SettingsScreen(
 ) {
 	val context = LocalContext.current
 	val version = BuildConfig.VERSION_NAME
+	val lifecycleOwner = LocalLifecycleOwner.current
 
 	/* Could not make it work; throws ActivityNotFoundException. Will try to
 	fix that in the future.
@@ -85,6 +91,33 @@ fun SettingsScreen(
 	 */
 
 	val state by viewModel.settingsState.collectAsState()
+
+	DisposableEffect(Unit) {
+		val observer = LifecycleEventObserver { _, event ->
+			if (event == Lifecycle.Event.ON_RESUME) {
+				if (Settings.System.canWrite(context)) {
+					viewModel.saveBrightnessSetting(true)
+					Toast.makeText(
+						context,
+						"Permission granted",
+						Toast.LENGTH_SHORT
+					).show()
+				} else {
+					viewModel.saveBrightnessSetting(false)
+					Toast.makeText(
+						context,
+						"Permission denied",
+						Toast.LENGTH_SHORT
+					).show()
+				}
+			}
+		}
+		lifecycleOwner.lifecycle.addObserver(observer)
+
+		onDispose {
+			lifecycleOwner.lifecycle.removeObserver(observer)
+		}
+	}
 
 	Scaffold(
 		topBar = {
@@ -126,18 +159,11 @@ fun SettingsScreen(
 					CheckboxSetting(
 						description = stringResource(R.string.brightness),
 						onCheckedChange = {
-							fun hasPermission(): Boolean {
-								return Settings.System.canWrite(context)
-							}
-							if (!hasPermission()) {
 								val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
 									data = "package:${context.packageName}".toUri()
 									addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 								}
 								context.startActivity(intent)
-							} else {
-								viewModel.saveBrightnessSetting(it)
-							}
 						},
 						isChecked = state.isMaxBrightness
 					)
