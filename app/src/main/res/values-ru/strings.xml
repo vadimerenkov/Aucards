@@ -31,4 +31,5 @@
     <string name="favourites">Избранное</string>
     <string name="mark_as_favourite">Добавить в избранное</string>
     <string name="add_to_fav_prompt">Добавьте любую карточку в избранное, чтобы увидеть ее здесь!</string>
+    <string name="brightness_permission">Чтобы эта настройка работала, нужно разрешить приложению изменять системные настройки.</string>
 </resources>

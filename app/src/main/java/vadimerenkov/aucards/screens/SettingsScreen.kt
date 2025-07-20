@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import android.util.Log
 import android.util.Log.v
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -70,6 +71,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 
+private const val TAG = "SettingsScreen"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -96,6 +99,7 @@ fun SettingsScreen(
 	 */
 
 	val state by viewModel.settingsState.collectAsState()
+	var showBrightnessContext by remember { mutableStateOf(false) }
 
 	if (!hasPermission(context)) {
 		DisposableEffect(Unit) {
@@ -103,12 +107,9 @@ fun SettingsScreen(
 				if (event == Lifecycle.Event.ON_RESUME) {
 					if (hasPermission(context)) {
 						viewModel.saveBrightnessSetting(true)
-						Toast.makeText(
-							context,
-							"Permission granted",
-							Toast.LENGTH_SHORT
-						).show()
+						showBrightnessContext = false
 					} else {
+						showBrightnessContext = true
 						viewModel.saveBrightnessSetting(false)
 					}
 				}
@@ -172,6 +173,13 @@ fun SettingsScreen(
 						},
 						isChecked = state.isMaxBrightness
 					)
+					if (showBrightnessContext) {
+						Text(
+							text = stringResource(R.string.brightness_permission),
+							color = Color.Blue,
+							style = MaterialTheme.typography.bodyMedium
+						)
+					}
 					HorizontalDivider(
 						modifier = Modifier
 							.padding(vertical = 8.dp)
