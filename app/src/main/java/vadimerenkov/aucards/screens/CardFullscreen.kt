@@ -67,7 +67,7 @@ import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.ui.CardState
 import vadimerenkov.aucards.ui.CardViewModel
 
-const val TAG = "CardFullscreen"
+private const val TAG = "CardFullscreen"
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -101,7 +101,6 @@ fun CardFullscreen(
 			}
 		}
 	}
-
 
 	if (state.isLandscapeMode == true) {
 		activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE

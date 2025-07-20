@@ -26,7 +26,7 @@ class CardViewModel(
 	private val aucardDao: AucardDao,
 	private val dispatchers: DispatchersProvider
 ): ViewModel() {
-	val TAG = "CardViewModel"
+	private val TAG = "CardViewModel"
 
 	private val route = savedStateHandle.toRoute<FullscreenCard>()
 	private val id: Int = route.id

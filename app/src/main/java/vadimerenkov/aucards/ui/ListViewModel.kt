@@ -37,7 +37,7 @@ class ListViewModel(
 		.stateIn(
 			scope = viewModelScope,
 			started = SharingStarted.WhileSubscribed(5000L),
-			initialValue = ListState()
+			initialValue = list_state.value
 		)
 
 	fun MarkAsFavourite(id: Int) {

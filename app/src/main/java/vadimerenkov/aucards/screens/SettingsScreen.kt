@@ -4,11 +4,7 @@ package vadimerenkov.aucards.screens
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.provider.Settings
-import android.util.Log
-import android.util.Log.v
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,7 +38,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,6 +54,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import vadimerenkov.aucards.BuildConfig
 import vadimerenkov.aucards.R
@@ -66,10 +65,6 @@ import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.settings.Language
 import vadimerenkov.aucards.settings.Theme
 import vadimerenkov.aucards.ui.SettingsViewModel
-import androidx.core.net.toUri
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 
 private const val TAG = "SettingsScreen"
 
@@ -86,17 +81,6 @@ fun SettingsScreen(
 	fun hasPermission(context: Context): Boolean {
 		return Settings.System.canWrite(context)
 	}
-
-	/* Could not make it work; throws ActivityNotFoundException. Will try to
-	fix that in the future.
-
-	val permissionLauncher = rememberLauncherForActivityResult(
-		contract = ActivityResultContracts.RequestPermission(),
-		onResult = { result ->
-
-		}
-	)
-	 */
 
 	val state by viewModel.settingsState.collectAsState()
 	var showBrightnessContext by remember { mutableStateOf(false) }
