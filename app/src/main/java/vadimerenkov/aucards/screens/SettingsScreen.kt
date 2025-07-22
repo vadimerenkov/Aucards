@@ -74,7 +74,7 @@ private const val TAG = "SettingsScreen"
 fun SettingsScreen(
 	onBackClicked: () -> Unit,
 	modifier: Modifier = Modifier,
-	viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory.Factory)
+	viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory.Factory())
 ) {
 	val context = LocalContext.current
 	val version = BuildConfig.VERSION_NAME

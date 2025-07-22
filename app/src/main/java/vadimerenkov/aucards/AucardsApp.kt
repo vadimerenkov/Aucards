@@ -34,6 +34,7 @@ data class FullscreenCard(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun AucardsApp(
+	isDarkTheme: Boolean,
 	navController: NavHostController = rememberNavController(),
 ) {
 	SharedTransitionLayout {
@@ -54,6 +55,7 @@ fun AucardsApp(
 				val card = it.toRoute<FullscreenCard>()
 				CardFullscreen(
 					onBackClicked = { navController.navigateUp() },
+					isDarkTheme = isDarkTheme,
 					modifier = Modifier
 						.sharedBounds(
 							sharedContentState = rememberSharedContentState(card.id),

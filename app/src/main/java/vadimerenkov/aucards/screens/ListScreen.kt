@@ -93,7 +93,7 @@ fun SharedTransitionScope.ListScreen(
 	onSettingsClicked: () -> Unit,
 	scope: AnimatedVisibilityScope,
 	modifier: Modifier = Modifier,
-	viewModel: ListViewModel = viewModel(factory = ViewModelFactory.Factory)
+	viewModel: ListViewModel = viewModel(factory = ViewModelFactory.Factory())
 ) {
 	val listState by viewModel.listState.collectAsState()
 	var deleteConfirmationOpen by remember { mutableStateOf(false) }

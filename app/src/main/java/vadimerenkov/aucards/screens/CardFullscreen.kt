@@ -1,16 +1,12 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package vadimerenkov.aucards.screens
 
-import android.R.attr.contentDescription
 import android.content.pm.ActivityInfo
 import android.provider.Settings
-import android.graphics.Color.toArgb
 import android.util.Log
 import androidx.activity.compose.LocalActivity
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.VectorConverter
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,7 +15,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,19 +22,18 @@ import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -58,16 +52,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.hsv
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.graphics.colorspace.ColorSpace
-import androidx.compose.ui.graphics.colorspace.ColorSpaces
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -75,13 +63,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
+import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 //import vadimerenkov.aucards.CreateStarters
@@ -92,7 +78,6 @@ import vadimerenkov.aucards.ui.CardState
 import vadimerenkov.aucards.ui.CardViewModel
 import vadimerenkov.aucards.ui.Palette
 import vadimerenkov.aucards.ui.calculateContentColor
-import vadimerenkov.aucards.ui.theme.onBackgroundDarkHighContrast
 
 private const val TAG = "CardFullscreen"
 
@@ -100,8 +85,9 @@ private const val TAG = "CardFullscreen"
 @Composable
 fun CardFullscreen(
 	onBackClicked: () -> Unit,
+	isDarkTheme: Boolean,
 	modifier: Modifier = Modifier,
-	viewModel: CardViewModel = viewModel(factory = ViewModelFactory.Factory)
+	viewModel: CardViewModel = viewModel(factory = ViewModelFactory.Factory(isDarkTheme))
 ) {
 	val state by viewModel.cardState.collectAsState()
 	val keyboardController = LocalSoftwareKeyboardController.current
@@ -166,14 +152,15 @@ fun CardFullscreen(
 		if (state.isEditable) {
 			EditScreen(
 				state = state,
-				onTextChange = { viewModel.UpdateState(state.aucard.copy(text = it)) },
-				onDescriptionChange = { viewModel.UpdateState(state.aucard.copy(description = it)) },
+				onTextChange = { viewModel.updateText(it) },
+				onDescriptionChange = { viewModel.updateDescription(it) },
 				onSaveClicked = {
-					viewModel.SaveAucard(it)
+					viewModel.saveAucard(it)
 					onBackClicked()
 				},
 				onCancelClicked = onBackClicked,
-				onColorChange = { viewModel.UpdateState(state.aucard.copy(color = it)) },
+				onColorChange = { viewModel.updateColor(it) },
+				onHexChange = { viewModel.updateHexCode(it) },
 				requestKeyboardClose = {
 					keyboardController?.hide()
 				}
@@ -191,6 +178,7 @@ private fun EditScreen(
 	onTextChange: (String) -> Unit,
 	onDescriptionChange: (String) -> Unit,
 	onColorChange: (Color) -> Unit,
+	onHexChange: (String) -> Unit,
 	onSaveClicked: (Aucard) -> Unit,
 	onCancelClicked: () -> Unit,
 	requestKeyboardClose: () -> Unit,
@@ -199,17 +187,9 @@ private fun EditScreen(
 	val colorController = rememberColorPickerController()
 	var colorPaletteOpen by remember { mutableStateOf(false) }
 	val focusRequester = remember { FocusRequester() }
-	var hex_color by remember { mutableStateOf("") }
-
-	//var contentColor by remember { mutableStateOf(calculateContentColor(state.aucard.color)) }
 
 	LaunchedEffect(true) {
 		focusRequester.requestFocus()
-	}
-
-	LaunchedEffect(state.aucard.color) {
-		Log.i(TAG, "Background color is ${state.aucard.color}")
-		//contentColor = calculateContentColor(state.aucard.color)
 	}
 
 	Box(
@@ -309,7 +289,7 @@ private fun EditScreen(
 										Icon(
 											imageVector = Icons.Default.Done,
 											contentDescription = null,
-											tint = Color.Black
+											tint = calculateContentColor(color)
 										)
 									}
 								}
@@ -321,7 +301,7 @@ private fun EditScreen(
 							controller = colorController,
 							onColorChanged = {
 								onColorChange(it.color)
-								hex_color = it.hexCode
+								onHexChange(it.hexCode)
 							},
 							initialColor = state.aucard.color,
 							modifier = Modifier
@@ -333,17 +313,24 @@ private fun EditScreen(
 							controller = colorController,
 							initialColor = state.aucard.color,
 							wheelRadius = 8.dp,
+							wheelColor = calculateContentColor(state.aucard.color),
 							modifier = Modifier
 								.padding(horizontal = 16.dp)
 								.fillMaxWidth()
 								.height(24.dp)
 						)
-						Text(
-							text = hex_color,
-							textAlign = TextAlign.Center,
+						OutlinedTextField(
+							value = state.hexColor.uppercase(),
+							isError = !state.isHexCodeValid,
+							singleLine = true,
+							textStyle = LocalTextStyle.current.copy(
+								textAlign = TextAlign.Center
+							),
+							onValueChange = onHexChange,
 							modifier = Modifier
 								.padding(8.dp)
-								.fillMaxWidth()
+								.width(120.dp)
+								.align(Alignment.CenterHorizontally)
 						)
 					}
 				}
@@ -354,8 +341,6 @@ private fun EditScreen(
 			modifier = Modifier
 				.align(Alignment.BottomCenter)
 				.fillMaxWidth()
-				//.padding(8.dp)
-				//.windowInsetsPadding(WindowInsets(8.dp))
 		) {
 			IconButton(
 				onClick = onCancelClicked,
@@ -425,13 +410,14 @@ private fun ViewScreen(
 @Composable
 private fun PreviewEditScreen() {
 	EditScreen(
-		state = CardState(),
+		state = CardState(Aucard(text = "")),
 		onSaveClicked = {},
 		onTextChange = {},
 		onDescriptionChange = {},
 		onColorChange = {},
 		onCancelClicked = {},
-		requestKeyboardClose = {}
+		requestKeyboardClose = {},
+		onHexChange = {}
 	)
 }
 
