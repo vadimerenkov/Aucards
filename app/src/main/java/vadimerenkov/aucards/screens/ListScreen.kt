@@ -83,6 +83,7 @@ import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.ui.AucardsTopBar
 import vadimerenkov.aucards.ui.ListViewModel
+import vadimerenkov.aucards.ui.calculateContentColor
 
 @Composable
 fun SharedTransitionScope.ListScreen(
@@ -532,7 +533,7 @@ fun AucardItem(
 						stop = MaterialTheme.typography.titleSmall,
 						fraction = textSize
 					),
-					color = Color.Black,
+					color = calculateContentColor(aucard.color),
 					textAlign = TextAlign.Center,
 					modifier = Modifier
 						.padding(4.dp)

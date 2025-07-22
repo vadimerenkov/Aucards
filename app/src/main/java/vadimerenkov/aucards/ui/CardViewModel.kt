@@ -36,8 +36,6 @@ class CardViewModel(
 
 	var cardState = card_state
 		.onStart {
-			Log.i("CardViewModel", savedStateHandle.toString())
-			Log.i("CardViewModel", route.toString())
 			val brightness = settings.brightness.first() ?: false
 			val landscape = settings.landscape.first()
 			if (id != 0) {
@@ -52,7 +50,11 @@ class CardViewModel(
 				}
 			}
 			else {
-				card_state.update { it.copy(isEditable = isEditable, isMaxBrightness = brightness, isLandscapeMode = landscape) }
+				card_state.update { it.copy(
+					isEditable = isEditable,
+					isMaxBrightness = brightness,
+					isLandscapeMode = landscape
+				) }
 			}
 		}
 		.flowOn(dispatchers.main)
