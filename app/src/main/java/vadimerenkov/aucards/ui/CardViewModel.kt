@@ -45,28 +45,13 @@ class CardViewModel(
 		)
 	))
 
+	init {
+		//loadInitialData()
+	}
+
 	var cardState = card_state
 		.onStart {
-			val brightness = settings.brightness.first() ?: false
-			val landscape = settings.landscape.first()
-			if (id != 0) {
-				viewModelScope.launch(dispatchers.main) {
-					val card = aucardDao.getAucardByID(id).first()
-					card_state.update { it.copy(
-						aucard = card,
-						isEditable = isEditable,
-						isMaxBrightness = brightness,
-						isLandscapeMode = landscape
-					) }
-				}
-			}
-			else {
-				card_state.update { it.copy(
-					isEditable = isEditable,
-					isMaxBrightness = brightness,
-					isLandscapeMode = landscape
-				) }
-			}
+			loadInitialData()
 		}
 		.flowOn(dispatchers.main)
 		.stateIn(
@@ -75,6 +60,32 @@ class CardViewModel(
 			initialValue = card_state.value
 		)
 
+	private fun loadInitialData() {
+		viewModelScope.launch(dispatchers.main) {
+			val brightness = settings.brightness.first() ?: false
+			val landscape = settings.landscape.first()
+			if (id != 0) {
+				val card = aucardDao.getAucardByID(id).first()
+				card_state.update {
+					it.copy(
+						aucard = card,
+						isEditable = isEditable,
+						isMaxBrightness = brightness,
+						isLandscapeMode = landscape
+					)
+				}
+			} else {
+				card_state.update {
+					it.copy(
+						isEditable = isEditable,
+						isMaxBrightness = brightness,
+						isLandscapeMode = landscape
+					)
+				}
+			}
+		}
+	}
+
 	fun saveAucard(aucard: Aucard) {
 		viewModelScope.launch(dispatchers.main) {
 			aucardDao.saveAucard(aucard)
@@ -82,7 +93,7 @@ class CardViewModel(
 	}
 
 	fun updateText(text: String) {
-		card_state.update { it.copy(aucard = it.aucard.copy(text = text)) }
+		card_state.update { it.copy(aucard = it.aucard.copy(text = text), isValid = text.isNotEmpty()) }
 	}
 
 	fun updateDescription(description: String) {
@@ -108,7 +119,7 @@ class CardViewModel(
 data class CardState(
 	val aucard: Aucard,
 	val isEditable: Boolean = false,
-	val isValid: Boolean = aucard.text.isNotEmpty(),
+	val isValid: Boolean = false,
 	val isMaxBrightness: Boolean = false,
 	val isLandscapeMode: Boolean? = null,
 	val hexColor: String = "",

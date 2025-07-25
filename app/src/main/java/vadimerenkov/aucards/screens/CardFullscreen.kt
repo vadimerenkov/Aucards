@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class, ExperimentalSharedTransitionApi::class)
 
 package vadimerenkov.aucards.screens
 
@@ -6,6 +6,10 @@ import android.content.pm.ActivityInfo
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +35,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -39,13 +44,12 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -62,34 +66,38 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
-import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import kotlinx.coroutines.Dispatchers
 //import vadimerenkov.aucards.CreateStarters
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.ui.CardState
 import vadimerenkov.aucards.ui.CardViewModel
+import vadimerenkov.aucards.ui.ContentType
 import vadimerenkov.aucards.ui.Palette
+import vadimerenkov.aucards.ui.SharedContentStateKey
 import vadimerenkov.aucards.ui.calculateContentColor
 
 private const val TAG = "CardFullscreen"
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun CardFullscreen(
+fun SharedTransitionScope.CardFullscreen(
 	onBackClicked: () -> Unit,
 	isDarkTheme: Boolean,
+	scope: AnimatedVisibilityScope,
 	modifier: Modifier = Modifier,
 	viewModel: CardViewModel = viewModel(factory = ViewModelFactory.Factory(isDarkTheme))
 ) {
-	val state by viewModel.cardState.collectAsState()
+	val state by viewModel.cardState.collectAsStateWithLifecycle(
+		context = Dispatchers.Main.immediate
+	)
 	val keyboardController = LocalSoftwareKeyboardController.current
 	val activity = LocalActivity.current
 
@@ -130,10 +138,25 @@ fun CardFullscreen(
 			Settings.System.SCREEN_BRIGHTNESS,
 			255
 		)
-		Log.i(TAG, "Brightness set to maximum")
-	} else {
-		Log.i(TAG, "Permission not granted to change brightness")
 	}
+
+	val contentColor by animateColorAsState(
+		calculateContentColor(state.aucard.color)
+	)
+
+	val contentState = rememberSharedContentState(
+		SharedContentStateKey(
+			state.aucard.id,
+			ContentType.CARD
+		)
+	)
+
+	val textContentState = rememberSharedContentState(
+		SharedContentStateKey(
+			state.aucard.id,
+			ContentType.TEXT
+		)
+	)
 
 	Surface(
 		color = state.aucard.color,
@@ -147,6 +170,11 @@ fun CardFullscreen(
 						onBackClicked()
 					}
 				}
+			)
+			.sharedBounds(
+				sharedContentState = contentState,
+				animatedVisibilityScope = scope,
+				resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
 			)
 	) {
 		if (state.isEditable) {
@@ -163,17 +191,25 @@ fun CardFullscreen(
 				onHexChange = { viewModel.updateHexCode(it) },
 				requestKeyboardClose = {
 					keyboardController?.hide()
-				}
+				},
+				scope = scope,
+				contentColor = contentColor,
+				textContentState = textContentState
 			)
 		}
 		else {
-			ViewScreen(state)
+			ViewScreen(
+				state = state,
+				scope = scope,
+				contentColor = contentColor,
+				textContentState = textContentState
+			)
 		}
 	}
 }
 
 @Composable
-private fun EditScreen(
+private fun SharedTransitionScope.EditScreen(
 	state: CardState,
 	onTextChange: (String) -> Unit,
 	onDescriptionChange: (String) -> Unit,
@@ -182,6 +218,9 @@ private fun EditScreen(
 	onSaveClicked: (Aucard) -> Unit,
 	onCancelClicked: () -> Unit,
 	requestKeyboardClose: () -> Unit,
+	scope: AnimatedVisibilityScope,
+	contentColor: Color,
+	textContentState: SharedTransitionScope.SharedContentState,
 	modifier: Modifier = Modifier
 ) {
 	val colorController = rememberColorPickerController()
@@ -213,6 +252,10 @@ private fun EditScreen(
 				modifier = Modifier
 					.focusRequester(focusRequester)
 					.testTag("TextField")
+					.sharedBounds(
+						sharedContentState = textContentState,
+						animatedVisibilityScope = scope
+					)
 			)
 			TextField(
 				value = state.aucard.description ?: "",
@@ -235,18 +278,18 @@ private fun EditScreen(
 			) {
 				Icon(
 					painter = painterResource(R.drawable.palette),
-					tint = calculateContentColor(state.aucard.color),
+					tint = contentColor,
 					contentDescription = stringResource(R.string.choose_color),
 					modifier = Modifier
 						.size(48.dp)
 				)
 
 				DropdownMenu(
-					offset = DpOffset((-50).dp, 350.dp),
+					offset = DpOffset((-50).dp, 0.dp),
 					onDismissRequest = { colorPaletteOpen = false },
 					expanded = colorPaletteOpen
 				) {
-					var selectedTab by remember { mutableStateOf(0) }
+					var selectedTab by remember { mutableIntStateOf(0) }
 					TabRow(
 						selectedTabIndex = selectedTab,
 						modifier = Modifier
@@ -289,7 +332,7 @@ private fun EditScreen(
 										Icon(
 											imageVector = Icons.Default.Done,
 											contentDescription = null,
-											tint = calculateContentColor(color)
+											tint = contentColor
 										)
 									}
 								}
@@ -313,7 +356,7 @@ private fun EditScreen(
 							controller = colorController,
 							initialColor = state.aucard.color,
 							wheelRadius = 8.dp,
-							wheelColor = calculateContentColor(state.aucard.color),
+							wheelColor = contentColor,
 							modifier = Modifier
 								.padding(horizontal = 16.dp)
 								.fillMaxWidth()
@@ -351,20 +394,23 @@ private fun EditScreen(
 				Icon(
 					imageVector = Icons.Default.Close,
 					contentDescription = "Cancel",
-					tint = calculateContentColor(state.aucard.color)
+					tint = contentColor
 				)
 			}
 			IconButton(
 				enabled = state.isValid,
 				onClick = { onSaveClicked(state.aucard) },
+				colors = IconButtonDefaults.iconButtonColors(
+					contentColor = contentColor,
+					disabledContentColor = contentColor.copy(alpha = 0.3f)
+				),
 				modifier = Modifier
 					.navigationBarsPadding()
 					.size(120.dp)
 			) {
 				Icon(
 					imageVector = Icons.Default.Done,
-					contentDescription = stringResource(R.string.save),
-					tint = calculateContentColor(state.aucard.color)
+					contentDescription = stringResource(R.string.save)
 				)
 			}
 		}
@@ -372,8 +418,11 @@ private fun EditScreen(
 }
 
 @Composable
-private fun ViewScreen(
+private fun SharedTransitionScope.ViewScreen(
 	state: CardState,
+	scope: AnimatedVisibilityScope,
+	contentColor: Color,
+	textContentState: SharedTransitionScope.SharedContentState,
 	modifier: Modifier = Modifier
 ) {
 	Box(
@@ -389,14 +438,19 @@ private fun ViewScreen(
 		) {
 			Text(
 				text = state.aucard.text,
-				color = calculateContentColor(state.aucard.color),
+				color = contentColor,
 				style = MaterialTheme.typography.displayLarge,
-				textAlign = TextAlign.Center
+				textAlign = TextAlign.Center,
+				modifier = Modifier
+					.sharedBounds(
+						sharedContentState = textContentState,
+						animatedVisibilityScope = scope
+					)
 			)
 			state.aucard.description?.let {
 				Text(
 					text = it,
-					color = calculateContentColor(state.aucard.color),
+					color = contentColor,
 					textAlign = TextAlign.Justify,
 					modifier = Modifier
 						.padding(8.dp)
@@ -405,25 +459,3 @@ private fun ViewScreen(
 		}
 	}
 }
-
-@Preview(device = "spec:parent=pixel_5,orientation=landscape")
-@Composable
-private fun PreviewEditScreen() {
-	EditScreen(
-		state = CardState(Aucard(text = "")),
-		onSaveClicked = {},
-		onTextChange = {},
-		onDescriptionChange = {},
-		onColorChange = {},
-		onCancelClicked = {},
-		requestKeyboardClose = {},
-		onHexChange = {}
-	)
-}
-
-@Preview(device = "spec:parent=pixel_5,orientation=landscape")
-@Composable
-private fun PreviewViewScreen() {
-	//ViewScreen(CardState(CreateStarters()[4]))
-}
-
