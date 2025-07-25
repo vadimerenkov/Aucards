@@ -71,7 +71,8 @@ class CardViewModel(
 						aucard = card,
 						isEditable = isEditable,
 						isMaxBrightness = brightness,
-						isLandscapeMode = landscape
+						isLandscapeMode = landscape,
+						isValid = card.text.isNotEmpty()
 					)
 				}
 			} else {

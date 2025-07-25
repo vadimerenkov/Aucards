@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +28,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -44,6 +46,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -123,13 +126,14 @@ fun SharedTransitionScope.CardFullscreen(
 		}
 	}
 
-	if (state.isLandscapeMode == true) {
-		activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-		Log.i(TAG, "Requested landscape mode, setting is ${state.isLandscapeMode}.")
-	}
-	else {
-		activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
-		Log.i(TAG, "Reset back to user preferences, setting is ${state.isLandscapeMode}.")
+	LaunchedEffect(state.isLandscapeMode) {
+		if (state.isLandscapeMode == true) {
+			activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+			Log.i(TAG, "Requested landscape mode, setting is ${state.isLandscapeMode}.")
+		} else {
+			activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
+			Log.i(TAG, "Reset back to user preferences, setting is ${state.isLandscapeMode}.")
+		}
 	}
 
 	if (hasPermission()) {
@@ -245,9 +249,29 @@ private fun SharedTransitionScope.EditScreen(
 			TextField(
 				value = state.aucard.text,
 				onValueChange = onTextChange,
-				placeholder = { Text(stringResource(R.string.your_text)) },
+				placeholder = {
+					Text(
+						text = stringResource(R.string.your_text),
+						style = MaterialTheme.typography.displayLarge,
+						textAlign = TextAlign.Center,
+						modifier = Modifier
+							.align(Alignment.CenterHorizontally)
+							.fillMaxWidth()
+					)
+				},
 				keyboardOptions = KeyboardOptions(
 					imeAction = ImeAction.Next
+				),
+				textStyle = MaterialTheme.typography.displayLarge.copy(
+					textAlign = TextAlign.Center
+				),
+				colors = TextFieldDefaults.colors(
+					focusedTextColor = contentColor,
+					focusedContainerColor = Color.Transparent,
+					unfocusedTextColor = contentColor,
+					unfocusedContainerColor = Color.Transparent,
+					focusedIndicatorColor = Color.Transparent,
+					unfocusedIndicatorColor = Color.Transparent
 				),
 				modifier = Modifier
 					.focusRequester(focusRequester)
@@ -260,121 +284,146 @@ private fun SharedTransitionScope.EditScreen(
 			TextField(
 				value = state.aucard.description ?: "",
 				onValueChange = onDescriptionChange,
-				placeholder = { Text(stringResource(R.string.description)) },
+				textStyle = MaterialTheme.typography.titleLarge.copy(
+					textAlign = TextAlign.Center
+				),
+				colors = TextFieldDefaults.colors(
+					focusedTextColor = contentColor,
+					focusedContainerColor = Color.Transparent,
+					unfocusedTextColor = contentColor,
+					unfocusedContainerColor = Color.Transparent,
+					focusedIndicatorColor = Color.Transparent,
+					unfocusedIndicatorColor = Color.Transparent
+				),
+				placeholder = {
+					Text(
+						text = stringResource(R.string.description),
+						style = MaterialTheme.typography.titleLarge,
+						textAlign = TextAlign.Center,
+						modifier = Modifier
+							.align(Alignment.CenterHorizontally)
+							.fillMaxWidth()
+					)
+				},
 				keyboardOptions = KeyboardOptions(
 					imeAction = ImeAction.Done
-				)
-			)
-			IconButton(
-				onClick = {
-					requestKeyboardClose()
-					colorPaletteOpen = !colorPaletteOpen
-				},
+				),
 				modifier = Modifier
-					.align(Alignment.End)
-					.padding(top = 8.dp)
-					.size(48.dp)
-
+					.fillMaxWidth()
+			)
+			Row(
+				verticalAlignment = Alignment.CenterVertically
 			) {
-				Icon(
-					painter = painterResource(R.drawable.palette),
-					tint = contentColor,
-					contentDescription = stringResource(R.string.choose_color),
+				Spacer(modifier = Modifier.weight(1f))
+				IconButton(
+					onClick = {
+						requestKeyboardClose()
+						colorPaletteOpen = !colorPaletteOpen
+					},
 					modifier = Modifier
+						.padding(vertical = 8.dp, horizontal = 24.dp)
 						.size(48.dp)
-				)
-
-				DropdownMenu(
-					offset = DpOffset((-50).dp, 0.dp),
-					onDismissRequest = { colorPaletteOpen = false },
-					expanded = colorPaletteOpen
 				) {
-					var selectedTab by remember { mutableIntStateOf(0) }
-					TabRow(
-						selectedTabIndex = selectedTab,
+					Icon(
+						painter = painterResource(R.drawable.palette),
+						tint = contentColor,
+						contentDescription = stringResource(R.string.choose_color),
 						modifier = Modifier
-							.width(250.dp)
-							.height(40.dp)
-					) {
-						Tab(
-							selected = selectedTab == 0,
-							onClick = { selectedTab = 0 }
-						) {
-							Text("Palette")
-						}
-						Tab(
-							selected = selectedTab == 1,
-							onClick = { selectedTab = 1 }
-						) {
-							Text("Wheel")
-						}
-					}
+							.size(48.dp)
+					)
 
-					if (selectedTab == 0) {
-						FlowRow(
-							maxItemsInEachRow = 4,
+					DropdownMenu(
+						offset = DpOffset((-50).dp, 0.dp),
+						onDismissRequest = { colorPaletteOpen = false },
+						expanded = colorPaletteOpen
+					) {
+						var selectedTab by remember { mutableIntStateOf(0) }
+						TabRow(
+							selectedTabIndex = selectedTab,
 							modifier = Modifier
-								.padding(8.dp)
-								.align(Alignment.CenterHorizontally)
+								.width(250.dp)
+								.height(40.dp)
 						) {
-							Palette.colors.forEach { color ->
-								Box(
-									modifier = Modifier
-										.padding(4.dp)
-										.clip(MaterialTheme.shapes.medium)
-										.background(color)
-										.minimumInteractiveComponentSize()
-										.clickable(
-											onClick = { onColorChange(color) }
-										)
-								) {
-									if (color == state.aucard.color) {
-										Icon(
-											imageVector = Icons.Default.Done,
-											contentDescription = null,
-											tint = contentColor
-										)
+							Tab(
+								selected = selectedTab == 0,
+								onClick = { selectedTab = 0 }
+							) {
+								Text(stringResource(R.string.palette))
+							}
+							Tab(
+								selected = selectedTab == 1,
+								onClick = { selectedTab = 1 }
+							) {
+								Text(stringResource(R.string.custom_color))
+							}
+						}
+
+						if (selectedTab == 0) {
+							FlowRow(
+								maxItemsInEachRow = 4,
+								modifier = Modifier
+									.padding(8.dp)
+									.align(Alignment.CenterHorizontally)
+							) {
+								Palette.colors.forEach { color ->
+									Box(
+										modifier = Modifier
+											.padding(4.dp)
+											.clip(MaterialTheme.shapes.medium)
+											.background(color)
+											.minimumInteractiveComponentSize()
+											.clickable(
+												onClick = { onColorChange(color) }
+											)
+									) {
+										if (color == state.aucard.color) {
+											Icon(
+												imageVector = Icons.Default.Done,
+												contentDescription = color.toString(),
+												tint = contentColor
+											)
+										}
 									}
 								}
 							}
 						}
-					}
-					if (selectedTab == 1) {
-						HsvColorPicker(
-							controller = colorController,
-							onColorChanged = {
-								onColorChange(it.color)
-								onHexChange(it.hexCode)
-							},
-							initialColor = state.aucard.color,
-							modifier = Modifier
-								.padding(8.dp)
-								.size(200.dp)
-								.align(Alignment.CenterHorizontally)
-						)
-						BrightnessSlider(
-							controller = colorController,
-							initialColor = state.aucard.color,
-							wheelRadius = 8.dp,
-							wheelColor = contentColor,
-							modifier = Modifier
-								.padding(horizontal = 16.dp)
-								.fillMaxWidth()
-								.height(24.dp)
-						)
-						OutlinedTextField(
-							value = state.hexColor.uppercase(),
-							isError = !state.isHexCodeValid,
-							singleLine = true,
-							textStyle = LocalTextStyle.current.copy(
-								textAlign = TextAlign.Center
-							),
-							onValueChange = onHexChange,
-							modifier = Modifier
-								.padding(8.dp)
-								.width(120.dp)
-								.align(Alignment.CenterHorizontally)
-						)
+						if (selectedTab == 1) {
+							HsvColorPicker(
+								controller = colorController,
+								onColorChanged = {
+									onColorChange(it.color)
+									onHexChange(it.hexCode)
+								},
+								initialColor = state.aucard.color,
+								modifier = Modifier
+									.padding(8.dp)
+									.size(200.dp)
+									.align(Alignment.CenterHorizontally)
+							)
+							BrightnessSlider(
+								controller = colorController,
+								initialColor = state.aucard.color,
+								wheelRadius = 8.dp,
+								wheelColor = contentColor,
+								modifier = Modifier
+									.padding(horizontal = 16.dp)
+									.fillMaxWidth()
+									.height(24.dp)
+							)
+							OutlinedTextField(
+								value = state.hexColor.uppercase(),
+								isError = !state.isHexCodeValid,
+								singleLine = true,
+								textStyle = LocalTextStyle.current.copy(
+									textAlign = TextAlign.Center
+								),
+								onValueChange = onHexChange,
+								modifier = Modifier
+									.padding(8.dp)
+									.width(120.dp)
+									.align(Alignment.CenterHorizontally)
+							)
+						}
 					}
 				}
 			}
@@ -451,6 +500,7 @@ private fun SharedTransitionScope.ViewScreen(
 				Text(
 					text = it,
 					color = contentColor,
+					style = MaterialTheme.typography.titleLarge,
 					textAlign = TextAlign.Justify,
 					modifier = Modifier
 						.padding(8.dp)
