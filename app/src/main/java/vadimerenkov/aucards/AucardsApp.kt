@@ -2,6 +2,7 @@ package vadimerenkov.aucards
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
@@ -34,6 +35,7 @@ data class FullscreenCard(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun AucardsApp(
+	isDarkTheme: Boolean,
 	navController: NavHostController = rememberNavController(),
 ) {
 	SharedTransitionLayout {
@@ -54,13 +56,8 @@ fun AucardsApp(
 				val card = it.toRoute<FullscreenCard>()
 				CardFullscreen(
 					onBackClicked = { navController.navigateUp() },
-					modifier = Modifier
-						.sharedBounds(
-							sharedContentState = rememberSharedContentState(card.id),
-							animatedVisibilityScope = this,
-							enter = scaleIn(),
-							exit = scaleOut()
-						)
+					isDarkTheme = isDarkTheme,
+					scope = this
 				)
 			}
 			composable<SettingsScreen>(

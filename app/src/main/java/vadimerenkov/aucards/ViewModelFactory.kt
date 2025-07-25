@@ -10,14 +10,15 @@ import vadimerenkov.aucards.ui.ListViewModel
 import vadimerenkov.aucards.ui.SettingsViewModel
 
 object ViewModelFactory {
-	val Factory = viewModelFactory {
+	fun Factory(isDarkTheme: Boolean = false) = viewModelFactory {
 		initializer {
 			ListViewModel(app().database.aucardDao(), DefaultDispatchers())
 		}
 		initializer {
 			CardViewModel(
 				this.createSavedStateHandle(), app().settings, app().database.aucardDao(),
-				dispatchers = DefaultDispatchers()
+				dispatchers = DefaultDispatchers(),
+				isDarkTheme = isDarkTheme
 			)
 		}
 		initializer {

@@ -1,10 +1,13 @@
 package vadimerenkov.aucards.ui
 
-import android.util.Log
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.ui.graphics.Color
+import androidx.core.graphics.toColorInt
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
@@ -18,70 +21,108 @@ import vadimerenkov.aucards.FullscreenCard
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardDao
 import vadimerenkov.aucards.settings.Settings
+import vadimerenkov.aucards.settings.Theme
 
+private const val TAG = "CardViewModel"
 
 class CardViewModel(
 	savedStateHandle: SavedStateHandle,
 	val settings: Settings,
 	private val aucardDao: AucardDao,
-	private val dispatchers: DispatchersProvider
+	private val dispatchers: DispatchersProvider,
+	isDarkTheme: Boolean
 ): ViewModel() {
-	private val TAG = "CardViewModel"
 
 	private val route = savedStateHandle.toRoute<FullscreenCard>()
 	private val id: Int = route.id
 	private val isEditable: Boolean = route.isEditable
+	val color = if (isDarkTheme) Color.Black else Color.White
 
-	private var card_state = MutableStateFlow(CardState())
+	private var card_state = MutableStateFlow(CardState(
+		aucard = Aucard(
+			text = "",
+			color = color
+		)
+	))
+
+	init {
+		//loadInitialData()
+	}
 
 	var cardState = card_state
 		.onStart {
-			Log.i("CardViewModel", savedStateHandle.toString())
-			Log.i("CardViewModel", route.toString())
-			val brightness = settings.brightness.first() ?: false
-			val landscape = settings.landscape.first()
-			if (id != 0) {
-				viewModelScope.launch(dispatchers.main) {
-					val card = aucardDao.getAucardByID(id).first()
-					card_state.update { it.copy(
-						aucard = card,
-						isEditable = isEditable,
-						isMaxBrightness = brightness,
-						isLandscapeMode = landscape
-					) }
-				}
-			}
-			else {
-				card_state.update { it.copy(isEditable = isEditable, isMaxBrightness = brightness, isLandscapeMode = landscape) }
-			}
+			loadInitialData()
 		}
 		.flowOn(dispatchers.main)
 		.stateIn(
 			scope = viewModelScope,
 			started = SharingStarted.WhileSubscribed(5000L),
-			initialValue = CardState()
+			initialValue = card_state.value
 		)
 
-	fun SaveAucard(aucard: Aucard) {
+	private fun loadInitialData() {
+		viewModelScope.launch(dispatchers.main) {
+			val brightness = settings.brightness.first() ?: false
+			val landscape = settings.landscape.first()
+			if (id != 0) {
+				val card = aucardDao.getAucardByID(id).first()
+				card_state.update {
+					it.copy(
+						aucard = card,
+						isEditable = isEditable,
+						isMaxBrightness = brightness,
+						isLandscapeMode = landscape,
+						isValid = card.text.isNotEmpty()
+					)
+				}
+			} else {
+				card_state.update {
+					it.copy(
+						isEditable = isEditable,
+						isMaxBrightness = brightness,
+						isLandscapeMode = landscape
+					)
+				}
+			}
+		}
+	}
+
+	fun saveAucard(aucard: Aucard) {
 		viewModelScope.launch(dispatchers.main) {
 			aucardDao.saveAucard(aucard)
 		}
 	}
 
-	fun UpdateState(aucard: Aucard) {
-		card_state.update { it.copy(aucard) }
-		ValidateCard(aucard)
+	fun updateText(text: String) {
+		card_state.update { it.copy(aucard = it.aucard.copy(text = text), isValid = text.isNotEmpty()) }
 	}
 
-	private fun ValidateCard(aucard: Aucard) {
-		card_state.update { it.copy(isValid = aucard.text.isNotEmpty()) }
+	fun updateDescription(description: String) {
+		card_state.update { it.copy(aucard = it.aucard.copy(description = description)) }
+	}
+
+	fun updateColor(color: Color) {
+		card_state.update { it.copy(aucard = it.aucard.copy(color = color)) }
+	}
+
+	fun updateHexCode(hex: String) {
+		card_state.update { it.copy(hexColor = hex) }
+		try {
+			val color = ("#$hex").toColorInt()
+			card_state.update { it.copy(isHexCodeValid = true, aucard = it.aucard.copy(color = Color(color))) }
+		}
+		catch (e: Exception) {
+			card_state.update { it.copy(isHexCodeValid = false) }
+		}
 	}
 }
 
 data class CardState(
-	val aucard: Aucard = Aucard(text = ""),
+	val aucard: Aucard,
 	val isEditable: Boolean = false,
 	val isValid: Boolean = false,
 	val isMaxBrightness: Boolean = false,
-	val isLandscapeMode: Boolean? = null
+	val isLandscapeMode: Boolean? = null,
+	val hexColor: String = "",
+	val isHexCodeValid: Boolean = true
 )

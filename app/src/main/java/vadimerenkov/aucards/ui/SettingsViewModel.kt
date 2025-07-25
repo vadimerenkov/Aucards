@@ -22,7 +22,7 @@ import vadimerenkov.aucards.settings.Language
 import vadimerenkov.aucards.settings.Settings
 import vadimerenkov.aucards.settings.Theme
 
-const val TAG = "SettingsViewModel"
+private const val TAG = "SettingsViewModel"
 
 class SettingsViewModel(
 	private val settings: Settings

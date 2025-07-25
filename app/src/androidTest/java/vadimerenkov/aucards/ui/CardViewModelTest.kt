@@ -86,7 +86,7 @@ class CardViewModelTest {
 	@Test
 	fun SaveCardSavesCard() = runTest {
 		val card = Aucard(id = 1, text = "we are the champions", description = "my friend")
-		viewModel.SaveAucard(card)
+		viewModel.saveAucard(card)
 		assertThat(dao.getAllCards().first()).contains(card)
 	}
 }
