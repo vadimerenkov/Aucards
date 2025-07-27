@@ -2,6 +2,7 @@
 
 package vadimerenkov.aucards.screens
 
+//import vadimerenkov.aucards.CreateStarters
 import android.content.pm.ActivityInfo
 import android.provider.Settings
 import android.util.Log
@@ -10,6 +11,8 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +31,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -71,13 +73,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import kotlinx.coroutines.Dispatchers
-//import vadimerenkov.aucards.CreateStarters
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.data.Aucard
@@ -178,6 +182,8 @@ fun SharedTransitionScope.CardFullscreen(
 			.sharedBounds(
 				sharedContentState = contentState,
 				animatedVisibilityScope = scope,
+				enter = scaleIn(),
+				exit = scaleOut(),
 				resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
 			)
 	) {
@@ -254,6 +260,7 @@ private fun SharedTransitionScope.EditScreen(
 						text = stringResource(R.string.your_text),
 						style = MaterialTheme.typography.displayLarge,
 						textAlign = TextAlign.Center,
+						color = contentColor.copy(alpha = 0.3f),
 						modifier = Modifier
 							.align(Alignment.CenterHorizontally)
 							.fillMaxWidth()
@@ -300,6 +307,7 @@ private fun SharedTransitionScope.EditScreen(
 						text = stringResource(R.string.description),
 						style = MaterialTheme.typography.titleLarge,
 						textAlign = TextAlign.Center,
+						color = contentColor.copy(alpha = 0.3f),
 						modifier = Modifier
 							.align(Alignment.CenterHorizontally)
 							.fillMaxWidth()
@@ -315,34 +323,42 @@ private fun SharedTransitionScope.EditScreen(
 				verticalAlignment = Alignment.CenterVertically
 			) {
 				Spacer(modifier = Modifier.weight(1f))
-				IconButton(
-					onClick = {
-						requestKeyboardClose()
-						colorPaletteOpen = !colorPaletteOpen
-					},
-					modifier = Modifier
-						.padding(vertical = 8.dp, horizontal = 24.dp)
-						.size(48.dp)
+
+				Box(
+
 				) {
-					Icon(
-						painter = painterResource(R.drawable.palette),
-						tint = contentColor,
-						contentDescription = stringResource(R.string.choose_color),
+					IconButton(
+						onClick = {
+							requestKeyboardClose()
+							colorPaletteOpen = !colorPaletteOpen
+						},
 						modifier = Modifier
+							.padding(vertical = 8.dp, horizontal = 24.dp)
 							.size(48.dp)
-					)
+					) {
+						Icon(
+							painter = painterResource(R.drawable.palette),
+							tint = contentColor,
+							contentDescription = stringResource(R.string.choose_color),
+							modifier = Modifier
+								.size(48.dp)
+						)
+					}
 
 					DropdownMenu(
 						offset = DpOffset((-50).dp, 0.dp),
 						onDismissRequest = { colorPaletteOpen = false },
+						properties = PopupProperties(
+							//clippingEnabled = false
+						),
 						expanded = colorPaletteOpen
 					) {
 						var selectedTab by remember { mutableIntStateOf(0) }
 						TabRow(
 							selectedTabIndex = selectedTab,
 							modifier = Modifier
-								.width(250.dp)
-								.height(40.dp)
+								.width(300.dp)
+								.height(50.dp)
 						) {
 							Tab(
 								selected = selectedTab == 0,
@@ -474,6 +490,25 @@ private fun SharedTransitionScope.ViewScreen(
 	textContentState: SharedTransitionScope.SharedContentState,
 	modifier: Modifier = Modifier
 ) {
+	val window = LocalActivity.current?.window
+
+	LaunchedEffect(true) {
+		if (window != null) {
+			val controller = WindowCompat.getInsetsController(window, window.decorView)
+			controller.hide(WindowInsetsCompat.Type.systemBars())
+		}
+		Log.i(TAG, "Window is $window, trying to hide bars")
+	}
+
+	DisposableEffect(true) {
+		onDispose {
+			if (window != null) {
+				val controller = WindowCompat.getInsetsController(window, window.decorView)
+				controller.show(WindowInsetsCompat.Type.systemBars())
+			}
+		}
+	}
+
 	Box(
 		modifier = modifier
 			.padding(16.dp)

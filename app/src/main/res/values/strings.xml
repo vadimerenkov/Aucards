@@ -32,7 +32,7 @@
     <string name="favourites">Favourites</string>
     <string name="mark_as_favourite">Mark as favourite</string>
     <string name="add_to_fav_prompt">Add any card to favourites to see it here!</string>
-    <string name="brightness_permission">This setting requires app permission to write system settings.</string>
+    <string name="brightness_permission">This option requires app permission to write system settings.</string>
     <string name="palette">Palette</string>
     <string name="custom_color">Custom</string>
     <plurals name="delete_confirmation">

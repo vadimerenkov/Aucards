@@ -79,9 +79,9 @@ import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.ui.AucardsTopBar
-import vadimerenkov.aucards.ui.SharedContentStateKey
 import vadimerenkov.aucards.ui.ContentType
 import vadimerenkov.aucards.ui.ListViewModel
+import vadimerenkov.aucards.ui.SharedContentStateKey
 import vadimerenkov.aucards.ui.calculateContentColor
 
 private const val TAG = "ListScreen"
@@ -200,6 +200,12 @@ fun SharedTransitionScope.ListScreen(
 			}
 		},
 		floatingActionButton = {
+			val contentState = rememberSharedContentState(
+				SharedContentStateKey(
+					0,
+					ContentType.CARD
+				)
+			)
 			FloatingActionButton(
 				onClick = {
 					onAddButtonClicked()
@@ -209,6 +215,10 @@ fun SharedTransitionScope.ListScreen(
 				modifier = Modifier
 					.padding(6.dp)
 					.navigationBarsPadding()
+					.sharedBounds(
+						sharedContentState = contentState,
+						animatedVisibilityScope = scope
+					)
 			) {
 				Icon(
 					imageVector = Icons.Default.Add,
