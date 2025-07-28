@@ -5,7 +5,6 @@
 package vadimerenkov.aucards.screens
 
 import android.content.pm.ActivityInfo
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
@@ -82,6 +81,7 @@ import vadimerenkov.aucards.ui.AucardsTopBar
 import vadimerenkov.aucards.ui.ContentType
 import vadimerenkov.aucards.ui.ListViewModel
 import vadimerenkov.aucards.ui.SharedContentStateKey
+import vadimerenkov.aucards.ui.Target
 import vadimerenkov.aucards.ui.calculateContentColor
 
 private const val TAG = "ListScreen"
@@ -203,7 +203,8 @@ fun SharedTransitionScope.ListScreen(
 			val contentState = rememberSharedContentState(
 				SharedContentStateKey(
 					0,
-					ContentType.CARD
+					ContentType.CARD,
+					Target.EDIT
 				)
 			)
 			FloatingActionButton(
@@ -432,14 +433,32 @@ fun SharedTransitionScope.AucardItem(
 	val contentState = rememberSharedContentState(
 		SharedContentStateKey(
 			aucard.id,
-			ContentType.CARD
+			ContentType.CARD,
+			Target.VIEW
 		)
 	)
 
 	val textContentState = rememberSharedContentState(
 		SharedContentStateKey(
 			aucard.id,
-			ContentType.TEXT
+			ContentType.TEXT,
+			Target.VIEW
+		)
+	)
+
+	val editContentState = rememberSharedContentState(
+		SharedContentStateKey(
+			aucard.id,
+			ContentType.CARD,
+			Target.EDIT
+		)
+	)
+
+	val editTextContentState = rememberSharedContentState(
+		SharedContentStateKey(
+			aucard.id,
+			ContentType.TEXT,
+			Target.EDIT
 		)
 	)
 
@@ -454,8 +473,6 @@ fun SharedTransitionScope.AucardItem(
 				enabled = true,
 				onClick = {
 					onClick(aucard.id)
-					Log.i(TAG, "isCardMatchFound: ${contentState.isMatchFound}")
-					Log.i(TAG, "isTextMatchFound: ${textContentState.isMatchFound}")
 				},
 				onLongClick = {
 					if (!isSelectMode) {
@@ -468,7 +485,7 @@ fun SharedTransitionScope.AucardItem(
 				shape = MaterialTheme.shapes.medium
 			)
 			.sharedBounds(
-				sharedContentState = contentState,
+				sharedContentState = if (!isSelectMode) contentState else editContentState,
 				animatedVisibilityScope = scope,
 				resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
 			)
@@ -565,7 +582,7 @@ fun SharedTransitionScope.AucardItem(
 					modifier = Modifier
 						.padding(4.dp)
 						.sharedBounds(
-							sharedContentState = textContentState,
+							sharedContentState = if (!isSelectMode) textContentState else editTextContentState,
 							animatedVisibilityScope = scope
 						)
 				)

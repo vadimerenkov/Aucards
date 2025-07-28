@@ -1,13 +1,11 @@
 package vadimerenkov.aucards.ui
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.graphics.Color
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
@@ -21,7 +19,6 @@ import vadimerenkov.aucards.FullscreenCard
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardDao
 import vadimerenkov.aucards.settings.Settings
-import vadimerenkov.aucards.settings.Theme
 
 private const val TAG = "CardViewModel"
 
@@ -35,7 +32,6 @@ class CardViewModel(
 
 	private val route = savedStateHandle.toRoute<FullscreenCard>()
 	private val id: Int = route.id
-	private val isEditable: Boolean = route.isEditable
 	val color = if (isDarkTheme) Color.Black else Color.White
 
 	private var card_state = MutableStateFlow(CardState(
@@ -69,7 +65,6 @@ class CardViewModel(
 				card_state.update {
 					it.copy(
 						aucard = card,
-						isEditable = isEditable,
 						isMaxBrightness = brightness,
 						isLandscapeMode = landscape,
 						isValid = card.text.isNotEmpty()
@@ -78,7 +73,6 @@ class CardViewModel(
 			} else {
 				card_state.update {
 					it.copy(
-						isEditable = isEditable,
 						isMaxBrightness = brightness,
 						isLandscapeMode = landscape
 					)
@@ -119,7 +113,6 @@ class CardViewModel(
 
 data class CardState(
 	val aucard: Aucard,
-	val isEditable: Boolean = false,
 	val isValid: Boolean = false,
 	val isMaxBrightness: Boolean = false,
 	val isLandscapeMode: Boolean? = null,

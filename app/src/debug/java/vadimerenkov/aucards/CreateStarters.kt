@@ -31,6 +31,7 @@ fun CreateStarters(): List<Aucard> {
 		Aucard(
 			0,
 			stringResource(R.string.alone),
+			description = "If you don't mind",
 			color = Color.Yellow
 		)
 	)
