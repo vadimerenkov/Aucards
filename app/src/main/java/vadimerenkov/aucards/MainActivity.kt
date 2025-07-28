@@ -23,6 +23,11 @@ class MainActivity : AppCompatActivity() {
 		setContent {
 			val app = this.application as AucardsApplication
 			val theme_string by app.settings.themeSetting.collectAsState("why are we here")
+			val isDarkTheme = when (theme_string) {
+				Theme.LIGHT.name -> false
+				Theme.DARK.name -> true
+				else -> isSystemInDarkTheme()
+			}
 
 			val locales = getApplicationLocales()
 			setApplicationLocales(locales)
@@ -35,13 +40,9 @@ class MainActivity : AppCompatActivity() {
 			}
 
 			AucardsTheme(
-				darkTheme = when (theme_string) {
-					Theme.LIGHT.name -> false
-					Theme.DARK.name -> true
-					else -> isSystemInDarkTheme()
-				}
+				darkTheme = isDarkTheme
 			) {
-				AucardsApp()
+				AucardsApp(isDarkTheme)
 			}
 		}
 	}

@@ -22,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -74,7 +75,7 @@ private const val TAG = "SettingsScreen"
 fun SettingsScreen(
 	onBackClicked: () -> Unit,
 	modifier: Modifier = Modifier,
-	viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory.Factory)
+	viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory.Factory())
 ) {
 	val context = LocalContext.current
 	val version = BuildConfig.VERSION_NAME
@@ -292,8 +293,18 @@ private fun DropdownSetting(
 				onDismissRequest = { expanded = !expanded }
 			) {
 				options.forEach { option ->
+					val text = stringResource(option)
+
 					DropdownMenuItem(
-						text = { Text(stringResource(option)) },
+						text = { Text(text) },
+						trailingIcon = {
+							if (text == chosenOption) {
+								Icon(
+									imageVector = Icons.Default.Check,
+									contentDescription = null
+								)
+							} else null
+						},
 						onClick = {
 							onOptionChosen(option)
 							expanded = false

@@ -5,8 +5,10 @@
 package vadimerenkov.aucards.screens
 
 import android.content.pm.ActivityInfo
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -36,7 +38,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Star
@@ -50,14 +51,11 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -75,14 +73,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.lerp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.ui.AucardsTopBar
+import vadimerenkov.aucards.ui.ContentType
 import vadimerenkov.aucards.ui.ListViewModel
+import vadimerenkov.aucards.ui.SharedContentStateKey
+import vadimerenkov.aucards.ui.calculateContentColor
+
+private const val TAG = "ListScreen"
 
 @Composable
 fun SharedTransitionScope.ListScreen(
@@ -92,7 +94,7 @@ fun SharedTransitionScope.ListScreen(
 	onSettingsClicked: () -> Unit,
 	scope: AnimatedVisibilityScope,
 	modifier: Modifier = Modifier,
-	viewModel: ListViewModel = viewModel(factory = ViewModelFactory.Factory)
+	viewModel: ListViewModel = viewModel(factory = ViewModelFactory.Factory())
 ) {
 	val listState by viewModel.listState.collectAsState()
 	var deleteConfirmationOpen by remember { mutableStateOf(false) }
@@ -198,6 +200,12 @@ fun SharedTransitionScope.ListScreen(
 			}
 		},
 		floatingActionButton = {
+			val contentState = rememberSharedContentState(
+				SharedContentStateKey(
+					0,
+					ContentType.CARD
+				)
+			)
 			FloatingActionButton(
 				onClick = {
 					onAddButtonClicked()
@@ -208,7 +216,7 @@ fun SharedTransitionScope.ListScreen(
 					.padding(6.dp)
 					.navigationBarsPadding()
 					.sharedBounds(
-						sharedContentState = rememberSharedContentState(0),
+						sharedContentState = contentState,
 						animatedVisibilityScope = scope
 					)
 			) {
@@ -348,7 +356,6 @@ fun SharedTransitionScope.GridOfCards(
 	selectedList: List<Int>,
 	scope: AnimatedVisibilityScope,
 	modifier: Modifier = Modifier
-
 ) {
 	Box(
 		modifier = modifier
@@ -384,13 +391,10 @@ fun SharedTransitionScope.GridOfCards(
 					isSelectMode = isSelectMode,
 					isSelected = isSelected,
 					onFavourited = { onFavourited(card.id) },
+					scope = scope,
 					modifier = Modifier
 						.padding(6.dp)
 						.animateItem()
-						.sharedBounds(
-							sharedContentState = rememberSharedContentState(card.id),
-							animatedVisibilityScope = scope
-						)
 				)
 			}
 		}
@@ -398,11 +402,12 @@ fun SharedTransitionScope.GridOfCards(
 }
 
 @Composable
-fun AucardItem(
+fun SharedTransitionScope.AucardItem(
 	aucard: Aucard,
 	onClick: (Int) -> Unit,
 	onLongPress: () -> Unit,
 	onFavourited: () -> Unit,
+	scope: AnimatedVisibilityScope,
 	modifier: Modifier = Modifier,
 	isSelectMode: Boolean = false,
 	isSelected: Boolean = false,
@@ -422,6 +427,21 @@ fun AucardItem(
 	val textSize by animateFloatAsState(
 		if (isSelected) 1f else 0f
 	)
+	val textColor = remember { calculateContentColor(aucard.color) }
+
+	val contentState = rememberSharedContentState(
+		SharedContentStateKey(
+			aucard.id,
+			ContentType.CARD
+		)
+	)
+
+	val textContentState = rememberSharedContentState(
+		SharedContentStateKey(
+			aucard.id,
+			ContentType.TEXT
+		)
+	)
 
 	ElevatedCard(
 		colors = CardDefaults.cardColors(
@@ -432,7 +452,11 @@ fun AucardItem(
 			.heightIn(max = 100.dp)
 			.combinedClickable(
 				enabled = true,
-				onClick = { onClick(aucard.id) },
+				onClick = {
+					onClick(aucard.id)
+					Log.i(TAG, "isCardMatchFound: ${contentState.isMatchFound}")
+					Log.i(TAG, "isTextMatchFound: ${textContentState.isMatchFound}")
+				},
 				onLongClick = {
 					if (!isSelectMode) {
 						onLongPress()
@@ -443,9 +467,14 @@ fun AucardItem(
 				border = BorderStroke(border, color),
 				shape = MaterialTheme.shapes.medium
 			)
+			.sharedBounds(
+				sharedContentState = contentState,
+				animatedVisibilityScope = scope,
+				resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
+			)
 	) {
 		Box {
-			androidx.compose.animation.AnimatedVisibility(
+			this@ElevatedCard.AnimatedVisibility(
 				visible = isSelectMode,
 				enter = scaleIn(),
 				exit = scaleOut(),
@@ -476,7 +505,7 @@ fun AucardItem(
 						)
 				)
 			}
-			androidx.compose.animation.AnimatedVisibility(
+			this@ElevatedCard.AnimatedVisibility(
 				visible = isSelectMode,
 				enter = scaleIn(),
 				exit = scaleOut(),
@@ -487,7 +516,6 @@ fun AucardItem(
 				Box(
 					contentAlignment = Alignment.Center,
 					modifier = Modifier
-						//.padding(8.dp)
 						.minimumInteractiveComponentSize()
 						.clickable(
 							onClick = onFavourited,
@@ -532,10 +560,14 @@ fun AucardItem(
 						stop = MaterialTheme.typography.titleSmall,
 						fraction = textSize
 					),
-					color = Color.Black,
+					color = textColor,
 					textAlign = TextAlign.Center,
 					modifier = Modifier
 						.padding(4.dp)
+						.sharedBounds(
+							sharedContentState = textContentState,
+							animatedVisibilityScope = scope
+						)
 				)
 			}
 		}
