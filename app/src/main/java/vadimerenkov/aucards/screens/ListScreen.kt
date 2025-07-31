@@ -277,7 +277,6 @@ fun SharedTransitionScope.ListScreen(
 						else {
 							GridOfCards(
 								list = listState.list,
-								letter = "A",
 								onSelect = {
 									viewModel.SelectId(it)
 								},
@@ -316,7 +315,6 @@ fun SharedTransitionScope.ListScreen(
 						} else {
 							GridOfCards(
 								list = listState.favouritesList,
-								letter = "F",
 								onSelect = {
 									viewModel.SelectId(it)
 								},
@@ -347,7 +345,6 @@ fun SharedTransitionScope.ListScreen(
 @Composable
 fun SharedTransitionScope.GridOfCards(
 	list: List<Aucard>,
-	letter: String,
 	onSelect: (Int) -> Unit,
 	onDeselect: (Int) -> Unit,
 	onCardClicked: (Int) -> Unit,
@@ -370,7 +367,7 @@ fun SharedTransitionScope.GridOfCards(
 		) {
 			items(
 				items = list,
-				key = { "$letter${it.id}" }
+				key = { it.id }
 			) { card ->
 				val isSelected = selectedList.contains(card.id)
 				AucardItem(
