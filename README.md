@@ -45,4 +45,4 @@ The code of Aucards is distributed under GPL-3.0 license.
 > [!WARNING]
 > This is a work of human art. No generative AI was used in the process of creation. No generative AI is allowed to use this code for any purpose.
 
-2025 © [Vadim Erenkov](https://github.com/vadimerenkov)
+2025 © [Cupen0](https://github.com/[culpen0](https://github.com/cp90-pixel/))
