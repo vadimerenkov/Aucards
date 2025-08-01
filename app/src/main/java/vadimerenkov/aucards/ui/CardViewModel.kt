@@ -99,6 +99,10 @@ class CardViewModel(
 		card_state.update { it.copy(aucard = it.aucard.copy(color = color)) }
 	}
 
+	fun updateBackgroundImage(imageUri: String?) {
+		card_state.update { it.copy(aucard = it.aucard.copy(backgroundImageUri = imageUri)) }
+	}
+
 	fun updateHexCode(hex: String) {
 		card_state.update { it.copy(hexColor = hex) }
 		try {

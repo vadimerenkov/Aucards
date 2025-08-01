@@ -1,5 +1,8 @@
 package vadimerenkov.aucards.screens
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -16,6 +19,9 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
@@ -73,6 +79,13 @@ fun SharedTransitionScope.EditScreen(
 	val contentColor by animateColorAsState(calculateContentColor(state.aucard.color))
 	val keyboardController = LocalSoftwareKeyboardController.current
 
+	// Image picker launcher
+	val imagePickerLauncher = rememberLauncherForActivityResult(
+		contract = ActivityResultContracts.GetContent()
+	) { uri: Uri? ->
+		viewModel.updateBackgroundImage(uri?.toString())
+	}
+
 	LaunchedEffect(true) {
 		focusRequester.requestFocus()
 	}
@@ -103,6 +116,17 @@ fun SharedTransitionScope.EditScreen(
 					scope
 				)
 		) {
+			// Background image if set
+			state.aucard.backgroundImageUri?.let { imageUri ->
+				AsyncImage(
+					model = imageUri,
+					contentDescription = "Card background",
+					contentScale = ContentScale.Crop,
+					modifier = Modifier
+						.fillMaxSize()
+						.alpha(0.7f)
+				)
+			}
 			Column(
 				verticalArrangement = Arrangement.Center,
 				horizontalAlignment = Alignment.CenterHorizontally,

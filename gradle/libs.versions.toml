@@ -27,6 +27,7 @@ truth = "1.6.0"
 lifecycleViewmodelTesting = "2.9.2"
 lifecycleViewmodelSavedstate = "2.9.2"
 turbine = "1.2.1"
+coil = "2.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -62,6 +63,7 @@ androidx-truth = { group = "androidx.test.ext", name = "truth", version.ref = "t
 androidx-lifecycle-viewmodel-testing = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-testing", version.ref = "lifecycleViewmodelTesting" }
 androidx-lifecycle-viewmodel-savedstate = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-savedstate", version.ref = "lifecycleViewmodelSavedstate" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
 
 [plugins]
