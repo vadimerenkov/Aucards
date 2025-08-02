@@ -95,6 +95,9 @@ dependencies {
 	//Colorpicker Compose
 	implementation(libs.compose.colorpicker)
 
+	//Image loading
+	implementation(libs.coil.compose)
+
 	testImplementation(libs.junit)
 	testImplementation(libs.androidx.truth)
 	testImplementation(libs.turbine)

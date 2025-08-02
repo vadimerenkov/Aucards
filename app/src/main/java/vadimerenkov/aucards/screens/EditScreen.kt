@@ -1,5 +1,8 @@
 package vadimerenkov.aucards.screens
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -16,6 +19,9 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.AsyncImage
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
@@ -46,6 +52,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.filled.Image
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import vadimerenkov.aucards.R
@@ -72,6 +79,13 @@ fun SharedTransitionScope.EditScreen(
 	val focusRequester = remember { FocusRequester() }
 	val contentColor by animateColorAsState(calculateContentColor(state.aucard.color))
 	val keyboardController = LocalSoftwareKeyboardController.current
+
+	// Image picker launcher
+	val imagePickerLauncher = rememberLauncherForActivityResult(
+		contract = ActivityResultContracts.GetContent()
+	) { uri: Uri? ->
+		viewModel.updateBackgroundImage(uri?.toString())
+	}
 
 	LaunchedEffect(true) {
 		focusRequester.requestFocus()
@@ -103,6 +117,17 @@ fun SharedTransitionScope.EditScreen(
 					scope
 				)
 		) {
+			// Background image if set
+			state.aucard.backgroundImageUri?.let { imageUri ->
+				AsyncImage(
+					model = imageUri,
+					contentDescription = "Card background",
+					contentScale = ContentScale.Crop,
+					modifier = Modifier
+						.fillMaxSize()
+						.alpha(0.7f)
+				)
+			}
 			Column(
 				verticalArrangement = Arrangement.Center,
 				horizontalAlignment = Alignment.CenterHorizontally,
@@ -190,7 +215,7 @@ fun SharedTransitionScope.EditScreen(
 								colorPaletteOpen = !colorPaletteOpen
 							},
 							modifier = Modifier
-								.padding(vertical = 8.dp, horizontal = 24.dp)
+								.padding(vertical = 8.dp, horizontal = 12.dp)
 								.size(48.dp)
 						) {
 							Icon(
@@ -198,8 +223,48 @@ fun SharedTransitionScope.EditScreen(
 								tint = contentColor,
 								contentDescription = stringResource(R.string.choose_color),
 								modifier = Modifier
-									.size(48.dp)
+									.size(32.dp)
 							)
+						}
+
+						// Add image picker button
+						IconButton(
+							onClick = {
+								keyboardController?.hide()
+								imagePickerLauncher.launch("image/*")
+							},
+							modifier = Modifier
+								.padding(vertical = 8.dp, horizontal = 12.dp)
+								.size(48.dp)
+						) {
+							Icon(
+								imageVector = Icons.Default.Image,
+								tint = contentColor,
+								contentDescription = stringResource(R.string.choose_image),
+								modifier = Modifier
+									.size(32.dp)
+							)
+						}
+
+						// Add clear image button if there's a background image
+						if (state.aucard.backgroundImageUri != null) {
+							IconButton(
+								onClick = {
+									keyboardController?.hide()
+									viewModel.updateBackgroundImage(null)
+								},
+								modifier = Modifier
+									.padding(vertical = 8.dp, horizontal = 12.dp)
+									.size(48.dp)
+							) {
+								Icon(
+									imageVector = Icons.Default.Close,
+									tint = contentColor,
+									contentDescription = stringResource(R.string.remove_image),
+									modifier = Modifier
+										.size(32.dp)
+								)
+							}
 						}
 
 						ColorPickerPopup(
