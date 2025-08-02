@@ -370,7 +370,7 @@ fun SharedTransitionScope.GridOfCards(
 		) {
 			items(
 				items = list,
-				key = { "$letter${it.id}" }
+				key = { "$letter${it.id}${it.isFavourite}" }
 			) { card ->
 				val isSelected = selectedList.contains(card.id)
 				AucardItem(
