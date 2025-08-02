@@ -13,8 +13,8 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.animateDpAsState
+import androidx.compose.animation.animateFloatAsState
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.BorderStroke
@@ -25,7 +25,10 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -65,7 +68,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.matchParentSize
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -459,9 +465,11 @@ fun SharedTransitionScope.AucardItem(
 		)
 	)
 
+	val cardShape = MaterialTheme.shapes.medium
+
 	ElevatedCard(
 		colors = CardDefaults.cardColors(
-			containerColor = aucard.color
+			containerColor = if (aucard.backgroundImageUri == null) aucard.color else Color.Transparent
 		),
 		elevation = CardDefaults.cardElevation(6.dp),
 		modifier = modifier
@@ -479,7 +487,7 @@ fun SharedTransitionScope.AucardItem(
 			)
 			.border(
 				border = BorderStroke(border, color),
-				shape = MaterialTheme.shapes.medium
+				shape = cardShape
 			)
 			.sharedBounds(
 				sharedContentState = if (!isSelectMode) contentState else editContentState,
@@ -487,6 +495,29 @@ fun SharedTransitionScope.AucardItem(
 				resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
 			)
 	) {
+		// Background image with overlay
+		aucard.backgroundImageUri?.let { imageUri ->
+			Box(
+				modifier = Modifier
+					.matchParentSize()
+					.clip(cardShape)
+		) {
+			// Dark overlay to ensure text is readable
+			Box(
+				modifier = Modifier
+					.matchParentSize()
+					.background(Color.Black.copy(alpha = 0.3f))
+			)
+			
+			// Background image
+			AsyncImage(
+				model = imageUri,
+				contentDescription = null,
+				contentScale = ContentScale.Crop,
+				modifier = Modifier.matchParentSize()
+			)
+		}
+	}
 		Box {
 			this@ElevatedCard.AnimatedVisibility(
 				visible = isSelectMode,

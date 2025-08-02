@@ -52,6 +52,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.filled.Image
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import vadimerenkov.aucards.R
@@ -214,7 +215,7 @@ fun SharedTransitionScope.EditScreen(
 								colorPaletteOpen = !colorPaletteOpen
 							},
 							modifier = Modifier
-								.padding(vertical = 8.dp, horizontal = 24.dp)
+								.padding(vertical = 8.dp, horizontal = 12.dp)
 								.size(48.dp)
 						) {
 							Icon(
@@ -222,8 +223,48 @@ fun SharedTransitionScope.EditScreen(
 								tint = contentColor,
 								contentDescription = stringResource(R.string.choose_color),
 								modifier = Modifier
-									.size(48.dp)
+									.size(32.dp)
 							)
+						}
+
+						// Add image picker button
+						IconButton(
+							onClick = {
+								keyboardController?.hide()
+								imagePickerLauncher.launch("image/*")
+							},
+							modifier = Modifier
+								.padding(vertical = 8.dp, horizontal = 12.dp)
+								.size(48.dp)
+						) {
+							Icon(
+								imageVector = Icons.Default.Image,
+								tint = contentColor,
+								contentDescription = stringResource(R.string.choose_image),
+								modifier = Modifier
+									.size(32.dp)
+							)
+						}
+
+						// Add clear image button if there's a background image
+						if (state.aucard.backgroundImageUri != null) {
+							IconButton(
+								onClick = {
+									keyboardController?.hide()
+									viewModel.updateBackgroundImage(null)
+								},
+								modifier = Modifier
+									.padding(vertical = 8.dp, horizontal = 12.dp)
+									.size(48.dp)
+							) {
+								Icon(
+									imageVector = Icons.Default.Close,
+									tint = contentColor,
+									contentDescription = stringResource(R.string.remove_image),
+									modifier = Modifier
+										.size(32.dp)
+								)
+							}
 						}
 
 						ColorPickerPopup(
