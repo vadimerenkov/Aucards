@@ -72,6 +72,8 @@ import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.settings.Language
 import vadimerenkov.aucards.settings.Theme
 import vadimerenkov.aucards.ui.SettingsViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 private const val TAG = "SettingsScreen"
 
@@ -155,16 +157,17 @@ fun SettingsScreen(
 					) {
 						if (it != null) {
 							Log.d(TAG, "Path saved: $it")
-							viewModel.exportDatabase(it)
+							viewModel.exportDatabase(it, context)
 						} else {
 							Log.d(TAG, "Path not saved.")
 						}
 					}
 					val loadLauncher = rememberLauncherForActivityResult(
-						ActivityResultContracts.OpenDocument()
+						ActivityResultContracts.GetContent()
 					) {
 						if (it != null) {
-							viewModel.importDatabase(it)
+							viewModel.importDatabase(it, context)
+							onBackClicked()
 						}
 					}
 					CheckboxSetting(
@@ -228,14 +231,18 @@ fun SettingsScreen(
 					Spacer(modifier = Modifier.padding(8.dp))
 					OutlinedButton(
 						onClick = {
-							saveLauncher.launch("TEST1_AUCARDS_DB.db")
-						}
+							val formatter = DateTimeFormatter
+								.ofPattern("yyyy-MM-dd.HH.mm.ss")
+							val now = formatter.format(LocalDateTime.now())
+							saveLauncher.launch("aucards-exported-$now.db")
+						},
+						enabled = !state.isDbEmpty
 					) {
 						Text(text = "Export")
 					}
 					OutlinedButton(
 						onClick = {
-							loadLauncher.launch(arrayOf("application/*"))
+							loadLauncher.launch("application/octet-stream")
 						}
 					) {
 						Text(text = "Import")

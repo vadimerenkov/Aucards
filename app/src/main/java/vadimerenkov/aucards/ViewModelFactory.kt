@@ -22,7 +22,7 @@ object ViewModelFactory {
 			)
 		}
 		initializer {
-			SettingsViewModel(app().settings, app().database, app().applicationContext)
+			SettingsViewModel(app().settings, app().database)
 		}
 	}
 }
