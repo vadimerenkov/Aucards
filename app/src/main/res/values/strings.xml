@@ -18,6 +18,7 @@
     <string name="english" translatable="false">English</string>
     <string name="russian" translatable="false">Русский</string>
     <string name="ukrainian" translatable="false">Українська</string>
+    <string name="georgian" translatable="false">ქართული</string>
     <string name="brightness">Set brightness to max when opening the card</string>
     <string name="theme">Theme</string>
     <string name="language">Language</string>
