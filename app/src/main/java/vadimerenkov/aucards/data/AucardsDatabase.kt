@@ -2,25 +2,24 @@ package vadimerenkov.aucards.data
 
 import android.content.Context
 import androidx.room.AutoMigration
-import androidx.room.ColumnInfo
 import androidx.room.Database
 import androidx.room.DeleteColumn
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.AutoMigrationSpec
-import androidx.room.migration.Migration
 import vadimerenkov.aucards.converters.Converters
-import kotlin.reflect.KClass
 
 @Database(
 	entities = [Aucard::class],
+	views = [FavAucard::class],
 	exportSchema = true,
-	version = 3,
+	version = 4,
 	autoMigrations = [
 		AutoMigration(2, 3,
 			spec = AucardsDatabase.Migrations::class
-		)
+		),
+		AutoMigration(3, 4)
 	]
 )
 @TypeConverters(Converters::class)

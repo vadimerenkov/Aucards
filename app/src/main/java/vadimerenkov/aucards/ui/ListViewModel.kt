@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import vadimerenkov.aucards.DispatchersProvider
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardDao
+import vadimerenkov.aucards.data.toAucard
 
 class ListViewModel(
 	private val aucardDao: AucardDao,
@@ -26,9 +27,9 @@ class ListViewModel(
 		.flowOn(dispatchers.main)
 		.launchIn(viewModelScope)
 
-	private val favourite_cards = aucardDao.getFavouriteCards()
+	private val favourite_cards = aucardDao.getFavCards()
 		.onEach { list ->
-			list_state.update { it.copy(favouritesList = list) }
+			list_state.update { it.copy(favouritesList = list.map { it.toAucard() }) }
 		}
 		.flowOn(dispatchers.main)
 		.launchIn(viewModelScope)
