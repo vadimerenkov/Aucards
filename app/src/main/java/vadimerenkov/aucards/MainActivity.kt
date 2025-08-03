@@ -7,12 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.getApplicationLocales
 import androidx.appcompat.app.AppCompatDelegate.setApplicationLocales
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import vadimerenkov.aucards.settings.Theme
 import vadimerenkov.aucards.ui.theme.AucardsTheme
 
@@ -32,12 +28,12 @@ class MainActivity : AppCompatActivity() {
 			val locales = getApplicationLocales()
 			setApplicationLocales(locales)
 
-			if (BuildConfig.DEBUG) {
-				SetInitialState(
-					scope = lifecycleScope,
-					dao = app.database.aucardDao()
-				)
-			}
+//			if (BuildConfig.DEBUG) {
+//				SetInitialState(
+//					scope = lifecycleScope,
+//					dao = app.database.aucardDao()
+//				)
+//			}
 
 			AucardsTheme(
 				darkTheme = isDarkTheme

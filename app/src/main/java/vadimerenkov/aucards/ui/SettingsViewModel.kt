@@ -1,5 +1,7 @@
 package vadimerenkov.aucards.ui
 
+import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate.getApplicationLocales
 import androidx.appcompat.app.AppCompatDelegate.setApplicationLocales
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import vadimerenkov.aucards.data.AucardsDatabase
 import vadimerenkov.aucards.settings.Keys.BRIGHTNESS_STRING
 import vadimerenkov.aucards.settings.Keys.LANDSCAPE_STRING
 import vadimerenkov.aucards.settings.Keys.THEME_STRING
@@ -25,7 +28,9 @@ import vadimerenkov.aucards.settings.Theme
 private const val TAG = "SettingsViewModel"
 
 class SettingsViewModel(
-	private val settings: Settings
+	private val settings: Settings,
+	private val database: AucardsDatabase,
+	private val context: Context
 ): ViewModel() {
 	private val state = MutableStateFlow(SettingsState())
 
@@ -141,6 +146,43 @@ class SettingsViewModel(
 				key = BRIGHTNESS_STRING,
 				value = brightness
 			)
+		}
+	}
+
+	fun exportDatabase(uri: Uri) {
+		viewModelScope.launch {
+			database.openHelper.setWriteAheadLoggingEnabled(false)
+
+			val currentDb = context.getDatabasePath(AucardsDatabase.NAME)
+			val file = context.contentResolver.openOutputStream(uri)
+			val currentBytes = currentDb.readBytes()
+			file?.write(currentBytes)
+			file?.close()
+
+			Log.i(TAG, "Database path is ${database.openHelper.readableDatabase.path}")
+			database.openHelper.setWriteAheadLoggingEnabled(true)
+		}
+	}
+
+	fun importDatabase(uri: Uri) {
+		viewModelScope.launch {
+			Log.d(TAG, "Uri is $uri")
+			database.openHelper.setWriteAheadLoggingEnabled(false)
+
+			val currentDb = context.getDatabasePath(AucardsDatabase.NAME)
+			Log.d(TAG, "Current path is $currentDb")
+			val file = context.contentResolver.openInputStream(uri)
+			if (file != null) {
+				Log.d(TAG, "Writing the bytes...")
+				val stream = currentDb.outputStream()
+				val number = file.copyTo(stream)
+				Log.d(TAG, "Copied $number bytes.")
+				//currentDb.outputStream().write(file.readBytes())
+				//currentDb.writeBytes(file.readBytes())
+				stream.close()
+				file.close()
+			}
+			database.openHelper.setWriteAheadLoggingEnabled(true)
 		}
 	}
 }
