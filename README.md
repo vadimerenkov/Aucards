@@ -32,7 +32,7 @@ It primarily aims to help people with special needs to quickly communicate their
 
 ## Planned features
 
-- export/import
+- export/import ✅
 
 - synchronization through Syncthing
 
@@ -44,13 +44,13 @@ It primarily aims to help people with special needs to quickly communicate their
 
 - widgets for your most used cards
 
-## License
-
-The code of Aucards is distributed under GPL-3.0 license.
-
 ## Used libraries
 
 - [GitHub - skydoves/colorpicker-compose: 🎨 Kotlin Multiplatform color picker library for getting colors from any images by tapping on the desired color.](https://github.com/skydoves/colorpicker-compose)
+
+## License
+
+The code of Aucards is distributed under GPL-3.0 license.
 
 > [!WARNING]
 > This is a work of human art. No generative AI was used in the process of creation. No generative AI is allowed to use this code for any purpose.
