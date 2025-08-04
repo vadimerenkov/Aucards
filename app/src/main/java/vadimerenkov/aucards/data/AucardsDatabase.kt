@@ -43,7 +43,7 @@ abstract class AucardsDatabase: RoomDatabase() {
 		fun getDatabase(context: Context): AucardsDatabase {
 			return Instance ?: synchronized(this) {
 				Room.databaseBuilder(context, AucardsDatabase::class.java, NAME)
-					//.fallbackToDestructiveMigration(true)
+					.fallbackToDestructiveMigrationOnDowngrade(true)
 					.build()
 					.also { Instance = it }
 			}

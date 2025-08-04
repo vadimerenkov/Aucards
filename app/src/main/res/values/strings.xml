@@ -35,6 +35,8 @@
     <string name="brightness_permission">This option requires app permission to write system settings.</string>
     <string name="palette">Palette</string>
     <string name="custom_color">Custom</string>
+    <string name="import_cards">Import cards from file</string>
+    <string name="export">Export cards to file</string>
     <plurals name="delete_confirmation">
         <item quantity="one">Are you sure you want to delete this card?</item>
         <item quantity="other">Are you sure you want to delete %s cards?</item>

@@ -238,14 +238,14 @@ fun SettingsScreen(
 						},
 						enabled = !state.isDbEmpty
 					) {
-						Text(text = "Export")
+						Text(text = stringResource(R.string.export))
 					}
 					OutlinedButton(
 						onClick = {
 							loadLauncher.launch("application/octet-stream")
 						}
 					) {
-						Text(text = "Import")
+						Text(text = stringResource(R.string.import_cards))
 					}
 				}
 

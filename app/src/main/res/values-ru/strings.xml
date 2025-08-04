@@ -34,4 +34,6 @@
     <string name="brightness_permission">Чтобы эта опция работала, нужно разрешить приложению изменять системные настройки.</string>
     <string name="palette">Палитра</string>
     <string name="custom_color">Свой цвет</string>
+    <string name="import_cards">Загрузить карточки из файла</string>
+    <string name="export">Сохранить карточки в файл</string>
 </resources>
