@@ -2,7 +2,6 @@ package vadimerenkov.aucards.data
 
 import androidx.room.Dao
 import androidx.room.Query
-import androidx.room.Update
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
@@ -22,4 +21,7 @@ interface AucardDao {
 
 	@Query("SELECT * FROM aucard WHERE isFavourite = 1")
 	fun getFavouriteCards(): Flow<List<Aucard>>
+
+	@Query("SELECT * FROM favaucard")
+	fun getFavCards(): Flow<List<FavAucard>>
 }

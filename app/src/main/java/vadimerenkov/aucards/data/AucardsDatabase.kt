@@ -12,12 +12,14 @@ import vadimerenkov.aucards.converters.Converters
 
 @Database(
 	entities = [Aucard::class],
+	views = [FavAucard::class],
 	exportSchema = true,
-	version = 3,
+	version = 4,
 	autoMigrations = [
 		AutoMigration(2, 3,
 			spec = AucardsDatabase.Migrations::class
-		)
+		),
+		AutoMigration(3, 4)
 	]
 )
 @TypeConverters(Converters::class)
