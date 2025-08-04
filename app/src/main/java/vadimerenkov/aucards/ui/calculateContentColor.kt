@@ -1,9 +1,5 @@
 package vadimerenkov.aucards.ui
 
-import android.util.Log
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 
@@ -18,8 +14,6 @@ fun calculateContentColor(color: Color): Color {
 	val hsv = FloatArray(3)
 	android.graphics.Color.colorToHSV(color.toArgb(), hsv)
 
-	Log.i(TAG, "HSV is ${hsv[0]}, ${hsv[1]}, ${hsv[2]} }")
-
 	val animatedColor =
 		if (hsv[0] in (210f..280f)
 			&& hsv[1] in (0.75f..1f)
@@ -27,8 +21,6 @@ fun calculateContentColor(color: Color): Color {
 			) {
 			Color.White
 		} else Color.Black
-
-	Log.i(TAG, "Color is $animatedColor")
 
 	return animatedColor
 }

@@ -5,6 +5,9 @@ package vadimerenkov.aucards.screens
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -32,6 +36,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -67,6 +72,8 @@ import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.settings.Language
 import vadimerenkov.aucards.settings.Theme
 import vadimerenkov.aucards.ui.SettingsViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 private const val TAG = "SettingsScreen"
 
@@ -142,7 +149,27 @@ fun SettingsScreen(
 					.fillMaxSize()
 					.verticalScroll(scroll)
 			) {
-				Column {
+				Column(
+					horizontalAlignment = Alignment.CenterHorizontally
+				) {
+					val saveLauncher = rememberLauncherForActivityResult(
+						ActivityResultContracts.CreateDocument("application/vnd.sqlite3")
+					) {
+						if (it != null) {
+							Log.d(TAG, "Path saved: $it")
+							viewModel.exportDatabase(it, context)
+						} else {
+							Log.d(TAG, "Path not saved.")
+						}
+					}
+					val loadLauncher = rememberLauncherForActivityResult(
+						ActivityResultContracts.GetContent()
+					) {
+						if (it != null) {
+							viewModel.importDatabase(it, context)
+							onBackClicked()
+						}
+					}
 					CheckboxSetting(
 						description = stringResource(R.string.brightness),
 						onCheckedChange = {
@@ -195,8 +222,30 @@ fun SettingsScreen(
 						Text(
 							text = stringResource(it),
 							color = Color.Blue,
-							style = MaterialTheme.typography.bodyMedium
+							style = MaterialTheme.typography.bodyMedium,
+							modifier = Modifier
+								.padding(top = 8.dp)
+								.align(Alignment.End)
 						)
+					}
+					Spacer(modifier = Modifier.padding(8.dp))
+					OutlinedButton(
+						onClick = {
+							val formatter = DateTimeFormatter
+								.ofPattern("yyyy-MM-dd.HH.mm.ss")
+							val now = formatter.format(LocalDateTime.now())
+							saveLauncher.launch("aucards-exported-$now.db")
+						},
+						enabled = !state.isDbEmpty
+					) {
+						Text(text = stringResource(R.string.export))
+					}
+					OutlinedButton(
+						onClick = {
+							loadLauncher.launch("application/octet-stream")
+						}
+					) {
+						Text(text = stringResource(R.string.import_cards))
 					}
 				}
 
