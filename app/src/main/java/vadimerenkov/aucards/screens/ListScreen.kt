@@ -33,6 +33,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -247,7 +249,8 @@ fun SharedTransitionScope.ListScreen(
 			HorizontalPager(
 				state = pager_state,
 				modifier = Modifier
-					.fillMaxSize()
+					.fillMaxSize(),
+				userScrollEnabled = true
 			) { page ->
 				when (page) {
 					0 -> {
@@ -346,60 +349,73 @@ fun SharedTransitionScope.ListScreen(
 
 @Composable
 fun SharedTransitionScope.GridOfCards(
-	list: List<Aucard>,
-	letter: String,
-	onSelect: (Int) -> Unit,
-	onDeselect: (Int) -> Unit,
-	onCardClicked: (Int) -> Unit,
-	onSelectModeEntered: (Int) -> Unit,
-	onFavourited: (Int) -> Unit,
-	isSelectMode: Boolean,
-	selectedList: List<Int>,
-	scope: AnimatedVisibilityScope,
-	modifier: Modifier = Modifier
+    list: List<Aucard>,
+    letter: String,
+    onSelect: (Int) -> Unit,
+    onDeselect: (Int) -> Unit,
+    onCardClicked: (Int) -> Unit,
+    onSelectModeEntered: (Int) -> Unit,
+    onFavourited: (Int) -> Unit,
+    isSelectMode: Boolean,
+    selectedList: List<Int>,
+    scope: AnimatedVisibilityScope,
+    modifier: Modifier = Modifier
 ) {
-	Box(
-		modifier = modifier
-			.fillMaxSize()
-	) {
-		LazyVerticalGrid(
-			columns = GridCells.Adaptive(150.dp),
-			horizontalArrangement = Arrangement.SpaceBetween,
-			modifier = Modifier
-				.padding(6.dp)
-		) {
-			items(
-				items = list,
-				key = { "$letter${it.id}" }
-			) { card ->
-				val isSelected = selectedList.contains(card.id)
-				AucardItem(
-					aucard = card,
-					onClick = { id ->
-						if (isSelectMode) {
-							if (isSelected) {
-								onDeselect(id)
-							} else {
-								onSelect(id)
-							}
-						} else {
-							onCardClicked(id)
-						}
-					},
-					onLongPress = {
-						onSelectModeEntered(card.id)
-					},
-					isSelectMode = isSelectMode,
-					isSelected = isSelected,
-					onFavourited = { onFavourited(card.id) },
-					scope = scope,
-					modifier = Modifier
-						.padding(6.dp)
-						.animateItem()
-				)
-			}
-		}
-	}
+    val listState = rememberLazyGridState()
+    
+    LaunchedEffect(letter) {
+        // Reset scroll position when switching between tabs
+        listState.animateScrollToItem(0)
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        LazyVerticalGrid(
+            state = listState,
+            columns = GridCells.Adaptive(150.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .padding(6.dp)
+                .fillMaxSize()
+        ) {
+            items(
+                items = list,
+                key = { "$letter-${it.id}" },
+                contentType = { it.id }
+            ) { card ->
+                val isSelected = selectedList.contains(card.id)
+                key(card.id) {
+                    AucardItem(
+                        aucard = card,
+                        onClick = { id ->
+                            if (isSelectMode) {
+                                if (isSelected) {
+                                    onDeselect(id)
+                                } else {
+                                    onSelect(id)
+                                }
+                            } else {
+                                onCardClicked(id)
+                            }
+                        },
+                        onLongPress = {
+                            onSelectModeEntered(card.id)
+                        },
+                        isSelectMode = isSelectMode,
+                        isSelected = isSelected,
+                        onFavourited = { onFavourited(card.id) },
+                        scope = scope,
+                        modifier = Modifier
+                            .padding(6.dp)
+                            .animateItem()
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
