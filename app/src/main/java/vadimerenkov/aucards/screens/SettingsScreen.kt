@@ -93,6 +93,7 @@ fun SettingsScreen(
 
 	val state by viewModel.settingsState.collectAsState()
 	var showBrightnessContext by remember { mutableStateOf(false) }
+	var didWeClickOnBrightness by remember { mutableStateOf(false) }
 
 	if (!hasPermission(context)) {
 		DisposableEffect(Unit) {
@@ -102,8 +103,10 @@ fun SettingsScreen(
 						viewModel.saveBrightnessSetting(true)
 						showBrightnessContext = false
 					} else {
-						showBrightnessContext = true
-						viewModel.saveBrightnessSetting(false)
+						if (didWeClickOnBrightness) {
+							showBrightnessContext = true
+							viewModel.saveBrightnessSetting(false)
+						}
 					}
 				}
 			}
@@ -179,6 +182,7 @@ fun SettingsScreen(
 									addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 								}
 								context.startActivity(intent)
+								didWeClickOnBrightness = true
 							}
 							else{
 								viewModel.saveBrightnessSetting(it)
