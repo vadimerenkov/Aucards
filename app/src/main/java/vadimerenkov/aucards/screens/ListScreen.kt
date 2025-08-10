@@ -310,7 +310,9 @@ fun SharedTransitionScope.ListScreen(
 									text = stringResource(R.string.add_to_fav_prompt),
 									style = MaterialTheme.typography.bodyLarge,
 									textAlign = TextAlign.Center,
-									color = Color.Gray
+									color = Color.Gray,
+									modifier = Modifier
+										.padding(horizontal = 16.dp)
 								)
 							}
 						} else {

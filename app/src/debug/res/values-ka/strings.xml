@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="yes">დიახ</string>
+    <string name="no">არა</string>
+    <string name="help">მჭირდება დახმარება</string>
+    <string name="hug">შეგიძლია ჩამეხუტო?</string>
+    <string name="alone">მსურს მარტოდ ყოფნა</string>
+</resources>
