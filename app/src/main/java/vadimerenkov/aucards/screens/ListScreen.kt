@@ -163,13 +163,16 @@ fun SharedTransitionScope.ListScreen(
 					icon = {
 						Icon(
 							painterResource(R.drawable.grid),
-							contentDescription = stringResource(R.string.all_cards),
+							contentDescription = null,
 							tint = if (listState.currentPage == 0) {
 								MaterialTheme.colorScheme.onPrimary
 							} else {
 								MaterialTheme.colorScheme.onPrimaryContainer
 							}
 						)
+					},
+					label = {
+						Text(text = stringResource(R.string.all_cards))
 					},
 					colors = NavigationBarItemDefaults.colors(
 						indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -183,13 +186,16 @@ fun SharedTransitionScope.ListScreen(
 					icon = {
 						Icon(
 							imageVector = Icons.Outlined.Star,
-							contentDescription = stringResource(R.string.favourites),
+							contentDescription = null,
 							tint = if (listState.currentPage == 1) {
 								MaterialTheme.colorScheme.onPrimary
 							} else {
 								MaterialTheme.colorScheme.onPrimaryContainer
 							}
 						)
+					},
+					label = {
+						Text(text = stringResource(R.string.favourites))
 					},
 					colors = NavigationBarItemDefaults.colors(
 						indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer
