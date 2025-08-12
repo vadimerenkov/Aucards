@@ -1,5 +1,3 @@
-import org.gradle.kotlin.dsl.testImplementation
-
 plugins {
 	alias(libs.plugins.android.application)
 	alias(libs.plugins.kotlin.android)
@@ -92,8 +90,11 @@ dependencies {
 	implementation(libs.kotlinx.serialization.json)
 	implementation(libs.kotlinx.serialization.core)
 
-	//Colorpicker Compose
+	//Colorpicker Compose by skydoves
 	implementation(libs.compose.colorpicker)
+
+	//Reorderable by Calvin-LL
+	implementation(libs.reorderable)
 
 	testImplementation(libs.junit)
 	testImplementation(libs.androidx.truth)

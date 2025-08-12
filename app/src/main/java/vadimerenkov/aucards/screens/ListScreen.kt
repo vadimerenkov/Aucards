@@ -22,6 +22,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,24 +30,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -65,14 +64,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.lerp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
+import sh.calvin.reorderable.ReorderableCollectionItemScope
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.data.Aucard
@@ -86,12 +88,13 @@ import vadimerenkov.aucards.ui.calculateContentColor
 private const val TAG = "ListScreen"
 
 @Composable
-fun SharedTransitionScope.ListScreen(
+fun ListScreen(
 	onCardClicked: (Int) -> Unit,
 	onCardEditClicked: (Int) -> Unit,
 	onAddButtonClicked: () -> Unit,
 	onSettingsClicked: () -> Unit,
-	scope: AnimatedVisibilityScope,
+	animatedVisibilityScope: AnimatedVisibilityScope,
+	sharedTransitionScope: SharedTransitionScope,
 	modifier: Modifier = Modifier,
 	viewModel: ListViewModel = viewModel(factory = ViewModelFactory.Factory())
 ) {
@@ -104,7 +107,7 @@ fun SharedTransitionScope.ListScreen(
 
 	// Exit selection mode on back pressed
 	BackHandler(listState.isSelectMode) {
-		viewModel.ExitSelectMode()
+		viewModel.exitSelectMode()
 	}
 
 	if (deleteConfirmationOpen) {
@@ -121,7 +124,7 @@ fun SharedTransitionScope.ListScreen(
 			confirmButton = {
 				Button(
 					onClick = {
-						viewModel.DeleteSelected()
+						viewModel.deleteSelected()
 						deleteConfirmationOpen = false
 					}
 				) {
@@ -139,11 +142,11 @@ fun SharedTransitionScope.ListScreen(
 				},
 				onEditClick = {
 					onCardEditClicked(listState.selectedList[0])
-					viewModel.ExitSelectMode()
+					viewModel.exitSelectMode()
 				},
 				onSettingsClick = {
 					onSettingsClicked()
-					viewModel.ExitSelectMode()
+					viewModel.exitSelectMode()
 				},
 				isSelectMode = listState.isSelectMode,
 				isEditEnabled = listState.selectedList.size == 1,
@@ -158,7 +161,7 @@ fun SharedTransitionScope.ListScreen(
 			) {
 				NavigationBarItem(
 					selected = listState.currentPage == 0,
-					onClick = { viewModel.TurnPage(0) },
+					onClick = { viewModel.turnPage(0) },
 					icon = {
 						Icon(
 							painterResource(R.drawable.grid),
@@ -175,7 +178,7 @@ fun SharedTransitionScope.ListScreen(
 				)
 				NavigationBarItem(
 					selected = listState.currentPage == 1,
-					onClick = { viewModel.TurnPage(1) },
+					onClick = { viewModel.turnPage(1) },
 					icon = {
 						Icon(
 							imageVector = Icons.Outlined.Star,
@@ -193,36 +196,38 @@ fun SharedTransitionScope.ListScreen(
 			}
 		},
 		floatingActionButton = {
-			val contentState = rememberSharedContentState(
-				SharedContentStateKey(
-					0,
-					ContentType.CARD,
-					Target.EDIT
-				)
-			)
-			FloatingActionButton(
-				onClick = {
-					onAddButtonClicked()
-					viewModel.ExitSelectMode()
-				},
-				shape = MaterialTheme.shapes.medium,
-				modifier = Modifier
-					.padding(16.dp)
-					.sharedBounds(
-						sharedContentState = contentState,
-						animatedVisibilityScope = scope
+			with(sharedTransitionScope) {
+				val contentState = rememberSharedContentState(
+					SharedContentStateKey(
+						0,
+						ContentType.CARD,
+						Target.EDIT
 					)
-			) {
-				Icon(
-					imageVector = Icons.Default.Add,
-					contentDescription = stringResource(R.string.add_card)
 				)
+				FloatingActionButton(
+					onClick = {
+						onAddButtonClicked()
+						viewModel.exitSelectMode()
+					},
+					shape = MaterialTheme.shapes.medium,
+					modifier = Modifier
+						.padding(16.dp)
+						.sharedBounds(
+							sharedContentState = contentState,
+							animatedVisibilityScope = animatedVisibilityScope
+						)
+				) {
+					Icon(
+						imageVector = Icons.Default.Add,
+						contentDescription = stringResource(R.string.add_card)
+					)
+				}
+
 			}
-		},
-		modifier = modifier
+		}
 	) { innerPadding ->
 		Box(
-			modifier = Modifier
+			modifier = modifier
 				.fillMaxSize()
 				.padding(innerPadding)
 		) {
@@ -233,8 +238,70 @@ fun SharedTransitionScope.ListScreen(
 			}
 
 			LaunchedEffect(pager_state.currentPage) {
-				viewModel.TurnPage(pager_state.currentPage)
+				viewModel.turnPage(pager_state.currentPage)
 			}
+
+			HorizontalPager(
+				state = pager_state,
+				modifier = modifier
+					.fillMaxSize(),
+			) { page ->
+				when (page) {
+					0 -> {
+						SimpleReorderableLazyVerticalGridScreen(
+							items = listState.list,
+							selectedList = listState.selectedList,
+							sharedTransitionScope = sharedTransitionScope,
+							animatedVisibilityScope = animatedVisibilityScope,
+							onCardClick = onCardClicked,
+							onFavourited = {
+								viewModel.markAsFavourite(it)
+							},
+							onLongPress = {
+								viewModel.enterSelectMode(it)
+							},
+							isSelectMode = listState.isSelectMode,
+							onSelect = { id ->
+								viewModel.selectId(id)
+							},
+							onDeselect = { id ->
+								viewModel.deselectId(id)
+							},
+							onDragStopped = { newList ->
+								viewModel.saveAllCards(newList)
+							}
+						)
+					}
+					1 -> {
+						SimpleReorderableLazyVerticalGridScreen(
+							items = listState.favouritesList,
+							selectedList = listState.selectedList,
+							sharedTransitionScope = sharedTransitionScope,
+							animatedVisibilityScope = animatedVisibilityScope,
+							onCardClick = onCardClicked,
+							onFavourited = {},
+							onLongPress = {
+								viewModel.enterSelectMode(it)
+								viewModel.selectId(it)
+							},
+							isSelectMode = listState.isSelectMode,
+							onSelect = { id ->
+								viewModel.selectId(id)
+							},
+							onDeselect = { id ->
+								viewModel.deselectId(id)
+							},
+							onDragStopped = { newList ->
+								viewModel.saveAllCards(newList)
+							}
+						)
+					}
+				}
+			}
+
+
+
+			/*
 
 			HorizontalPager(
 				state = pager_state,
@@ -267,6 +334,8 @@ fun SharedTransitionScope.ListScreen(
 							}
 						}
 						else {
+							//SimpleReorderableLazyVerticalGridScreen()
+
 							GridOfCards(
 								list = listState.list,
 								letter = "A",
@@ -285,10 +354,13 @@ fun SharedTransitionScope.ListScreen(
 								onFavourited = {
 									viewModel.MarkAsFavourite(it)
 								},
-								scope = scope,
+								animatedVisibilityScope = animatedVisibilityScope,
 								isSelectMode = listState.isSelectMode,
-								selectedList = listState.selectedList
+								selectedList = listState.selectedList,
+								sharedTransitionScope = sharedTransitionScope
 							)
+
+
 						}
 					}
 					1 -> {
@@ -324,20 +396,25 @@ fun SharedTransitionScope.ListScreen(
 								onFavourited = {
 									viewModel.MarkAsFavourite(it)
 								},
-								scope = scope,
+								animatedVisibilityScope = animatedVisibilityScope,
 								isSelectMode = listState.isSelectMode,
-								selectedList = listState.selectedList
+								selectedList = listState.selectedList,
+								sharedTransitionScope = sharedTransitionScope
 							)
 						}
 					}
 				}
+
+
 			}
+
+			 */
 		}
 	}
 }
 
 @Composable
-fun SharedTransitionScope.GridOfCards(
+private fun GridOfCards(
 	list: List<Aucard>,
 	letter: String,
 	onSelect: (Int) -> Unit,
@@ -347,24 +424,40 @@ fun SharedTransitionScope.GridOfCards(
 	onFavourited: (Int) -> Unit,
 	isSelectMode: Boolean,
 	selectedList: List<Int>,
-	scope: AnimatedVisibilityScope,
+	animatedVisibilityScope: AnimatedVisibilityScope,
+	sharedTransitionScope: SharedTransitionScope,
 	modifier: Modifier = Modifier
 ) {
-	Box(
+	/*
+	var visibleList by remember { mutableStateOf(list) }
+	val state = rememberLazyGridState()
+	val reorderableState =
+		rememberReorderableLazyGridState(state) { from, to ->
+			Log.d(TAG, "AAAAA")
+			visibleList = visibleList.toMutableList().apply {
+				add(to.index, removeAt(from.index))
+			}
+		}
+
+	LazyVerticalGrid(
+		columns = GridCells.Adaptive(150.dp),
+		horizontalArrangement = Arrangement.SpaceBetween,
+		state = state,
 		modifier = modifier
+			.padding(8.dp)
 			.fillMaxSize()
 	) {
-		LazyVerticalGrid(
-			columns = GridCells.Adaptive(150.dp),
-			horizontalArrangement = Arrangement.SpaceBetween,
-			modifier = Modifier
-				.padding(6.dp)
-		) {
-			items(
-				items = list,
-				key = { "$letter${it.id}" }
-			) { card ->
-				val isSelected = selectedList.contains(card.id)
+		itemsIndexed(
+			items = visibleList,
+			key = { index, card ->
+				card.id }
+		) { index, card ->
+			val isSelected = selectedList.contains(card.id)
+			ReorderableItem(
+				state = reorderableState,
+				key = { card.id }
+			) {isDragging ->
+				val interactionSource = remember { MutableInteractionSource() }
 				AucardItem(
 					aucard = card,
 					onClick = { id ->
@@ -381,29 +474,41 @@ fun SharedTransitionScope.GridOfCards(
 					onLongPress = {
 						onSelectModeEntered(card.id)
 					},
+					onFavourited = { onFavourited(card.id) },
+					//animatedVisibilityScope = animatedVisibilityScope,
+					dragScope = this,
+					modifier = Modifier
+						.padding(6.dp),
+						//.animateItem(),
 					isSelectMode = isSelectMode,
 					isSelected = isSelected,
-					onFavourited = { onFavourited(card.id) },
-					scope = scope,
-					modifier = Modifier
-						.padding(6.dp)
-						.animateItem()
+					interactionSource = interactionSource,
+					//sharedTransitionScope = sharedTransitionScope,
+					onDrag = {
+
+					}
 				)
 			}
 		}
 	}
+
+	 */
 }
 
 @Composable
-fun SharedTransitionScope.AucardItem(
+fun AucardItem(
 	aucard: Aucard,
 	onClick: (Int) -> Unit,
 	onLongPress: () -> Unit,
 	onFavourited: () -> Unit,
-	scope: AnimatedVisibilityScope,
+	onDragStopped: () -> Unit,
+	animatedVisibilityScope: AnimatedVisibilityScope,
+	dragScope: ReorderableCollectionItemScope,
+	sharedTransitionScope: SharedTransitionScope,
+	interactionSource: MutableInteractionSource,
 	modifier: Modifier = Modifier,
 	isSelectMode: Boolean = false,
-	isSelected: Boolean = false,
+	isSelected: Boolean = false
 ) {
 	val color by animateColorAsState(
 		targetValue = if (isSelected) MaterialTheme.colorScheme.onPrimary else Color.Transparent
@@ -421,6 +526,8 @@ fun SharedTransitionScope.AucardItem(
 		if (isSelected) 1f else 0f
 	)
 	val textColor = remember { calculateContentColor(aucard.color) }
+
+	with(sharedTransitionScope) {
 
 	val contentState = rememberSharedContentState(
 		SharedContentStateKey(
@@ -478,7 +585,7 @@ fun SharedTransitionScope.AucardItem(
 			)
 			.sharedBounds(
 				sharedContentState = if (!isSelectMode) contentState else editContentState,
-				animatedVisibilityScope = scope,
+				animatedVisibilityScope = animatedVisibilityScope,
 				resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
 			)
 	) {
@@ -532,14 +639,14 @@ fun SharedTransitionScope.AucardItem(
 						)
 				) {
 					Icon(
-						painter = painterResource(R.drawable.star_outlined),
+						imageVector = ImageVector.vectorResource(R.drawable.star_outlined),
 						contentDescription = null,
 						tint = Color.White,
 						modifier = Modifier
 							.size(32.dp)
 					)
 					Icon(
-						painter = painterResource(R.drawable.star_outlined),
+						imageVector = ImageVector.vectorResource(R.drawable.star_outlined),
 						contentDescription = null,
 						tint = Color.Black,
 						modifier = Modifier
@@ -554,8 +661,23 @@ fun SharedTransitionScope.AucardItem(
 					)
 
 				}
-
 			}
+			IconButton(
+				onClick = {},
+				modifier = with(dragScope) {
+					Modifier
+						.draggableHandle(
+							onDragStopped = onDragStopped,
+							interactionSource = interactionSource
+						)
+				}
+			) {
+				Icon(
+					imageVector = Icons.Default.Menu,
+					contentDescription = null
+				)
+			}
+
 			Column(
 				verticalArrangement = Arrangement.Center,
 				horizontalAlignment = Alignment.CenterHorizontally,
@@ -575,10 +697,11 @@ fun SharedTransitionScope.AucardItem(
 						.padding(4.dp)
 						.sharedBounds(
 							sharedContentState = if (!isSelectMode) textContentState else editTextContentState,
-							animatedVisibilityScope = scope
+							animatedVisibilityScope = animatedVisibilityScope
 						)
 				)
 			}
 		}
+	}
 	}
 }

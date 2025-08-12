@@ -49,7 +49,8 @@ fun AucardsApp(
 					onAddButtonClicked = { navController.navigate(EditScreen(0)) },
 					onCardEditClicked = { navController.navigate(EditScreen(it)) },
 					onSettingsClicked = { navController.navigate(SettingsScreen) },
-					scope = this
+					animatedVisibilityScope = this,
+					sharedTransitionScope = this@SharedTransitionLayout
 				)
 			}
 			composable<FullscreenCard> {
