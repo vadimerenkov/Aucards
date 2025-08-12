@@ -87,6 +87,9 @@ fun SimpleReorderableLazyVerticalGridScreen(
 					isSelectMode = isSelectMode,
 					isSelected = isSelected,
 					onDragStopped = {
+						list.forEach { card ->
+							card.index = list.indexOf(card)
+						}
 						onDragStopped(list)
 					}
 				)

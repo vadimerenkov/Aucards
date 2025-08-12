@@ -267,8 +267,8 @@ fun ListScreen(
 							onDeselect = { id ->
 								viewModel.deselectId(id)
 							},
-							onDragStopped = { newList ->
-								viewModel.saveAllCards(newList)
+							onDragStopped = { cards ->
+								viewModel.saveAllCards(cards)
 							}
 						)
 					}
@@ -291,8 +291,8 @@ fun ListScreen(
 							onDeselect = { id ->
 								viewModel.deselectId(id)
 							},
-							onDragStopped = { newList ->
-								viewModel.saveAllCards(newList)
+							onDragStopped = { cards ->
+								viewModel.saveAllCards(cards)
 							}
 						)
 					}
@@ -662,20 +662,29 @@ fun AucardItem(
 
 				}
 			}
-			IconButton(
-				onClick = {},
-				modifier = with(dragScope) {
-					Modifier
-						.draggableHandle(
-							onDragStopped = onDragStopped,
-							interactionSource = interactionSource
-						)
-				}
+			this@ElevatedCard.AnimatedVisibility(
+				visible = isSelectMode,
+				enter = scaleIn(),
+				exit = scaleOut(),
+				modifier = Modifier
+					.align(Alignment.TopStart)
+					.zIndex(10f)
 			) {
-				Icon(
-					imageVector = Icons.Default.Menu,
-					contentDescription = null
-				)
+				IconButton(
+					onClick = {},
+					modifier = with(dragScope) {
+						Modifier
+							.draggableHandle(
+								onDragStopped = onDragStopped,
+								interactionSource = interactionSource
+							)
+					}
+				) {
+					Icon(
+						imageVector = Icons.Default.Menu,
+						contentDescription = null
+					)
+				}
 			}
 
 			Column(
