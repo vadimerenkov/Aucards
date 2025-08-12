@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -163,22 +162,16 @@ fun SharedTransitionScope.ListScreen(
 					icon = {
 						Icon(
 							painterResource(R.drawable.grid),
-							contentDescription = null,
-							tint = if (listState.currentPage == 0) {
-								MaterialTheme.colorScheme.onPrimary
-							} else {
-								MaterialTheme.colorScheme.onPrimaryContainer
-							}
+							contentDescription = null
 						)
 					},
 					label = {
 						Text(text = stringResource(R.string.all_cards))
 					},
 					colors = NavigationBarItemDefaults.colors(
-						indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer
-					),
-					modifier = Modifier
-						.weight(0.5f)
+						indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer,
+						selectedIconColor = MaterialTheme.colorScheme.onPrimary
+					)
 				)
 				NavigationBarItem(
 					selected = listState.currentPage == 1,
@@ -186,22 +179,16 @@ fun SharedTransitionScope.ListScreen(
 					icon = {
 						Icon(
 							imageVector = Icons.Outlined.Star,
-							contentDescription = null,
-							tint = if (listState.currentPage == 1) {
-								MaterialTheme.colorScheme.onPrimary
-							} else {
-								MaterialTheme.colorScheme.onPrimaryContainer
-							}
+							contentDescription = null
 						)
 					},
 					label = {
 						Text(text = stringResource(R.string.favourites))
 					},
 					colors = NavigationBarItemDefaults.colors(
-						indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer
-					),
-					modifier = Modifier
-						.weight(0.5f)
+						indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer,
+						selectedIconColor = MaterialTheme.colorScheme.onPrimary
+					)
 				)
 			}
 		},
@@ -220,8 +207,7 @@ fun SharedTransitionScope.ListScreen(
 				},
 				shape = MaterialTheme.shapes.medium,
 				modifier = Modifier
-					.padding(6.dp)
-					.navigationBarsPadding()
+					.padding(16.dp)
 					.sharedBounds(
 						sharedContentState = contentState,
 						animatedVisibilityScope = scope
