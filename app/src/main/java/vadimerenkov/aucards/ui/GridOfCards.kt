@@ -49,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -168,6 +169,9 @@ private fun AucardItem(
 	val textSize by animateFloatAsState(
 		if (isSelected) 1f else 0f
 	)
+	val elevation by animateDpAsState(
+		targetValue = if (isSelected) 0.dp else 8.dp
+	)
 
 
 	with(sharedTransitionScope) {
@@ -208,7 +212,7 @@ private fun AucardItem(
 			colors = CardDefaults.cardColors(
 				containerColor = aucard.color
 			),
-			elevation = CardDefaults.cardElevation(6.dp),
+			elevation = CardDefaults.cardElevation(elevation),
 			modifier = modifier
 				.heightIn(max = 100.dp)
 				.combinedClickable(
@@ -307,8 +311,12 @@ private fun AucardItem(
 				}
 				this@ElevatedCard.AnimatedVisibility(
 					visible = isSelectMode,
-					enter = scaleIn(),
-					exit = scaleOut(),
+					enter = scaleIn(
+						transformOrigin = TransformOrigin(0.4f, 0.5f)
+					),
+					exit = scaleOut(
+						transformOrigin = TransformOrigin(0.4f, 0.5f)
+					),
 					modifier = Modifier
 						.align(Alignment.TopStart)
 						.zIndex(10f)
@@ -342,7 +350,7 @@ private fun AucardItem(
 					Text(
 						text = aucard.text,
 						style = lerp(
-							start = MaterialTheme.typography.titleMedium,
+							start = MaterialTheme.typography.titleLarge,
 							stop = MaterialTheme.typography.titleSmall,
 							fraction = textSize
 						),
