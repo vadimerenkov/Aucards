@@ -7,6 +7,7 @@ package vadimerenkov.aucards.screens
 import android.content.pm.ActivityInfo
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -30,6 +31,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -42,6 +44,7 @@ import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -91,7 +94,7 @@ private const val TAG = "ListScreen"
 fun ListScreen(
 	onCardClicked: (Int) -> Unit,
 	onCardEditClicked: (Int) -> Unit,
-	onAddButtonClicked: () -> Unit,
+	onAddButtonClicked: (Int) -> Unit,
 	onSettingsClicked: () -> Unit,
 	animatedVisibilityScope: AnimatedVisibilityScope,
 	sharedTransitionScope: SharedTransitionScope,
@@ -206,7 +209,7 @@ fun ListScreen(
 				)
 				FloatingActionButton(
 					onClick = {
-						onAddButtonClicked()
+						onAddButtonClicked(listState.list.size + 1)
 						viewModel.exitSelectMode()
 					},
 					shape = MaterialTheme.shapes.medium,
@@ -248,8 +251,57 @@ fun ListScreen(
 			) { page ->
 				when (page) {
 					0 -> {
+						AnimatedContent(targetState = listState.isLoading) {
+							if (it) {
+								CircularProgressIndicator(
+									modifier = Modifier
+										.fillMaxSize()
+										.wrapContentSize()
+										.align(Alignment.Center)
+								)
+							} else if (listState.list.isEmpty()) {
+								Box(
+									contentAlignment = Alignment.Center,
+									modifier = Modifier
+										.fillMaxSize()
+								) {
+									Text(
+										text = stringResource(R.string.empty_list_prompt),
+										style = MaterialTheme.typography.bodyLarge,
+										textAlign = TextAlign.Center,
+										color = Color.Gray
+									)
+								}
+							} else {
+								SimpleReorderableLazyVerticalGridScreen(
+									items = listState.list,
+									selectedList = listState.selectedList,
+									sharedTransitionScope = sharedTransitionScope,
+									animatedVisibilityScope = animatedVisibilityScope,
+									onCardClick = onCardClicked,
+									onFavourited = {
+										viewModel.markAsFavourite(it)
+									},
+									onLongPress = {
+										viewModel.enterSelectMode(it)
+									},
+									isSelectMode = listState.isSelectMode,
+									onSelect = { id ->
+										viewModel.selectId(id)
+									},
+									onDeselect = { id ->
+										viewModel.deselectId(id)
+									},
+									onDragStopped = { cards ->
+										viewModel.saveAllCards(cards)
+									}
+								)
+							}
+						}
+					}
+					1 -> {
 						SimpleReorderableLazyVerticalGridScreen(
-							items = listState.list,
+							items = listState.favouritesList,
 							selectedList = listState.selectedList,
 							sharedTransitionScope = sharedTransitionScope,
 							animatedVisibilityScope = animatedVisibilityScope,
@@ -259,30 +311,6 @@ fun ListScreen(
 							},
 							onLongPress = {
 								viewModel.enterSelectMode(it)
-							},
-							isSelectMode = listState.isSelectMode,
-							onSelect = { id ->
-								viewModel.selectId(id)
-							},
-							onDeselect = { id ->
-								viewModel.deselectId(id)
-							},
-							onDragStopped = { cards ->
-								viewModel.saveAllCards(cards)
-							}
-						)
-					}
-					1 -> {
-						SimpleReorderableLazyVerticalGridScreen(
-							items = listState.favouritesList,
-							selectedList = listState.selectedList,
-							sharedTransitionScope = sharedTransitionScope,
-							animatedVisibilityScope = animatedVisibilityScope,
-							onCardClick = onCardClicked,
-							onFavourited = {},
-							onLongPress = {
-								viewModel.enterSelectMode(it)
-								viewModel.selectId(it)
 							},
 							isSelectMode = listState.isSelectMode,
 							onSelect = { id ->

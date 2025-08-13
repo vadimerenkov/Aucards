@@ -63,8 +63,10 @@ fun SharedTransitionScope.EditScreen(
 	isDarkTheme: Boolean,
 	onBackClicked: () -> Unit,
 	scope: AnimatedVisibilityScope,
+	id: Int,
+	index: Int?,
 	modifier: Modifier = Modifier,
-	viewModel: CardViewModel = viewModel(factory = ViewModelFactory.Factory(isDarkTheme))
+	viewModel: CardViewModel = viewModel(factory = ViewModelFactory.Factory(isDarkTheme, id, index))
 ) {
 	val state by viewModel.cardState.collectAsStateWithLifecycle()
 

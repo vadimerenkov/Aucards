@@ -2,10 +2,8 @@ package vadimerenkov.aucards.ui
 
 import androidx.compose.ui.graphics.Color
 import androidx.core.graphics.toColorInt
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
@@ -15,7 +13,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import vadimerenkov.aucards.DispatchersProvider
-import vadimerenkov.aucards.FullscreenCard
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardDao
 import vadimerenkov.aucards.settings.Settings
@@ -23,15 +20,14 @@ import vadimerenkov.aucards.settings.Settings
 private const val TAG = "CardViewModel"
 
 class CardViewModel(
-	savedStateHandle: SavedStateHandle,
 	val settings: Settings,
 	private val aucardDao: AucardDao,
 	private val dispatchers: DispatchersProvider,
-	isDarkTheme: Boolean
+	isDarkTheme: Boolean,
+	private val id: Int,
+	private val index: Int?
 ): ViewModel() {
 
-	private val route = savedStateHandle.toRoute<FullscreenCard>()
-	private val id: Int = route.id
 	val color = if (isDarkTheme) Color.Black else Color.White
 
 	private var card_state = MutableStateFlow(CardState(
@@ -82,6 +78,9 @@ class CardViewModel(
 	}
 
 	fun saveAucard(aucard: Aucard) {
+		if (index != null) {
+			aucard.index = index
+		}
 		viewModelScope.launch(dispatchers.main) {
 			aucardDao.saveAucard(aucard)
 		}

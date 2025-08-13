@@ -1,7 +1,6 @@
 package vadimerenkov.aucards
 
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -10,15 +9,22 @@ import vadimerenkov.aucards.ui.ListViewModel
 import vadimerenkov.aucards.ui.SettingsViewModel
 
 object ViewModelFactory {
-	fun Factory(isDarkTheme: Boolean = false) = viewModelFactory {
+	fun Factory(
+		isDarkTheme: Boolean = false,
+		id: Int = 0,
+		index: Int? = null
+	) = viewModelFactory {
 		initializer {
 			ListViewModel(app().database.aucardDao(), DefaultDispatchers())
 		}
 		initializer {
 			CardViewModel(
-				this.createSavedStateHandle(), app().settings, app().database.aucardDao(),
+				settings = app().settings,
+				aucardDao = app().database.aucardDao(),
 				dispatchers = DefaultDispatchers(),
-				isDarkTheme = isDarkTheme
+				isDarkTheme = isDarkTheme,
+				id = id,
+				index = index
 			)
 		}
 		initializer {

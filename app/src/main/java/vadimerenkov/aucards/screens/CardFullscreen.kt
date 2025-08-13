@@ -48,8 +48,9 @@ private const val TAG = "CardFullscreen"
 fun SharedTransitionScope.CardFullscreen(
 	onBackClicked: () -> Unit,
 	scope: AnimatedVisibilityScope,
+	id: Int,
 	modifier: Modifier = Modifier,
-	viewModel: CardViewModel = viewModel(factory = ViewModelFactory.Factory())
+	viewModel: CardViewModel = viewModel(factory = ViewModelFactory.Factory(id = id))
 ) {
 	val state by viewModel.cardState.collectAsStateWithLifecycle(
 		context = Dispatchers.Main.immediate
