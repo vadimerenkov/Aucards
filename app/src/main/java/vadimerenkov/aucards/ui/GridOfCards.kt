@@ -14,7 +14,6 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +24,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -33,14 +31,15 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +47,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -92,9 +92,9 @@ fun GridOfCards(
 		columns = GridCells.Adaptive(minSize = 150.dp),
 		modifier = Modifier.fillMaxSize(),
 		state = lazyGridState,
-		contentPadding = PaddingValues(8.dp),
-		verticalArrangement = Arrangement.spacedBy(8.dp),
-		horizontalArrangement = Arrangement.spacedBy(8.dp),
+		contentPadding = PaddingValues(12.dp),
+		verticalArrangement = Arrangement.spacedBy(12.dp),
+		horizontalArrangement = Arrangement.spacedBy(12.dp),
 	) {
 		itemsIndexed(list, key = { _, item -> item.id }) { index, item ->
 			ReorderableItem(reorderableLazyGridState, item.id) {
@@ -143,7 +143,7 @@ private fun AucardItem(
 	aucard: Aucard,
 	onClick: (Int) -> Unit,
 	onLongPress: () -> Unit,
-	onFavourited: () -> Unit,
+	onFavourited: (Boolean) -> Unit,
 	onDragStopped: () -> Unit,
 	animatedVisibilityScope: AnimatedVisibilityScope,
 	dragScope: ReorderableCollectionItemScope,
@@ -154,17 +154,17 @@ private fun AucardItem(
 	isSelected: Boolean = false
 ) {
 	val color by animateColorAsState(
-		targetValue = if (isSelected) MaterialTheme.colorScheme.onPrimary else Color.Transparent
+		targetValue = if (isSelected) Color.White else Color.Transparent
 	)
-	val bg_color by animateColorAsState(
-		targetValue = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else Color.Transparent
+	val overlayColor by animateColorAsState(
+		targetValue = if (isSelectMode) Color.Black.copy(alpha = 0.3f) else Color.Transparent
+	)
+	val favColor by animateColorAsState(
+		targetValue = if (aucard.isFavourite) Color.Red else Color.White
 	)
 	val textColor = remember { calculateContentColor(aucard.color) }
-	val fav_color by animateColorAsState(
-		targetValue = if (aucard.isFavourite) textColor else Color.Transparent
-	)
 	val border by animateDpAsState(
-		targetValue = if (isSelected) 3.dp else 0.dp
+		targetValue = if (isSelected) 4.dp else 0.dp
 	)
 	val textSize by animateFloatAsState(
 		if (isSelected) 1f else 0f
@@ -238,6 +238,21 @@ private fun AucardItem(
 		) {
 			Box {
 				this@ElevatedCard.AnimatedVisibility(
+					visible = true
+				) {
+					Box(
+						modifier = Modifier
+							.fillMaxSize()
+							.background(
+								brush = Brush.horizontalGradient(
+									listOf(
+										Color.Transparent, overlayColor
+									)
+								)
+							)
+					)
+				}
+				this@ElevatedCard.AnimatedVisibility(
 					visible = isSelectMode,
 					enter = scaleIn(),
 					exit = scaleOut(),
@@ -250,20 +265,10 @@ private fun AucardItem(
 						contentDescription = null,
 						tint = color,
 						modifier = Modifier
-							.padding(8.dp)
+							.padding(12.dp)
 							.border(
-								width = 2.dp,
+								width = 3.dp,
 								color = Color.White,
-								shape = CircleShape
-							)
-							.padding(2.dp)
-							.border(
-								width = 2.dp,
-								color = Color.Black,
-								shape = CircleShape
-							)
-							.background(
-								color = bg_color,
 								shape = CircleShape
 							)
 					)
@@ -276,37 +281,15 @@ private fun AucardItem(
 						.align(Alignment.BottomEnd)
 						.zIndex(10f)
 				) {
-					Box(
-						contentAlignment = Alignment.Center,
-						modifier = Modifier
-							.minimumInteractiveComponentSize()
-							.clickable(
-								onClick = onFavourited,
-								onClickLabel = stringResource(R.string.mark_as_favourite)
-							)
-					) {
+					IconToggleButton(
+						checked = aucard.isFavourite,
+						onCheckedChange = onFavourited
+					)  {
 						Icon(
-							imageVector = ImageVector.vectorResource(R.drawable.star_outlined),
-							contentDescription = null,
-							tint = Color.White,
-							modifier = Modifier
-								.size(32.dp)
+							imageVector = if (aucard.isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+							contentDescription = stringResource(R.string.mark_as_favourite),
+							tint = favColor
 						)
-						Icon(
-							imageVector = ImageVector.vectorResource(R.drawable.star_outlined),
-							contentDescription = null,
-							tint = Color.Black,
-							modifier = Modifier
-								.size(24.dp)
-						)
-						Icon(
-							imageVector = Icons.Default.Star,
-							contentDescription = null,
-							tint = fav_color,
-							modifier = Modifier
-								.size(24.dp)
-						)
-
 					}
 				}
 				this@ElevatedCard.AnimatedVisibility(
@@ -334,12 +317,13 @@ private fun AucardItem(
 						Icon(
 							imageVector = ImageVector.vectorResource(R.drawable.drag),
 							contentDescription = null,
-							tint = textColor.copy(alpha = 0.4f),
+							tint = textColor.copy(alpha = 0.5f),
 							modifier = Modifier
 								.offset(x = (-6).dp)
 						)
 					}
 				}
+
 
 				Column(
 					verticalArrangement = Arrangement.Center,
