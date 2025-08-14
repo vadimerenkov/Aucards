@@ -334,7 +334,7 @@ private fun AucardItem(
 						Icon(
 							imageVector = ImageVector.vectorResource(R.drawable.drag),
 							contentDescription = null,
-							tint = textColor,
+							tint = textColor.copy(alpha = 0.4f),
 							modifier = Modifier
 								.offset(x = (-6).dp)
 						)

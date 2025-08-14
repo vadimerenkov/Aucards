@@ -19,9 +19,7 @@ fun SetInitialState(
 			dao.getAllCards().first().forEach { card ->
 				dao.deleteById(card.id)
 			}
-			start_list.forEach { card ->
-				dao.saveAucard(card)
-			}
+			dao.saveAllCards(start_list)
 		}
 	}
 }
