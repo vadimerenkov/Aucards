@@ -350,7 +350,7 @@ private fun AucardItem(
 					Text(
 						text = aucard.text,
 						style = lerp(
-							start = MaterialTheme.typography.titleLarge,
+							start = MaterialTheme.typography.titleMedium,
 							stop = MaterialTheme.typography.titleSmall,
 							fraction = textSize
 						),
