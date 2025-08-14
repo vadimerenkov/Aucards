@@ -12,5 +12,7 @@ data class Aucard(
 	@ColumnInfo(defaultValue = "false")
 	val isFavourite: Boolean = false,
 	val description: String? = null,
-	val color: Color = Color.White
+	val color: Color = Color.White,
+	@ColumnInfo(defaultValue = "0")
+	var index: Int = 0
 )

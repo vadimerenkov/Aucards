@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
 import vadimerenkov.aucards.screens.CardFullscreen
 import vadimerenkov.aucards.screens.EditScreen
@@ -29,7 +30,8 @@ data class FullscreenCard(
 
 @Serializable
 data class EditScreen(
-	val id: Int
+	val id: Int,
+	val index: Int? = null
 )
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -46,23 +48,29 @@ fun AucardsApp(
 			composable<ListScreen> {
 				ListScreen(
 					onCardClicked = { navController.navigate(FullscreenCard(it)) },
-					onAddButtonClicked = { navController.navigate(EditScreen(0)) },
+					onAddButtonClicked = { navController.navigate(EditScreen(0, index = it)) },
 					onCardEditClicked = { navController.navigate(EditScreen(it)) },
 					onSettingsClicked = { navController.navigate(SettingsScreen) },
-					scope = this
+					animatedVisibilityScope = this,
+					sharedTransitionScope = this@SharedTransitionLayout
 				)
 			}
 			composable<FullscreenCard> {
+				val route = it.toRoute<FullscreenCard>()
 				CardFullscreen(
 					onBackClicked = { navController.navigateUp() },
-					scope = this
+					scope = this,
+					id = route.id
 				)
 			}
 			composable<EditScreen> {
+				val route = it.toRoute<EditScreen>()
 				EditScreen(
 					isDarkTheme = isDarkTheme,
 					onBackClicked = { navController.navigateUp() },
-					scope = this
+					scope = this,
+					id = route.id,
+					index = route.index
 				)
 			}
 			composable<SettingsScreen>(

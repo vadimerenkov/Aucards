@@ -179,6 +179,8 @@ class SettingsViewModel(
 	fun importDatabase(uri: Uri, context: Context) {
 		viewModelScope.launch {
 			try {
+				var current_index = database.aucardDao().getAllCards().first().size
+
 				val file = context.contentResolver.openInputStream(uri)
 				val temp = File.createTempFile("asdf", "qwer")
 				val stream = temp.outputStream()
@@ -203,11 +205,13 @@ class SettingsViewModel(
 								text = text_value,
 								color = Color(color_value),
 								description = desc_value,
-								isFavourite = fav_value.toBoolean()
+								isFavourite = fav_value.toBoolean(),
+								index = current_index + 1
 							)
 
 							this@SettingsViewModel.database.aucardDao().saveAucard(card)
 							Log.d(TAG, "We made a new card: $card")
+							current_index++
 
 						} while (it.moveToNext())
 					}

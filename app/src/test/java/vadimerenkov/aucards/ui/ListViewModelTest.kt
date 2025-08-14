@@ -48,7 +48,7 @@ class ListViewModelTest {
 			}
 		}
 		addTwoCards()
-		viewModel.EnterSelectMode(card1.id)
+		viewModel.enterSelectMode(card1.id)
 	}
 
 	@Test
@@ -62,8 +62,8 @@ class ListViewModelTest {
 			}
 		}
 		addTwoCards()
-		viewModel.EnterSelectMode(card1.id)
-		viewModel.SelectId(card2.id)
+		viewModel.enterSelectMode(card1.id)
+		viewModel.selectId(card2.id)
 	}
 
 	@Test
@@ -80,8 +80,8 @@ class ListViewModelTest {
 			}
 		}
 
-		viewModel.EnterSelectMode(card1.id)
-		viewModel.DeselectId(card1.id)
+		viewModel.enterSelectMode(card1.id)
+		viewModel.deselectId(card1.id)
 	}
 
 	@Test
@@ -97,8 +97,8 @@ class ListViewModelTest {
 			}
 		}
 		addTwoCards()
-		viewModel.EnterSelectMode(card1.id)
-		viewModel.ExitSelectMode()
+		viewModel.enterSelectMode(card1.id)
+		viewModel.exitSelectMode()
 	}
 
 	@Test
@@ -113,7 +113,7 @@ class ListViewModelTest {
 			}
 		}
 		addTwoCards()
-		viewModel.EnterSelectMode(card1.id)
-		viewModel.DeleteSelected()
+		viewModel.enterSelectMode(card1.id)
+		viewModel.deleteSelected()
 	}
 }

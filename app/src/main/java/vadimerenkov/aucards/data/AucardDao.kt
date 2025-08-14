@@ -2,7 +2,6 @@ package vadimerenkov.aucards.data
 
 import androidx.room.Dao
 import androidx.room.Query
-import androidx.room.Update
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
@@ -11,7 +10,10 @@ interface AucardDao {
 	@Upsert
 	suspend fun saveAucard(aucard: Aucard)
 
-	@Query("SELECT * FROM aucard")
+	@Upsert
+	suspend fun saveAllCards(cards: List<Aucard>)
+
+	@Query("SELECT * FROM aucard ORDER BY `index`")
 	fun getAllCards(): Flow<List<Aucard>>
 
 	@Query("SELECT * FROM aucard WHERE id = :id")
@@ -20,6 +22,6 @@ interface AucardDao {
 	@Query("DELETE FROM aucard WHERE id = :id")
 	suspend fun deleteById(id: Int)
 
-	@Query("SELECT * FROM aucard WHERE isFavourite = 1")
+	@Query("SELECT * FROM aucard WHERE isFavourite = 1 ORDER BY `index`")
 	fun getFavouriteCards(): Flow<List<Aucard>>
 }

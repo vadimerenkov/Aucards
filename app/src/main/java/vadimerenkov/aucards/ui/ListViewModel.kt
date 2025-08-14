@@ -1,5 +1,6 @@
 package vadimerenkov.aucards.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +14,8 @@ import kotlinx.coroutines.launch
 import vadimerenkov.aucards.DispatchersProvider
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardDao
+
+private const val TAG = "ListViewModel"
 
 class ListViewModel(
 	private val aucardDao: AucardDao,
@@ -40,41 +43,48 @@ class ListViewModel(
 			initialValue = list_state.value
 		)
 
-	fun MarkAsFavourite(id: Int) {
+	fun markAsFavourite(id: Int) {
 		val card = list_state.value.list.find { it -> it.id == id }
 		if (card != null) {
-			SaveAucard(card.copy(isFavourite = !card.isFavourite))
+			saveAucard(card.copy(isFavourite = !card.isFavourite))
 		}
 	}
 
-	private fun SaveAucard(aucard: Aucard) {
+	private fun saveAucard(aucard: Aucard) {
 		viewModelScope.launch(dispatchers.main) {
 			aucardDao.saveAucard(aucard)
 		}
 	}
 
-	fun TurnPage(number: Int) {
+	fun saveAllCards(newList: List<Aucard>) {
+		viewModelScope.launch {
+			aucardDao.saveAllCards(newList)
+		}
+		Log.i(TAG, "Saved new cards: $newList")
+	}
+
+	fun turnPage(number: Int) {
 		list_state.update { it.copy(currentPage = number) }
 	}
 
-	fun EnterSelectMode(id: Int) {
+	fun enterSelectMode(id: Int) {
 		list_state.update { it.copy(isSelectMode = true) }
-		SelectId(id)
+		selectId(id)
 	}
 
-	fun ExitSelectMode() {
+	fun exitSelectMode() {
 		list_state.update { it.copy(isSelectMode = false, selectedList = emptyList()) }
 	}
 
-	fun SelectId(id: Int) {
+	fun selectId(id: Int) {
 		list_state.update { it.copy(selectedList = it.selectedList + id) }
 	}
 
-	fun DeselectId(id: Int) {
+	fun deselectId(id: Int) {
 		list_state.update { it.copy(selectedList = it.selectedList - id) }
 	}
 
-	fun DeleteSelected() {
+	fun deleteSelected() {
 		val list = list_state.value.selectedList
 		//Log.d("delete items", list.toString())
 			list.forEach { id ->
@@ -83,7 +93,7 @@ class ListViewModel(
 				}
 				//Log.d("Delete items (view model scope)", "deleted $id")
 			}
-		ExitSelectMode()
+		exitSelectMode()
 		}
 }
 
