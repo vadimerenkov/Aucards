@@ -143,6 +143,7 @@ fun SettingsScreen(
 			modifier = modifier
 				.padding(innerPadding)
 				.padding(horizontal = 16.dp)
+				.padding(top = 8.dp)
 				.fillMaxSize()
 		) {
 			Column(
