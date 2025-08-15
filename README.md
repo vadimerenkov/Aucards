@@ -6,7 +6,7 @@ It primarily aims to help people with special needs to quickly communicate their
 
 <div align="center">
 
-[<img height="90" alt="Get it on IzzyOnDroid" src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" />](https://apt.izzysoft.de/packages/vadimerenkov.aucards)
+[<img height="90" alt="Get it on Google Play" src="https://github.com/user-attachments/assets/11da011f-27e6-4163-b0e1-675d1f6709b2" />](https://play.google.com/store/apps/details?id=vadimerenkov.aucards)  [<img height="80" alt="Get it on IzzyOnDroid" src="https://github.com/user-attachments/assets/62f19e66-1abb-4762-a737-6cca5cef0dec" />](https://apt.izzysoft.de/packages/vadimerenkov.aucards)
 
 </div>
 
