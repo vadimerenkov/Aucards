@@ -5,18 +5,16 @@ package vadimerenkov.aucards.screens
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
-import androidx.annotation.DrawableRes
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -144,7 +142,7 @@ fun SettingsScreen(
 			contentAlignment = Alignment.TopStart,
 			modifier = modifier
 				.padding(innerPadding)
-				.padding(16.dp)
+				.padding(horizontal = 16.dp)
 				.fillMaxSize()
 		) {
 			Column(
@@ -235,9 +233,6 @@ fun SettingsScreen(
 							style = MaterialTheme.typography.bodyMedium,
 							modifier = Modifier
 								.padding(top = 8.dp)
-								.align(Alignment.End)
-							style = MaterialTheme.typography.bodyMedium,
-							modifier = Modifier
 								.align(Alignment.End)
 						)
 					}
@@ -330,7 +325,7 @@ private fun DropdownSetting(
 	) {
 		Row(
 			modifier = Modifier
-				.weight(1f)
+				.weight(2f)
 		) {
 			icon?.let {
 				Icon(
@@ -338,7 +333,7 @@ private fun DropdownSetting(
 					contentDescription = null,
 					tint = MaterialTheme.colorScheme.primary
 				)
-				Spacer(modifier = Modifier.width(6.dp))
+				Spacer(modifier = Modifier.width(8.dp))
 			}
 			Text(
 				text = description,
@@ -349,7 +344,7 @@ private fun DropdownSetting(
 			expanded = expanded,
 			onExpandedChange = { expanded = it },
 			modifier = Modifier
-				.weight(1f)
+				.weight(3f)
 		) {
 			TextField(
 				value = chosenOption,
@@ -394,7 +389,9 @@ private fun CheckboxSetting(
 	isChecked: Boolean = false
 ) {
 	Row(
+		verticalAlignment = Alignment.CenterVertically,
 		modifier = modifier
+			.fillMaxWidth()
 			.clickable(onClick = {
 				onCheckedChange(!isChecked)
 			})
@@ -403,13 +400,12 @@ private fun CheckboxSetting(
 			text = description,
 			style = MaterialTheme.typography.bodyLarge,
 			modifier = Modifier
-				.weight(1f, false)
+				.weight(1f)
 		)
 		Checkbox(
 			checked = isChecked,
 			onCheckedChange = onCheckedChange,
 			modifier = Modifier
-
 		)
 	}
 }

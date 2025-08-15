@@ -5,7 +5,7 @@ Aucards is a free and open-source app which allows you to create short messages 
 It primarily aims to help people with special needs to quickly communicate their feelings, their requests or inform others of their conditions.
 
 <div align="center">
-  
+
 [<img height="90" alt="Get it on IzzyOnDroid" src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" />](https://apt.izzysoft.de/packages/vadimerenkov.aucards)
 
 </div>
@@ -47,6 +47,7 @@ It primarily aims to help people with special needs to quickly communicate their
 ## Used libraries
 
 - [GitHub - skydoves/colorpicker-compose: 🎨 Kotlin Multiplatform color picker library for getting colors from any images by tapping on the desired color.](https://github.com/skydoves/colorpicker-compose)
+- [GitHub - Calvin-LL/Reorderable: Reorder items in Lists and Grids in Jetpack Compose and Compose Multiplatform with drag and drop.](https://github.com/Calvin-LL/Reorderable)
 
 ## License
 
