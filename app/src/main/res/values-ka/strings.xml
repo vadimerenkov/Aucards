@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_card">ახალი ბარათის დამატება</string>
+    <string name="save">შენახვა</string>
+    <string name="empty_list_prompt">დაამატეთ თქვენი პირველი ბარათი!</string>
+    <string name="your_text">თქვენი ტექსტი…</string>
+    <string name="description">აღწერა…</string>
+    <string name="choose_color">ფერის არჩევა</string>
+    <string name="delete">ბარათის წაშლა</string>
+    <string name="edit">ბარათის რედაქტირება</string>
+    <string name="open_settings">პარამეტრების გახსნა</string>
+    <string name="settings">პარამეტრები</string>
+    <string name="go_back">დაბრუნება</string>
+    <string name="light">ღია</string>
+    <string name="dark">მუქი</string>
+    <string name="device">მოწყობილობა</string>
+    <string name="brightness">ბარათის გახსნისას ეკრანის მაქსიმალური სიკაშკაშის ჩართვა</string>
+    <string name="theme">თემა</string>
+    <string name="language">ენა</string>
+    <string name="source_code">საწყისი კოდი: </string>
+    <string name="selected_number">არჩეულია: %s</string>
+    <string name="delete_button">წაშლა</string>
+    <string name="cancel">გაუქმება</string>
+    <string name="translator">თარგმანი: Elene O.</string>
+    <string name="landscape">ბარათის გახსნისას ჰორიზონტალურ რეჟიმში გადასვლა</string>
+    <string name="all_cards">ყველა ბარათი</string>
+    <string name="favourites">რჩეულები</string>
+    <string name="mark_as_favourite">რჩეულებში დამატება</string>
+    <string name="add_to_fav_prompt">დაამატეთ ნებისმიერი ბარათი რჩეულებში, რომ იხილოთ აქ!</string>
+    <string name="brightness_permission">ამ ფუნქციის გამოსაყენებლად აპლიკაციას სჭირდება სისტემური პარამეტრების შეცვლის ნებართვა.</string>
+    <string name="palette">პალიტრა</string>
+    <string name="custom_color">საკუთარი ფერი</string>
+    <plurals name="delete_confirmation">
+        <item quantity="one">დარწმუნებული ხართ, რომ გსურთ ამ ბარათის წაშლა?</item>
+        <item quantity="other">დარწმუნებული ხართ, რომ გსურთ %s ბარათის წაშლა?</item>
+    </plurals>
+</resources>

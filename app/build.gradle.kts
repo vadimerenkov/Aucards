@@ -57,13 +57,18 @@ android {
 			enableSplit = false
 		}
 	}
+	dependenciesInfo {
+		// Disables dependency metadata when building APKs (for IzzyOnDroid/F-Droid)
+		includeInApk = false
+		// Disables dependency metadata when building Android App Bundles (for Google Play)
+		includeInBundle = false
+	}
 }
 
 dependencies {
 	implementation(libs.androidx.lifecycle.viewmodel.compose)
 	implementation(libs.androidx.datastore)
 	implementation(libs.androidx.datastore.preferences)
-
 	implementation(libs.androidx.core.ktx)
 	implementation(libs.androidx.lifecycle.runtime.ktx)
 	implementation(libs.androidx.activity.compose)
@@ -72,17 +77,14 @@ dependencies {
 	implementation(libs.androidx.ui.graphics)
 	implementation(libs.androidx.ui.tooling.preview)
 	implementation(libs.androidx.material3)
-
-	//Room
-	implementation(libs.androidx.room.runtime)
 	implementation(libs.androidx.appcompat)
 	implementation(libs.androidx.fragment)
 	implementation(libs.activity)
 	implementation(libs.androidx.activity.ktx)
-	implementation(libs.androidx.navigation.testing)
 	implementation(libs.androidx.lifecycle.viewmodel.savedstate)
 
-
+	//Room
+	implementation(libs.androidx.room.runtime)
 	ksp(libs.androidx.room.compiler)
 
 	//Navigation
@@ -102,6 +104,7 @@ dependencies {
 	testImplementation(libs.kotlinx.coroutines.test)
 	testImplementation(libs.androidx.lifecycle.viewmodel.testing)
 	testImplementation(libs.androidx.ui.test.junit4)
+	testImplementation(libs.androidx.navigation.testing)
 
 	androidTestImplementation(libs.androidx.junit)
 	androidTestImplementation(libs.androidx.espresso.core)

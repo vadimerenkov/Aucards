@@ -20,7 +20,8 @@ enum class Language(
 ) {
 	ENGLISH(R.string.english, "en", null),
 	RUSSIAN(R.string.russian, "ru", null),
-	UKRAINIAN(R.string.ukrainian, "uk")
+	UKRAINIAN(R.string.ukrainian, "uk"),
+	GEORGIAN(R.string.georgian, "ka")
 }
 
 enum class Theme(
@@ -34,14 +35,6 @@ enum class Theme(
 class Settings(
 	private val dataStore: DataStore<Preferences>
 ) {
-
-	/*
-	fun hasPermission(): Boolean {
-		return Settings.System.canWrite(context)
-	}
-	 */
-
-
 	val settingsFlow = dataStore.data
 	val themeSetting = dataStore.data
 		.map { settings ->

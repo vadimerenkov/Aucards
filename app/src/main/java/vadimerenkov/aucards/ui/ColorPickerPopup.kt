@@ -71,13 +71,23 @@ fun ColorPickerPopup(
 				selected = selectedTab == 0,
 				onClick = { selectedTab = 0 }
 			) {
-				Text(stringResource(R.string.palette))
+				Text(
+					text = stringResource(R.string.palette),
+					textAlign = TextAlign.Center,
+					modifier = Modifier
+						.padding(8.dp)
+				)
 			}
 			Tab(
 				selected = selectedTab == 1,
 				onClick = { selectedTab = 1 }
 			) {
-				Text(stringResource(R.string.custom_color))
+				Text(
+					text = stringResource(R.string.custom_color),
+					textAlign = TextAlign.Center,
+					modifier = Modifier
+						.padding(8.dp)
+				)
 			}
 		}
 
