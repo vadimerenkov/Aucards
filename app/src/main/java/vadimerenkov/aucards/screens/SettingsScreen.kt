@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -184,6 +183,7 @@ fun SettingsScreen(
 					)
 					DropdownSetting(
 						options = Theme.entries.map { it.uiText },
+						icon = R.drawable.theme_mode,
 						description = stringResource(R.string.theme),
 						onOptionChosen = { viewModel.saveThemeSetting(it) },
 						chosenOption = stringResource(state.theme.uiText)
@@ -211,7 +211,6 @@ fun SettingsScreen(
 					horizontalAlignment = Alignment.CenterHorizontally,
 					modifier = Modifier
 						.padding(12.dp)
-						.navigationBarsPadding()
 						.fillMaxWidth()
 				) {
 					val handler = LocalUriHandler.current
@@ -244,6 +243,14 @@ fun SettingsScreen(
 							)
 						}
 					}
+					Spacer(modifier = Modifier.height(48.dp))
+					Text(
+						text = "logo: Olga Prilutskaia",
+						style = MaterialTheme.typography.bodyLarge,
+						textAlign = TextAlign.Center,
+						modifier = Modifier
+							.padding(8.dp)
+					)
 				}
 			}
 		}
