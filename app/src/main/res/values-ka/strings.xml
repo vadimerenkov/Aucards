@@ -30,6 +30,8 @@
     <string name="brightness_permission">ამ ფუნქციის გამოსაყენებლად აპლიკაციას სჭირდება სისტემური პარამეტრების შეცვლის ნებართვა.</string>
     <string name="palette">პალიტრა</string>
     <string name="custom_color">საკუთარი ფერი</string>
+    <string name="import_cards">ბარათების იმპორტი</string>
+    <string name="export">ბარათების ექსპორტი</string>
     <plurals name="delete_confirmation">
         <item quantity="one">დარწმუნებული ხართ, რომ გსურთ ამ ბარათის წაშლა?</item>
         <item quantity="other">დარწმუნებული ხართ, რომ გსურთ %s ბარათის წაშლა?</item>
