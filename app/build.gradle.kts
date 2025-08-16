@@ -9,12 +9,12 @@ plugins {
 
 android {
 	namespace = "vadimerenkov.aucards"
-	compileSdk = 35
+	compileSdk = 36
 
 	defaultConfig {
 		applicationId = "vadimerenkov.aucards"
 		minSdk = 26
-		targetSdk = 35
+		targetSdk = 36
 		versionCode = 5
 		versionName = "2.0.0"
 
