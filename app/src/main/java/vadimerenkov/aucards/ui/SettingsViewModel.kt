@@ -160,19 +160,19 @@ class SettingsViewModel(
 	fun exportDatabase(uri: Uri, context: Context) {
 		viewModelScope.launch {
 			try {
-				val tmp = File.createTempFile("aucards_export", ".db", context.cacheDir)
+				val temp = File.createTempFile("aucards_export", ".db", context.cacheDir)
 				
 				val db = database.openHelper.writableDatabase
-				db.execSQL("VACUUM INTO '${tmp.absolutePath}'")
+				db.execSQL("VACUUM INTO '${temp.absolutePath}'")
 
 				context.contentResolver.openOutputStream(uri)?.use { output ->
-					tmp.inputStream().use { input ->
+					temp.inputStream().use { input ->
 						input.copyTo(output)
 					}
 				}
 
-				Log.i(TAG, "Database path is: ${tmp.path}")
-				tmp.delete()
+				Log.i(TAG, "Database path is: ${temp.path}")
+				temp.delete()
 			} catch (e: Exception) {
 				Log.e(TAG, "Export database error: $e")
 			}
