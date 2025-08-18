@@ -160,16 +160,19 @@ class SettingsViewModel(
 	fun exportDatabase(uri: Uri, context: Context) {
 		viewModelScope.launch {
 			try {
-				database.openHelper.setWriteAheadLoggingEnabled(false)
+				val tmp = File.createTempFile("aucards_export", ".db", context.cacheDir)
+				
+				val db = database.openHelper.writableDatabase
+				db.execSQL("VACUUM INTO '${tmp.absolutePath}'")
 
-				val currentDb = context.getDatabasePath(AucardsDatabase.NAME)
-				val file = context.contentResolver.openOutputStream(uri)
-				val currentBytes = currentDb.readBytes()
-				file?.write(currentBytes)
-				file?.close()
+				context.contentResolver.openOutputStream(uri)?.use { output ->
+					tmp.inputStream().use { input ->
+						input.copyTo(output)
+					}
+				}
 
-				Log.i(TAG, "Database path is ${database.openHelper.readableDatabase.path}")
-				database.openHelper.setWriteAheadLoggingEnabled(true)
+				Log.i(TAG, "Database path is: ${tmp.path}")
+				tmp.delete()
 			} catch (e: Exception) {
 				Log.e(TAG, "Export database error: $e")
 			}
