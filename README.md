@@ -1,10 +1,11 @@
-# Aucards
+<div align="center">
+
+<img height="200" alt="logotype" src="https://github.com/user-attachments/assets/3d20bf91-1144-4e6b-8031-00efefb54352" />
 
 Aucards is a free and open-source app which allows you to create short messages for quick access on your phone or tablet.
-
 It primarily aims to help people with special needs to quickly communicate their feelings, their requests or inform others of their conditions.
 
-<div align="center">
+
 
 [<img height="90" alt="Get it on Google Play" src="https://github.com/user-attachments/assets/11da011f-27e6-4163-b0e1-675d1f6709b2" />](https://play.google.com/store/apps/details?id=vadimerenkov.aucards)  [<img height="80" alt="Get it on IzzyOnDroid" src="https://github.com/user-attachments/assets/62f19e66-1abb-4762-a737-6cca5cef0dec" />](https://apt.izzysoft.de/packages/vadimerenkov.aucards)
 
@@ -53,7 +54,19 @@ It primarily aims to help people with special needs to quickly communicate their
 
 The code of Aucards is distributed under GPL-3.0 license.
 
+
+
 > [!WARNING]
 > This is a work of human art. No generative AI was used in the process of creation. No generative AI is allowed to use this code for any purpose.
 
-2025 © [Vadim Erenkov](https://github.com/vadimerenkov)
+
+
+<div align="center">
+  
+  
+2025 © [Vadim Erenkov](https://github.com/vadimerenkov) 
+
+Logo design: Olga Prilutskaia
+
+
+</div>
