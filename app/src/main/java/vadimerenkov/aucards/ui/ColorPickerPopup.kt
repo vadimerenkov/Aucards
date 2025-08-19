@@ -103,11 +103,12 @@ fun ColorPickerPopup(
 						modifier = Modifier
 							.padding(4.dp)
 							.clip(MaterialTheme.shapes.medium)
-							.background(color)
-							.minimumInteractiveComponentSize()
 							.clickable(
 								onClick = { onColorSelected(color) }
 							)
+							.background(color)
+							.minimumInteractiveComponentSize()
+
 					) {
 						if (color == selectedColor) {
 							Icon(
