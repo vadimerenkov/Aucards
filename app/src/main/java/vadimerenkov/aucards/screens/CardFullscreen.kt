@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
@@ -147,11 +148,14 @@ fun SharedTransitionScope.CardFullscreen(
 				horizontalAlignment = Alignment.CenterHorizontally,
 				modifier = Modifier
 					.align(Alignment.Center)
+					.padding(16.dp)
 			) {
 				Text(
 					text = state.aucard.text,
 					color = contentColor,
-					style = MaterialTheme.typography.displayLarge,
+					style = MaterialTheme.typography.displayLarge.copy(
+						hyphens = Hyphens.Auto
+					),
 					textAlign = TextAlign.Center,
 					modifier = Modifier
 						.sharedBounds(
@@ -164,10 +168,10 @@ fun SharedTransitionScope.CardFullscreen(
 						Text(
 							text = it,
 							color = contentColor,
-							style = MaterialTheme.typography.titleLarge,
-							textAlign = TextAlign.Justify,
-							modifier = Modifier
-								.padding(8.dp)
+							style = MaterialTheme.typography.titleLarge.copy(
+								hyphens = Hyphens.Auto
+							),
+							textAlign = TextAlign.Justify
 						)
 					}
 				}

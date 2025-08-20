@@ -42,6 +42,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
@@ -129,7 +130,8 @@ fun SharedTransitionScope.EditScreen(
 						imeAction = ImeAction.Next
 					),
 					textStyle = MaterialTheme.typography.displayLarge.copy(
-						textAlign = TextAlign.Center
+						textAlign = TextAlign.Center,
+						hyphens = Hyphens.Auto
 					),
 					colors = TextFieldDefaults.colors(
 						focusedTextColor = contentColor,
@@ -151,7 +153,8 @@ fun SharedTransitionScope.EditScreen(
 					value = state.aucard.description ?: "",
 					onValueChange = { viewModel.updateDescription(it) },
 					textStyle = MaterialTheme.typography.titleLarge.copy(
-						textAlign = TextAlign.Center
+						textAlign = TextAlign.Center,
+						hyphens = Hyphens.Auto
 					),
 					colors = TextFieldDefaults.colors(
 						focusedTextColor = contentColor,

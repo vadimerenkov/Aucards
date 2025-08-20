@@ -28,4 +28,13 @@
 	<string name="selected_number">Обрано: %s</string>
 	<string name="delete_button">Видалити</string>
 	<string name="cancel">Скасувати</string>
+	<string name="all_cards">Усі картки</string>
+	<string name="favourites">Улюблені</string>
+	<string name="mark_as_favourite">Додати до улюблених</string>
+	<string name="add_to_fav_prompt">Тут відображатимуться ваші улюблені картки!</string>
+	<string name="brightness_permission">Аби ця опція працювала, необхідно надати додатку AuCards дозвіл на зміну системних налаштувань. </string>
+	<string name="palette">Палітра</string>
+	<string name="custom_color">Обрати</string>
+	<string name="import_cards">Імпортувати картки</string>
+	<string name="export">Експортувати картки</string>
 </resources>
