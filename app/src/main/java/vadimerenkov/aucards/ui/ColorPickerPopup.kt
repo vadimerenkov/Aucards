@@ -154,7 +154,7 @@ fun ColorPickerPopup(
 				onValueChange = onHexCodeChanged,
 				modifier = Modifier
 					.padding(8.dp)
-					.width(120.dp)
+					.width(130.dp)
 					.align(Alignment.CenterHorizontally)
 			)
 		}

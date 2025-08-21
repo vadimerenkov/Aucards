@@ -99,10 +99,13 @@ class CardViewModel(
 	}
 
 	fun updateHexCode(hex: String) {
-		card_state.update { it.copy(hexColor = hex) }
+		var hex_code = if (hex.startsWith("#")) hex else "#$hex"
+		if (hex_code.endsWith("#")) hex_code = hex_code.dropLast(1)
+		card_state.update { it.copy(hexColor = hex_code) }
 		try {
-			val color = ("#$hex").toColorInt()
-			card_state.update { it.copy(isHexCodeValid = true, aucard = it.aucard.copy(color = Color(color))) }
+			val color_int = hex_code.toColorInt()
+			val color = Color(color_int).copy(alpha = 1f)
+			card_state.update { it.copy(isHexCodeValid = true, aucard = it.aucard.copy(color = color)) }
 		}
 		catch (e: Exception) {
 			card_state.update { it.copy(isHexCodeValid = false) }

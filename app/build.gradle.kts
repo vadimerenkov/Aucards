@@ -15,8 +15,8 @@ android {
 		applicationId = "vadimerenkov.aucards"
 		minSdk = 26
 		targetSdk = 36
-		versionCode = 8
-		versionName = "2.0.3"
+		versionCode = 9
+		versionName = "2.0.4"
 
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 	}

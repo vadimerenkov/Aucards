@@ -206,7 +206,7 @@ class SettingsViewModel(
 
 							val card = Aucard(
 								text = text_value,
-								color = Color(color_value),
+								color = Color(color_value).copy(alpha = 1f),
 								description = desc_value,
 								isFavourite = fav_value.toBoolean(),
 								index = current_index + 1
