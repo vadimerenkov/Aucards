@@ -243,7 +243,8 @@ fun SettingsScreen(
 							val formatter = DateTimeFormatter
 								.ofPattern("yyyy-MM-dd.HH.mm.ss")
 							val now = formatter.format(LocalDateTime.now())
-							saveLauncher.launch("aucards-exported-$now.db")
+							val version = BuildConfig.VERSION_NAME
+							saveLauncher.launch("aucards-$version-exported-$now.db")
 						},
 						enabled = !state.isDbEmpty
 					) {
