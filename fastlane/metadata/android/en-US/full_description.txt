@@ -2,6 +2,10 @@
 
 <p>App is based on the concept of "autistic cards", which people with special needs use to quickly communicate their feelings, their requests or inform others of their conditions.</p>
 
+<p>If you've ever experienced the need to say something when you couldn't, for example, in a moment of autistic shutdown, when you are too overwhelmed to speak, then this app is for you.
+It is designed to be as frictionless as possible to minimize the effort needed to express what you feel right now.
+</p>
+
 <p><b>Highlights:</b></p>
 
 <li>Create an endless amount of cards with unique messages</li>
