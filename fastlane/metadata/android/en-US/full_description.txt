@@ -1,1 +1,19 @@
-<p><i>Aucards</i> is a free and open-source app which allows you to create short messages for quick access on your phone or tablet.</p><p>It primarily aims to help people with special needs to quickly communicate their feelings, their requests or inform others of their conditions.</p>
+<p><i>Aucards</i> is a free and open-source app where you can create colorful communication cards to help you communicate with others.</p>
+
+<p>App is based on the concept of "autistic cards", which people with special needs use to quickly communicate their feelings, their requests or inform others of their conditions.</p>
+
+<p><b>Highlights:</b></p>
+
+<li>Create an endless amount of cards with unique messages</li>
+<li>Choose any color from a rich palette – or create your own!</li>
+<li>Organize your cards however you like: drag them around or add to favourites</li>
+<li>Easy to use: just tap on the card to open it in fullscreen!</li>
+<li>Bring your cards to any device: easily export and transfer them wherever you like</li>
+<li>Completely free, open source and no ads – ever!</li>
+
+<p><b>Who can benefit from this app:</b></p>
+
+<li>People with autism/adhd</li>
+<li>Children who have difficulties with verbal communication</li>
+<li>Elderly people who need assistance</li>
+<li>Or anyone in a situation where you can't speak: on a loud concert or a lecture!</li>
