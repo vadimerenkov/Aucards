@@ -38,6 +38,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.NavigationRail
@@ -51,6 +52,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -59,13 +61,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
@@ -227,7 +230,6 @@ fun SettingsScreen(
 				modifier = modifier
 					.padding(innerPadding)
 					.padding(horizontal = 16.dp)
-					.padding(top = 8.dp)
 					.fillMaxSize()
 			) {
 				Column(
@@ -260,7 +262,9 @@ fun SettingsScreen(
 							}
 						}
 						CheckboxSetting(
-							description = stringResource(R.string.brightness),
+							title = stringResource(R.string.brightness),
+						description = stringResource(R.string.brightness_permission),
+						isDescVisible = showBrightnessContext,
 							onCheckedChange = {
 								if (!hasPermission(context)) {
 									val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
@@ -276,45 +280,36 @@ fun SettingsScreen(
 							},
 							isChecked = state.isMaxBrightness
 						)
-						AnimatedVisibility(showBrightnessContext) {
-							Text(
-								text = stringResource(R.string.brightness_permission),
-								color = Color.Blue,
-								style = MaterialTheme.typography.bodyMedium
-							)
-						}
-						HorizontalDivider(
-							modifier = Modifier
-								.padding(vertical = 8.dp)
-						)
 						CheckboxSetting(
-							description = stringResource(R.string.landscape),
+						title = stringResource(R.string.landscape),
 							onCheckedChange = { viewModel.saveLandscapeSetting(it) },
 							isChecked = state.isLandscapeMode
 						)
-						HorizontalDivider(
-							modifier = Modifier
-								.padding(vertical = 8.dp)
+						CheckboxSetting(
+							title = "Play a sound when opening the card",
+						description = "Play a sound to alert others that you are about to say something.",
+						onCheckedChange = {}
 						)
 						DropdownSetting(
 							options = Theme.entries.map { it.uiText },
 							icon = R.drawable.theme_mode,
 							description = stringResource(R.string.theme),
 							onOptionChosen = { viewModel.saveThemeSetting(it) },
-							chosenOption = stringResource(state.theme.uiText)
-						)
-						DropdownSetting(
-							options = Language.entries.map { it.uiText }.sorted(),
-							icon = R.drawable.language,
-							description = stringResource(R.string.language),
-							onOptionChosen = { viewModel.saveLanguageSetting(it) },
-							chosenOption = stringResource(state.language.uiText)
-						)
-						state.language.translator?.let { it ->
-							Spacer(modifier = Modifier.height(8.dp))
-							Text(
-								text = stringResource(it),
-								color = Color.Blue,
+							chosenOption = stringResource(state.theme.uiText),
+						modifier = Modifier
+							.padding(top = 8.dp)
+					)
+					DropdownSetting(
+						options = Language.entries.map { it.uiText }.sorted(),
+						icon = R.drawable.language,
+						description = stringResource(R.string.language),
+						onOptionChosen = { viewModel.saveLanguageSetting(it) },
+						chosenOption = stringResource(state.language.uiText)
+					)
+					state.language.translator?.let { it ->
+						Text(
+							text = stringResource(it),
+							color = MaterialTheme.colorScheme.primary,
 								style = MaterialTheme.typography.bodyMedium,
 								modifier = Modifier
 									.padding(top = 8.dp)
@@ -471,29 +466,49 @@ private fun DropdownSetting(
 
 @Composable
 private fun CheckboxSetting(
-	description: String,
+	title: String,
 	onCheckedChange: (Boolean) -> Unit,
 	modifier: Modifier = Modifier,
+	description: String? = null,
+	isDescVisible: Boolean = true,
 	isChecked: Boolean = false
 ) {
-	Row(
-		verticalAlignment = Alignment.CenterVertically,
+	Column(
+		verticalArrangement = Arrangement.spacedBy(8.dp),
 		modifier = modifier
 			.fillMaxWidth()
 			.clickable(onClick = {
 				onCheckedChange(!isChecked)
 			})
+			.padding(top = 8.dp)
 	) {
-		Text(
-			text = description,
-			style = MaterialTheme.typography.bodyLarge,
-			modifier = Modifier
-				.weight(1f)
-		)
-		Checkbox(
-			checked = isChecked,
-			onCheckedChange = onCheckedChange,
-			modifier = Modifier
-		)
+		Row(
+			verticalAlignment = Alignment.Top
+		) {
+			Text(
+				text = title,
+				style = MaterialTheme.typography.bodyLarge,
+				modifier = Modifier
+					.weight(1f)
+			)
+			CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified) {
+				Checkbox(
+					checked = isChecked,
+					onCheckedChange = onCheckedChange,
+					modifier = Modifier
+						.padding(start = 8.dp)
+				)
+			}
+		}
+		description?.let {
+			AnimatedVisibility(isDescVisible) {
+				Text(
+					text = it,
+					style = MaterialTheme.typography.bodyMedium,
+					color = MaterialTheme.colorScheme.primary
+				)
+			}
+		}
+		HorizontalDivider()
 	}
 }
