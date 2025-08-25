@@ -70,10 +70,22 @@ fun SharedTransitionScope.CardFullscreen(
 		return Settings.System.canWrite(context) && state.isMaxBrightness
 	}
 
-	val current_brightness = Settings.System.getInt(
-		context.contentResolver,
-		Settings.System.SCREEN_BRIGHTNESS
-	)
+	var current_brightness = 0
+
+	LaunchedEffect(hasPermission()) {
+		if (hasPermission()) {
+			current_brightness = Settings.System.getInt(
+				context.contentResolver,
+				Settings.System.SCREEN_BRIGHTNESS
+			)
+
+			Settings.System.putInt(
+				activity?.contentResolver,
+				Settings.System.SCREEN_BRIGHTNESS,
+				255
+			)
+		}
+	}
 
 	LaunchedEffect(state.isLandscapeMode) {
 		controller?.hide(WindowInsetsCompat.Type.systemBars())
@@ -97,14 +109,6 @@ fun SharedTransitionScope.CardFullscreen(
 				)
 			}
 		}
-	}
-
-	if (hasPermission()) {
-		Settings.System.putInt(
-			activity?.contentResolver,
-			Settings.System.SCREEN_BRIGHTNESS,
-			255
-		)
 	}
 
 	val contentColor= calculateContentColor(state.aucard.color)

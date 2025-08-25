@@ -5,6 +5,8 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -111,6 +114,10 @@ fun SharedTransitionScope.EditScreen(
 				horizontalAlignment = Alignment.CenterHorizontally,
 				modifier = Modifier
 					.align(Alignment.Center)
+					.scrollable(
+						state = rememberScrollState(),
+						orientation = Orientation.Vertical
+					)
 			) {
 				TextField(
 					value = state.aucard.text,
@@ -175,9 +182,6 @@ fun SharedTransitionScope.EditScreen(
 								.fillMaxWidth()
 						)
 					},
-					keyboardOptions = KeyboardOptions(
-						imeAction = ImeAction.Done
-					),
 					modifier = Modifier
 						.fillMaxWidth()
 				)

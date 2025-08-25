@@ -91,6 +91,7 @@ dependencies {
 	implementation(libs.androidx.navigation.compose)
 	implementation(libs.kotlinx.serialization.json)
 	implementation(libs.kotlinx.serialization.core)
+	implementation(libs.androidx.adaptive)
 
 	//Colorpicker Compose by skydoves
 	implementation(libs.compose.colorpicker)

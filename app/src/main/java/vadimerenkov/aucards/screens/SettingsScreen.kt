@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +29,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,6 +40,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -60,7 +66,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
@@ -82,6 +87,7 @@ private const val TAG = "SettingsScreen"
 @Composable
 fun SettingsScreen(
 	onBackClicked: () -> Unit,
+	isWideScreen: Boolean,
 	modifier: Modifier = Modifier,
 	viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory.Factory())
 ) {
@@ -117,195 +123,275 @@ fun SettingsScreen(
 			}
 		}
 	}
-	Scaffold(
-		topBar = {
-			TopAppBar(
-				title = { Text(stringResource(R.string.settings)) },
-				navigationIcon = {
-					IconButton(
-						onClick = onBackClicked,
-					) {
+	Row {
+		if (isWideScreen) {
+			NavigationRail(
+				containerColor = MaterialTheme.colorScheme.primaryContainer,
+				contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+			) {
+				NavigationRailItem(
+					selected = false,
+					onClick = { onBackClicked() },
+					icon = {
 						Icon(
-							imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-							contentDescription = stringResource(R.string.go_back)
+							painterResource(R.drawable.grid),
+							contentDescription = null
 						)
-					}
-				},
-				colors = TopAppBarDefaults.topAppBarColors(
-					containerColor = MaterialTheme.colorScheme.primaryContainer
+					},
+					label = {
+						Text(
+							text = stringResource(R.string.all_cards),
+							modifier = Modifier
+								.padding(horizontal = 8.dp))
+					},
+					colors = NavigationRailItemDefaults.colors(
+						indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer,
+						selectedIconColor = MaterialTheme.colorScheme.onPrimary
+					),
+					modifier = Modifier
+						.displayCutoutPadding()
 				)
-			)
+				NavigationRailItem(
+					selected = false,
+					onClick = { onBackClicked() },
+					icon = {
+						Icon(
+							imageVector = Icons.Outlined.Star,
+							contentDescription = null
+						)
+					},
+					label = {
+						Text(
+							text = stringResource(R.string.favourites),
+							modifier = Modifier
+								.padding(horizontal = 8.dp))
+					},
+					colors = NavigationRailItemDefaults.colors(
+						indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer,
+						selectedIconColor = MaterialTheme.colorScheme.onPrimary
+					),
+					modifier = Modifier
+						.displayCutoutPadding()
+				)
+				Spacer(modifier = Modifier.weight(1f))
+				NavigationRailItem(
+					selected = true,
+					onClick = { },
+					icon = {
+						Icon(
+							imageVector = Icons.Filled.Settings,
+							contentDescription = null
+						)
+					},
+					label = {
+						Text(
+							text = stringResource(R.string.settings),
+							modifier = Modifier
+								.padding(horizontal = 8.dp)
+						)
+					},
+					colors = NavigationRailItemDefaults.colors(
+						indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer,
+						selectedIconColor = MaterialTheme.colorScheme.onPrimary
+					),
+					modifier = Modifier
+						.displayCutoutPadding()
+				)
+			}
 		}
-	) { innerPadding ->
-		val scroll = rememberScrollState()
-		Box(
-			contentAlignment = Alignment.TopStart,
-			modifier = modifier
-				.padding(innerPadding)
-				.padding(horizontal = 16.dp)
-				.padding(top = 8.dp)
-				.fillMaxSize()
-		) {
-			Column(
-				verticalArrangement = Arrangement.SpaceBetween,
-				modifier = Modifier
-					.widthIn(max = 500.dp)
-					.align(Alignment.Center)
+		Scaffold(
+			topBar = {
+				TopAppBar(
+					title = { Text(stringResource(R.string.settings)) },
+					navigationIcon = {
+						if (!isWideScreen) {
+							IconButton(
+								onClick = onBackClicked,
+							) {
+								Icon(
+									imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+									contentDescription = stringResource(R.string.go_back)
+								)
+							}
+						}
+					},
+					colors = TopAppBarDefaults.topAppBarColors(
+						containerColor = MaterialTheme.colorScheme.primaryContainer
+					)
+				)
+			}
+		) { innerPadding ->
+			val scroll = rememberScrollState()
+			Box(
+				contentAlignment = Alignment.TopStart,
+				modifier = modifier
+					.padding(innerPadding)
+					.padding(horizontal = 16.dp)
+					.padding(top = 8.dp)
 					.fillMaxSize()
-					.verticalScroll(scroll)
 			) {
 				Column(
-					horizontalAlignment = Alignment.CenterHorizontally
-				) {
-					val saveLauncher = rememberLauncherForActivityResult(
-						ActivityResultContracts.CreateDocument("application/vnd.sqlite3")
-					) {
-						if (it != null) {
-							Log.d(TAG, "Path saved: $it")
-							viewModel.exportDatabase(it, context)
-						} else {
-							Log.d(TAG, "Path not saved.")
-						}
-					}
-					val loadLauncher = rememberLauncherForActivityResult(
-						ActivityResultContracts.GetContent()
-					) {
-						if (it != null) {
-							viewModel.importDatabase(it, context)
-							onBackClicked()
-						}
-					}
-					CheckboxSetting(
-						description = stringResource(R.string.brightness),
-						onCheckedChange = {
-							if (!hasPermission(context)) {
-								val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
-									data = "package:${context.packageName}".toUri()
-									addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-								}
-								context.startActivity(intent)
-								didWeClickOnBrightness = true
-							}
-							else{
-								viewModel.saveBrightnessSetting(it)
-							}
-						},
-						isChecked = state.isMaxBrightness
-					)
-					AnimatedVisibility(showBrightnessContext) {
-						Text(
-							text = stringResource(R.string.brightness_permission),
-							color = Color.Blue,
-							style = MaterialTheme.typography.bodyMedium
-						)
-					}
-					HorizontalDivider(
-						modifier = Modifier
-							.padding(vertical = 8.dp)
-					)
-					CheckboxSetting(
-						description = stringResource(R.string.landscape),
-						onCheckedChange = { viewModel.saveLandscapeSetting(it) },
-						isChecked = state.isLandscapeMode
-					)
-					HorizontalDivider(
-						modifier = Modifier
-							.padding(vertical = 8.dp)
-					)
-					DropdownSetting(
-						options = Theme.entries.map { it.uiText },
-						icon = R.drawable.theme_mode,
-						description = stringResource(R.string.theme),
-						onOptionChosen = { viewModel.saveThemeSetting(it) },
-						chosenOption = stringResource(state.theme.uiText)
-					)
-					DropdownSetting(
-						options = Language.entries.map { it.uiText }.sorted(),
-						icon = R.drawable.language,
-						description = stringResource(R.string.language),
-						onOptionChosen = { viewModel.saveLanguageSetting(it) },
-						chosenOption = stringResource(state.language.uiText)
-					)
-					state.language.translator?.let { it ->
-						Spacer(modifier = Modifier.height(8.dp))
-						Text(
-							text = stringResource(it),
-							color = Color.Blue,
-							style = MaterialTheme.typography.bodyMedium,
-							modifier = Modifier
-								.padding(top = 8.dp)
-								.align(Alignment.End)
-						)
-					}
-					Spacer(modifier = Modifier.padding(8.dp))
-					OutlinedButton(
-						onClick = {
-							val formatter = DateTimeFormatter
-								.ofPattern("yyyy-MM-dd.HH.mm.ss")
-							val now = formatter.format(LocalDateTime.now())
-							val version = BuildConfig.VERSION_NAME
-							saveLauncher.launch("aucards-$version-exported-$now.db")
-						},
-						enabled = !state.isDbEmpty
-					) {
-						Text(text = stringResource(R.string.export))
-					}
-					OutlinedButton(
-						onClick = {
-							loadLauncher.launch("application/octet-stream")
-						}
-					) {
-						Text(text = stringResource(R.string.import_cards))
-					}
-				}
-
-				Column(
-					horizontalAlignment = Alignment.CenterHorizontally,
+					verticalArrangement = Arrangement.SpaceBetween,
 					modifier = Modifier
-						.padding(12.dp)
-						.fillMaxWidth()
+						.widthIn(max = 500.dp)
+						.align(Alignment.Center)
+						.fillMaxSize()
+						.verticalScroll(scroll)
 				) {
-					val handler = LocalUriHandler.current
-					val link = stringResource(R.string.source_code_link)
-
-					Text(
-						text = stringResource(R.string.about, version),
-						style = MaterialTheme.typography.bodyLarge,
-						textAlign = TextAlign.Center,
-						modifier = Modifier
-							.padding(8.dp)
-					)
-					TextButton(
-						onClick = {
-							handler.openUri(link)
-						}
+					Column(
+						horizontalAlignment = Alignment.CenterHorizontally
 					) {
-						Row {
-
+						val saveLauncher = rememberLauncherForActivityResult(
+							ActivityResultContracts.CreateDocument("application/vnd.sqlite3")
+						) {
+							if (it != null) {
+								Log.d(TAG, "Path saved: $it")
+								viewModel.exportDatabase(it, context)
+							} else {
+								Log.d(TAG, "Path not saved.")
+							}
+						}
+						val loadLauncher = rememberLauncherForActivityResult(
+							ActivityResultContracts.GetContent()
+						) {
+							if (it != null) {
+								viewModel.importDatabase(it, context)
+								onBackClicked()
+							}
+						}
+						CheckboxSetting(
+							description = stringResource(R.string.brightness),
+							onCheckedChange = {
+								if (!hasPermission(context)) {
+									val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
+										data = "package:${context.packageName}".toUri()
+										addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+									}
+									context.startActivity(intent)
+									didWeClickOnBrightness = true
+								}
+								else{
+									viewModel.saveBrightnessSetting(it)
+								}
+							},
+							isChecked = state.isMaxBrightness
+						)
+						AnimatedVisibility(showBrightnessContext) {
 							Text(
-								text = stringResource(R.string.source_code),
-								style = MaterialTheme.typography.bodyLarge,
-								textDecoration = TextDecoration.Underline,
+								text = stringResource(R.string.brightness_permission),
+								color = Color.Blue,
+								style = MaterialTheme.typography.bodyMedium
+							)
+						}
+						HorizontalDivider(
+							modifier = Modifier
+								.padding(vertical = 8.dp)
+						)
+						CheckboxSetting(
+							description = stringResource(R.string.landscape),
+							onCheckedChange = { viewModel.saveLandscapeSetting(it) },
+							isChecked = state.isLandscapeMode
+						)
+						HorizontalDivider(
+							modifier = Modifier
+								.padding(vertical = 8.dp)
+						)
+						DropdownSetting(
+							options = Theme.entries.map { it.uiText },
+							icon = R.drawable.theme_mode,
+							description = stringResource(R.string.theme),
+							onOptionChosen = { viewModel.saveThemeSetting(it) },
+							chosenOption = stringResource(state.theme.uiText)
+						)
+						DropdownSetting(
+							options = Language.entries.map { it.uiText }.sorted(),
+							icon = R.drawable.language,
+							description = stringResource(R.string.language),
+							onOptionChosen = { viewModel.saveLanguageSetting(it) },
+							chosenOption = stringResource(state.language.uiText)
+						)
+						state.language.translator?.let { it ->
+							Spacer(modifier = Modifier.height(8.dp))
+							Text(
+								text = stringResource(it),
+								color = Color.Blue,
+								style = MaterialTheme.typography.bodyMedium,
 								modifier = Modifier
-									.padding(end = 4.dp)
+									.padding(top = 8.dp)
+									.align(Alignment.End)
 							)
-							Icon(
-								painter = painterResource(R.drawable.open_in_new),
-								contentDescription = null
-							)
+						}
+						Spacer(modifier = Modifier.padding(8.dp))
+						OutlinedButton(
+							onClick = {
+								val formatter = DateTimeFormatter
+									.ofPattern("yyyy-MM-dd.HH.mm.ss")
+								val now = formatter.format(LocalDateTime.now())
+								val version = BuildConfig.VERSION_NAME
+								saveLauncher.launch("aucards-$version-exported-$now.db")
+							},
+							enabled = !state.isDbEmpty
+						) {
+							Text(text = stringResource(R.string.export))
+						}
+						OutlinedButton(
+							onClick = {
+								loadLauncher.launch("application/octet-stream")
+							}
+						) {
+							Text(text = stringResource(R.string.import_cards))
 						}
 					}
-					Spacer(modifier = Modifier.height(48.dp))
-					Text(
-						text = "logo: Olga Prilutskaia",
-						style = MaterialTheme.typography.bodyLarge,
-						textAlign = TextAlign.Center,
+
+					Column(
+						horizontalAlignment = Alignment.CenterHorizontally,
 						modifier = Modifier
-							.padding(8.dp)
-					)
+							.padding(12.dp)
+							.fillMaxWidth()
+					) {
+						val handler = LocalUriHandler.current
+						val link = stringResource(R.string.source_code_link)
+
+						Text(
+							text = stringResource(R.string.about, version),
+							style = MaterialTheme.typography.bodyLarge,
+							textAlign = TextAlign.Center,
+							modifier = Modifier
+								.padding(8.dp)
+						)
+						TextButton(
+							onClick = {
+								handler.openUri(link)
+							}
+						) {
+							Row {
+
+								Text(
+									text = stringResource(R.string.source_code),
+									style = MaterialTheme.typography.bodyLarge,
+									textDecoration = TextDecoration.Underline,
+									modifier = Modifier
+										.padding(end = 4.dp)
+								)
+								Icon(
+									painter = painterResource(R.drawable.open_in_new),
+									contentDescription = null
+								)
+							}
+						}
+						Spacer(modifier = Modifier.height(48.dp))
+						Text(
+							text = "logo: Olga Prilutskaia",
+							style = MaterialTheme.typography.bodyLarge,
+							textAlign = TextAlign.Center,
+							modifier = Modifier
+								.padding(8.dp)
+						)
+					}
 				}
 			}
 		}
+
 	}
 }
 
@@ -410,12 +496,4 @@ private fun CheckboxSetting(
 			modifier = Modifier
 		)
 	}
-}
-
-@Preview()
-@Composable
-private fun SettingsPreview() {
-	SettingsScreen(
-		onBackClicked = {  }
-	)
 }

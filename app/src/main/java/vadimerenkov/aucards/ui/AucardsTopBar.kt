@@ -41,7 +41,8 @@ fun AucardsTopBar(
 	onSettingsClick: () -> Unit,
 	isEditEnabled: Boolean = true,
 	isSelectMode: Boolean = false,
-	isDeleteEnabled: Boolean = true
+	isDeleteEnabled: Boolean = true,
+	isShowingSettingsButton: Boolean = true
 ) {
 	val delete_color by animateColorAsState(
 		if (isDeleteEnabled) MaterialTheme.colorScheme.onPrimaryContainer else Color.Companion.Gray
@@ -96,14 +97,16 @@ fun AucardsTopBar(
 			containerColor = MaterialTheme.colorScheme.primaryContainer
 		),
 		navigationIcon = {
-			IconButton(
-				onClick = onSettingsClick
-			) {
-				Icon(
-					imageVector = Icons.Default.Settings,
-					contentDescription = stringResource(R.string.open_settings),
-					tint = MaterialTheme.colorScheme.onPrimaryContainer
-				)
+			if (isShowingSettingsButton) {
+				IconButton(
+					onClick = onSettingsClick
+				) {
+					Icon(
+						imageVector = Icons.Default.Settings,
+						contentDescription = stringResource(R.string.open_settings),
+						tint = MaterialTheme.colorScheme.onPrimaryContainer
+					)
+				}
 			}
 		},
 		actions = {

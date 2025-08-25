@@ -5,12 +5,14 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.serialization.Serializable
 import vadimerenkov.aucards.screens.CardFullscreen
 import vadimerenkov.aucards.screens.EditScreen
@@ -41,6 +43,10 @@ fun AucardsApp(
 	navController: NavHostController = rememberNavController(),
 ) {
 	SharedTransitionLayout {
+		val isWideScreen = when (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass) {
+			WindowWidthSizeClass.COMPACT -> false
+			else -> true
+		}
 		NavHost(
 			navController = navController,
 			startDestination = ListScreen
@@ -52,7 +58,8 @@ fun AucardsApp(
 					onCardEditClicked = { navController.navigate(EditScreen(it)) },
 					onSettingsClicked = { navController.navigate(SettingsScreen) },
 					animatedVisibilityScope = this,
-					sharedTransitionScope = this@SharedTransitionLayout
+					sharedTransitionScope = this@SharedTransitionLayout,
+					isWideScreen = isWideScreen
 				)
 			}
 			composable<FullscreenCard> {
@@ -90,7 +97,8 @@ fun AucardsApp(
 				}
 			) {
 				SettingsScreen(
-					onBackClicked = { navController.navigateUp() }
+					onBackClicked = { navController.navigateUp() },
+					isWideScreen = isWideScreen
 				)
 			}
 		}

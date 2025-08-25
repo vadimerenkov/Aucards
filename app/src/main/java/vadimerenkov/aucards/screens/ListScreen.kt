@@ -13,13 +13,18 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -30,6 +35,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -57,6 +65,7 @@ import vadimerenkov.aucards.ui.GridOfCards
 import vadimerenkov.aucards.ui.ListViewModel
 import vadimerenkov.aucards.ui.SharedContentStateKey
 import vadimerenkov.aucards.ui.Target
+import vadimerenkov.aucards.ui.applyIf
 
 private const val TAG = "ListScreen"
 
@@ -68,6 +77,7 @@ fun ListScreen(
 	onSettingsClicked: () -> Unit,
 	animatedVisibilityScope: AnimatedVisibilityScope,
 	sharedTransitionScope: SharedTransitionScope,
+	isWideScreen: Boolean,
 	modifier: Modifier = Modifier,
 	viewModel: ListViewModel = viewModel(factory = ViewModelFactory.Factory())
 ) {
@@ -106,33 +116,13 @@ fun ListScreen(
 			})
 	}
 
-	Scaffold(
-		topBar = {
-			AucardsTopBar(
-				selectedNumber = listState.selectedList.size,
-				onDeleteClick = {
-					deleteConfirmationOpen = true
-				},
-				onEditClick = {
-					onCardEditClicked(listState.selectedList[0])
-					viewModel.exitSelectMode()
-				},
-				onSettingsClick = {
-					onSettingsClicked()
-					viewModel.exitSelectMode()
-				},
-				isSelectMode = listState.isSelectMode,
-				isEditEnabled = listState.selectedList.size == 1,
-				isDeleteEnabled = listState.selectedList.isNotEmpty(),
-				currentPage = listState.currentPage
-			)
-		},
-		bottomBar = {
-			NavigationBar(
+	Row {
+		if (isWideScreen) {
+			NavigationRail(
 				containerColor = MaterialTheme.colorScheme.primaryContainer,
 				contentColor = MaterialTheme.colorScheme.onPrimaryContainer
 			) {
-				NavigationBarItem(
+				NavigationRailItem(
 					selected = listState.currentPage == 0,
 					onClick = { viewModel.turnPage(0) },
 					icon = {
@@ -142,14 +132,20 @@ fun ListScreen(
 						)
 					},
 					label = {
-						Text(text = stringResource(R.string.all_cards))
+						Text(
+							text = stringResource(R.string.all_cards),
+							modifier = Modifier
+								.padding(horizontal = 8.dp)
+						)
 					},
-					colors = NavigationBarItemDefaults.colors(
+					colors = NavigationRailItemDefaults.colors(
 						indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer,
 						selectedIconColor = MaterialTheme.colorScheme.onPrimary
-					)
+					),
+					modifier = Modifier
+						.displayCutoutPadding()
 				)
-				NavigationBarItem(
+				NavigationRailItem(
 					selected = listState.currentPage == 1,
 					onClick = { viewModel.turnPage(1) },
 					icon = {
@@ -159,51 +155,149 @@ fun ListScreen(
 						)
 					},
 					label = {
-						Text(text = stringResource(R.string.favourites))
+						Text(
+							text = stringResource(R.string.favourites),
+							modifier = Modifier
+								.padding(horizontal = 8.dp)
+						)
 					},
-					colors = NavigationBarItemDefaults.colors(
+					colors = NavigationRailItemDefaults.colors(
 						indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer,
 						selectedIconColor = MaterialTheme.colorScheme.onPrimary
-					)
-				)
-			}
-		},
-		floatingActionButton = {
-			with(sharedTransitionScope) {
-				val contentState = rememberSharedContentState(
-					SharedContentStateKey(
-						0,
-						ContentType.CARD,
-						Target.EDIT
-					)
-				)
-				FloatingActionButton(
-					onClick = {
-						onAddButtonClicked(listState.list.size + 1)
-						viewModel.exitSelectMode()
-					},
-					shape = MaterialTheme.shapes.medium,
+					),
 					modifier = Modifier
-						.padding(16.dp)
-						.sharedBounds(
-							sharedContentState = contentState,
-							animatedVisibilityScope = animatedVisibilityScope
+						.displayCutoutPadding()
+				)
+				Spacer(modifier = Modifier.weight(1f))
+				NavigationRailItem(
+					selected = false,
+					onClick = { onSettingsClicked() },
+					icon = {
+						Icon(
+							imageVector = Icons.Filled.Settings,
+							contentDescription = null
 						)
-				) {
-					Icon(
-						imageVector = Icons.Default.Add,
-						contentDescription = stringResource(R.string.add_card)
-					)
-				}
-
+					},
+					label = {
+						Text(
+							text = stringResource(R.string.settings),
+							modifier = Modifier
+								.padding(horizontal = 8.dp)
+						)
+					},
+					colors = NavigationRailItemDefaults.colors(
+						indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer,
+						selectedIconColor = MaterialTheme.colorScheme.onPrimary
+					),
+					modifier = Modifier
+						.displayCutoutPadding()
+				)
 			}
 		}
-	) { innerPadding ->
-		Box(
-			modifier = modifier
-				.fillMaxSize()
-				.padding(innerPadding)
-		) {
+
+		Scaffold(
+			topBar = {
+				AucardsTopBar(
+					selectedNumber = listState.selectedList.size,
+					onDeleteClick = {
+						deleteConfirmationOpen = true
+					},
+					onEditClick = {
+						onCardEditClicked(listState.selectedList[0])
+						viewModel.exitSelectMode()
+					},
+					onSettingsClick = {
+						onSettingsClicked()
+						viewModel.exitSelectMode()
+					},
+					isSelectMode = listState.isSelectMode,
+					isEditEnabled = listState.selectedList.size == 1,
+					isDeleteEnabled = listState.selectedList.isNotEmpty(),
+					currentPage = listState.currentPage,
+					isShowingSettingsButton = !isWideScreen
+				)
+			},
+			bottomBar = {
+				if (!isWideScreen) {
+					NavigationBar(
+						containerColor = MaterialTheme.colorScheme.primaryContainer,
+						contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+					) {
+						NavigationBarItem(
+							selected = listState.currentPage == 0,
+							onClick = { viewModel.turnPage(0) },
+							icon = {
+								Icon(
+									painterResource(R.drawable.grid),
+									contentDescription = null
+								)
+							},
+							label = {
+								Text(text = stringResource(R.string.all_cards))
+							},
+							colors = NavigationBarItemDefaults.colors(
+								indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer,
+								selectedIconColor = MaterialTheme.colorScheme.onPrimary
+							)
+						)
+						NavigationBarItem(
+							selected = listState.currentPage == 1,
+							onClick = { viewModel.turnPage(1) },
+							icon = {
+								Icon(
+									imageVector = Icons.Outlined.Star,
+									contentDescription = null
+								)
+							},
+							label = {
+								Text(text = stringResource(R.string.favourites))
+							},
+							colors = NavigationBarItemDefaults.colors(
+								indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer,
+								selectedIconColor = MaterialTheme.colorScheme.onPrimary
+							)
+						)
+					}
+				}
+			},
+			floatingActionButton = {
+				with(sharedTransitionScope) {
+					val contentState = rememberSharedContentState(
+						SharedContentStateKey(
+							0,
+							ContentType.CARD,
+							Target.EDIT
+						)
+					)
+					FloatingActionButton(
+						onClick = {
+							onAddButtonClicked(listState.list.size + 1)
+							viewModel.exitSelectMode()
+						},
+						shape = MaterialTheme.shapes.medium,
+						modifier = Modifier
+							.padding(16.dp)
+							.applyIf(
+								condition = isWideScreen,
+								modifier = {
+									navigationBarsPadding()
+								}
+							)
+							.sharedBounds(
+								sharedContentState = contentState,
+								animatedVisibilityScope = animatedVisibilityScope
+							)
+					) {
+						Icon(
+							imageVector = Icons.Default.Add,
+							contentDescription = stringResource(R.string.add_card)
+						)
+					}
+
+				}
+			}
+		) { innerPadding ->
+
 			val pager_state = rememberPagerState { 2 }
 
 			LaunchedEffect(listState.currentPage) {
@@ -217,7 +311,8 @@ fun ListScreen(
 			HorizontalPager(
 				state = pager_state,
 				modifier = modifier
-					.fillMaxSize(),
+					.fillMaxSize()
+					.padding(innerPadding),
 			) { page ->
 				when (page) {
 					0 -> {
@@ -227,7 +322,6 @@ fun ListScreen(
 									modifier = Modifier
 										.fillMaxSize()
 										.wrapContentSize()
-										.align(Alignment.Center)
 								)
 							} else if (listState.list.isEmpty()) {
 								PromptText(text = stringResource(R.string.empty_list_prompt))
