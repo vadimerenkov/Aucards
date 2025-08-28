@@ -24,6 +24,7 @@ import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardsDatabase
 import vadimerenkov.aucards.settings.Keys.BRIGHTNESS_STRING
 import vadimerenkov.aucards.settings.Keys.LANDSCAPE_STRING
+import vadimerenkov.aucards.settings.Keys.SOUND_STRING
 import vadimerenkov.aucards.settings.Keys.THEME_STRING
 import vadimerenkov.aucards.settings.Language
 import vadimerenkov.aucards.settings.Settings
@@ -46,9 +47,16 @@ class SettingsViewModel(
 		.onEach {
 			val landscape = settings.landscape.first() ?: false
 			val brightness = settings.brightness.first() ?: false
+			val playSound = settings.playSound.first() ?: false
 			val theme = readThemeSetting()
 			val language = readLanguageSetting()
-			state.update { it.copy(theme, brightness, landscape, language) }
+			state.update { it.copy(
+				theme = theme,
+				isMaxBrightness = brightness,
+				isLandscapeMode = landscape,
+				language = language,
+				playSound = playSound
+			) }
 		}
 		.launchIn(viewModelScope)
 
@@ -157,6 +165,15 @@ class SettingsViewModel(
 		}
 	}
 
+	fun saveSoundSetting(playSound: Boolean) {
+		viewModelScope.launch {
+			settings.saveBoolSettings(
+				key = SOUND_STRING,
+				value = playSound
+			)
+		}
+	}
+
 	fun exportDatabase(uri: Uri, context: Context) {
 		viewModelScope.launch {
 			try {
@@ -235,6 +252,7 @@ data class SettingsState(
 	val theme: Theme = Theme.DEVICE,
 	val isMaxBrightness: Boolean = false,
 	val isLandscapeMode: Boolean = false,
+	val playSound: Boolean = false,
 	val language: Language = Language.ENGLISH,
 	val isDbEmpty: Boolean = true
 )

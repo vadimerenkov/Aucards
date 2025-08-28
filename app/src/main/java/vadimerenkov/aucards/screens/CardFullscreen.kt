@@ -1,6 +1,7 @@
 package vadimerenkov.aucards.screens
 
 import android.content.pm.ActivityInfo
+import android.media.RingtoneManager
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.LocalActivity
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -66,6 +68,10 @@ fun SharedTransitionScope.CardFullscreen(
 		controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
 	}
 
+	val ringtoneUri = remember { RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM) }
+	val ringtone = remember { RingtoneManager.getRingtone(context, ringtoneUri) }
+
+
 	fun hasPermission(): Boolean {
 		return Settings.System.canWrite(context) && state.isMaxBrightness
 	}
@@ -98,9 +104,16 @@ fun SharedTransitionScope.CardFullscreen(
 		}
 	}
 
+	LaunchedEffect(state.isPlaySoundEnabled) {
+		if (state.isPlaySoundEnabled) {
+			ringtone.play()
+		}
+	}
+
 	DisposableEffect(Unit) {
 		onDispose {
 			controller?.show(WindowInsetsCompat.Type.systemBars())
+			ringtone.stop()
 			if (hasPermission()) {
 				Settings.System.putInt(
 					activity?.contentResolver,

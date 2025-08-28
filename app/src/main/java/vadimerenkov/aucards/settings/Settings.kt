@@ -6,11 +6,11 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.settings.Keys.BRIGHTNESS_STRING
 import vadimerenkov.aucards.settings.Keys.LANDSCAPE_STRING
+import vadimerenkov.aucards.settings.Keys.SOUND_STRING
 import vadimerenkov.aucards.settings.Keys.THEME_STRING
 
 enum class Language(
@@ -48,6 +48,10 @@ class Settings(
 		.map { settings ->
 			settings[booleanPreferencesKey(LANDSCAPE_STRING)]
 		}
+	val playSound = dataStore.data
+		.map { settings ->
+			settings[booleanPreferencesKey(SOUND_STRING)]
+		}
 
 	suspend fun saveEnumSettings(key: String, value: String) {
 		val key = stringPreferencesKey(key)
@@ -61,15 +65,5 @@ class Settings(
 		dataStore.edit { settings ->
 			settings[key] = value
 		}
-	}
-
-	suspend fun readBoolSettings(key: String): Boolean? {
-		val key = booleanPreferencesKey(key)
-		return dataStore.data.first()[key]
-	}
-
-	suspend fun readEnumSettings(key: String): String? {
-		val key = stringPreferencesKey(key)
-		return dataStore.data.first()[key]
 	}
 }

@@ -67,7 +67,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -263,8 +262,8 @@ fun SettingsScreen(
 						}
 						CheckboxSetting(
 							title = stringResource(R.string.brightness),
-						description = stringResource(R.string.brightness_permission),
-						isDescVisible = showBrightnessContext,
+							description = stringResource(R.string.brightness_permission),
+							isDescVisible = showBrightnessContext,
 							onCheckedChange = {
 								if (!hasPermission(context)) {
 									val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
@@ -281,14 +280,17 @@ fun SettingsScreen(
 							isChecked = state.isMaxBrightness
 						)
 						CheckboxSetting(
-						title = stringResource(R.string.landscape),
+							title = stringResource(R.string.landscape),
 							onCheckedChange = { viewModel.saveLandscapeSetting(it) },
 							isChecked = state.isLandscapeMode
 						)
 						CheckboxSetting(
+							isChecked = state.playSound,
 							title = "Play a sound when opening the card",
-						description = "Play a sound to alert others that you are about to say something.",
-						onCheckedChange = {}
+							description = "Play a sound to alert others that you are about to say something.",
+							onCheckedChange = {
+								viewModel.saveSoundSetting(it)
+							}
 						)
 						DropdownSetting(
 							options = Theme.entries.map { it.uiText },
@@ -296,26 +298,26 @@ fun SettingsScreen(
 							description = stringResource(R.string.theme),
 							onOptionChosen = { viewModel.saveThemeSetting(it) },
 							chosenOption = stringResource(state.theme.uiText),
-						modifier = Modifier
+							modifier = Modifier
 							.padding(top = 8.dp)
-					)
-					DropdownSetting(
-						options = Language.entries.map { it.uiText }.sorted(),
-						icon = R.drawable.language,
-						description = stringResource(R.string.language),
-						onOptionChosen = { viewModel.saveLanguageSetting(it) },
-						chosenOption = stringResource(state.language.uiText)
-					)
-					state.language.translator?.let { it ->
-						Text(
-							text = stringResource(it),
-							color = MaterialTheme.colorScheme.primary,
-								style = MaterialTheme.typography.bodyMedium,
-								modifier = Modifier
-									.padding(top = 8.dp)
-									.align(Alignment.End)
-							)
-						}
+						)
+						DropdownSetting(
+							options = Language.entries.map { it.uiText }.sorted(),
+							icon = R.drawable.language,
+							description = stringResource(R.string.language),
+							onOptionChosen = { viewModel.saveLanguageSetting(it) },
+							chosenOption = stringResource(state.language.uiText)
+						)
+						state.language.translator?.let { it ->
+							Text(
+								text = stringResource(it),
+								color = MaterialTheme.colorScheme.primary,
+									style = MaterialTheme.typography.bodyMedium,
+									modifier = Modifier
+										.padding(top = 8.dp)
+										.align(Alignment.End)
+								)
+							}
 						Spacer(modifier = Modifier.padding(8.dp))
 						OutlinedButton(
 							onClick = {
@@ -325,14 +327,16 @@ fun SettingsScreen(
 								val version = BuildConfig.VERSION_NAME
 								saveLauncher.launch("aucards-$version-exported-$now.db")
 							},
-							enabled = !state.isDbEmpty
+							enabled = !state.isDbEmpty,
+							shape = MaterialTheme.shapes.medium
 						) {
 							Text(text = stringResource(R.string.export))
 						}
 						OutlinedButton(
 							onClick = {
 								loadLauncher.launch("application/octet-stream")
-							}
+							},
+							shape = MaterialTheme.shapes.medium
 						) {
 							Text(text = stringResource(R.string.import_cards))
 						}

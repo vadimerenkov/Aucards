@@ -28,7 +28,7 @@ class CardViewModel(
 	private val index: Int?
 ): ViewModel() {
 
-	val color = if (isDarkTheme) Color.Black else Color.White
+	private val color = if (isDarkTheme) Color.Black else Color.White
 
 	private var card_state = MutableStateFlow(CardState(
 		aucard = Aucard(
@@ -56,6 +56,7 @@ class CardViewModel(
 		viewModelScope.launch(dispatchers.main) {
 			val brightness = settings.brightness.first() ?: false
 			val landscape = settings.landscape.first()
+			val playSound = settings.playSound.first() ?: false
 			if (id != 0) {
 				val card = aucardDao.getAucardByID(id).first()
 				card_state.update {
@@ -63,13 +64,13 @@ class CardViewModel(
 						aucard = card,
 						isMaxBrightness = brightness,
 						isLandscapeMode = landscape,
+						isPlaySoundEnabled = playSound,
 						isValid = card.text.isNotEmpty()
 					)
 				}
 			} else {
 				card_state.update {
 					it.copy(
-						isMaxBrightness = brightness,
 						isLandscapeMode = landscape
 					)
 				}
@@ -118,6 +119,7 @@ data class CardState(
 	val isValid: Boolean = false,
 	val isMaxBrightness: Boolean = false,
 	val isLandscapeMode: Boolean? = null,
+	val isPlaySoundEnabled: Boolean = false,
 	val hexColor: String = "",
 	val isHexCodeValid: Boolean = true
 )
