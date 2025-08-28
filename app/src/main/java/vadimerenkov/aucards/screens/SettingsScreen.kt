@@ -86,7 +86,7 @@ private const val TAG = "SettingsScreen"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-	onBackClicked: () -> Unit,
+	onBackClicked: (page: Int) -> Unit,
 	isWideScreen: Boolean,
 	modifier: Modifier = Modifier,
 	viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory.Factory())
@@ -131,7 +131,7 @@ fun SettingsScreen(
 			) {
 				NavigationRailItem(
 					selected = false,
-					onClick = { onBackClicked() },
+					onClick = { onBackClicked(0) },
 					icon = {
 						Icon(
 							painterResource(R.drawable.grid),
@@ -153,7 +153,7 @@ fun SettingsScreen(
 				)
 				NavigationRailItem(
 					selected = false,
-					onClick = { onBackClicked() },
+					onClick = { onBackClicked(1) },
 					icon = {
 						Icon(
 							imageVector = Icons.Outlined.Star,
@@ -206,7 +206,7 @@ fun SettingsScreen(
 					navigationIcon = {
 						if (!isWideScreen) {
 							IconButton(
-								onClick = onBackClicked,
+								onClick = { onBackClicked(0) },
 							) {
 								Icon(
 									imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -256,7 +256,7 @@ fun SettingsScreen(
 						) {
 							if (it != null) {
 								viewModel.importDatabase(it, context)
-								onBackClicked()
+								onBackClicked(0)
 							}
 						}
 						CheckboxSetting(

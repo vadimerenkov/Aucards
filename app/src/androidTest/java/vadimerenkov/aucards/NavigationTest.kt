@@ -28,7 +28,7 @@ class NavigationTest {
 			navController = TestNavHostController(LocalContext.current).apply {
 				navigatorProvider.addNavigator(ComposeNavigator())
 			}
-			AucardsApp(navController = navController)
+			MainNavHost(navController = navController)
 		}
 	}
 

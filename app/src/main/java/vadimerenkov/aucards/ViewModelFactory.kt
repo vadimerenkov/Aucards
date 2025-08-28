@@ -12,10 +12,15 @@ object ViewModelFactory {
 	fun Factory(
 		isDarkTheme: Boolean = false,
 		id: Int = 0,
-		index: Int? = null
+		index: Int? = null,
+		initialPage: Int = 0
 	) = viewModelFactory {
 		initializer {
-			ListViewModel(app().database.aucardDao(), DefaultDispatchers())
+			ListViewModel(
+				aucardDao = app().database.aucardDao(),
+				dispatchers = DefaultDispatchers(),
+				initialPage = initialPage
+			)
 		}
 		initializer {
 			CardViewModel(

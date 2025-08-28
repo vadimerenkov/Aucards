@@ -20,7 +20,9 @@ import vadimerenkov.aucards.screens.ListScreen
 import vadimerenkov.aucards.screens.SettingsScreen
 
 @Serializable
-object ListScreen
+data class ListScreen(
+	val page: Int
+)
 
 @Serializable
 object SettingsScreen
@@ -38,7 +40,7 @@ data class EditScreen(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun AucardsApp(
+fun MainNavHost(
 	isDarkTheme: Boolean,
 	navController: NavHostController = rememberNavController(),
 ) {
@@ -49,10 +51,12 @@ fun AucardsApp(
 		}
 		NavHost(
 			navController = navController,
-			startDestination = ListScreen
+			startDestination = ListScreen(0)
 		) {
 			composable<ListScreen> {
+				val route = it.toRoute<ListScreen>()
 				ListScreen(
+					initialPage = route.page,
 					onCardClicked = { navController.navigate(FullscreenCard(it)) },
 					onAddButtonClicked = { navController.navigate(EditScreen(0, index = it)) },
 					onCardEditClicked = { navController.navigate(EditScreen(it)) },
@@ -97,7 +101,7 @@ fun AucardsApp(
 				}
 			) {
 				SettingsScreen(
-					onBackClicked = { navController.navigateUp() },
+					onBackClicked = { navController.navigate(ListScreen(it)) },
 					isWideScreen = isWideScreen
 				)
 			}

@@ -23,14 +23,9 @@ import androidx.navigation.testing.TestNavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -77,7 +72,7 @@ class CardsInteractionTest {
 				navigatorProvider.addNavigator(ComposeNavigator())
 			}
 			AucardsTheme {
-				AucardsApp(navController)
+				MainNavHost(navController)
 			}
 		}
 		application = composeTestRule.activity.application as AucardsApplication

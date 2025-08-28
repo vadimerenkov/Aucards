@@ -79,7 +79,8 @@ fun ListScreen(
 	sharedTransitionScope: SharedTransitionScope,
 	isWideScreen: Boolean,
 	modifier: Modifier = Modifier,
-	viewModel: ListViewModel = viewModel(factory = ViewModelFactory.Factory())
+	initialPage: Int = 0,
+	viewModel: ListViewModel = viewModel(factory = ViewModelFactory.Factory(initialPage = initialPage))
 ) {
 	val listState by viewModel.listState.collectAsState()
 	var deleteConfirmationOpen by remember { mutableStateOf(false) }
@@ -298,7 +299,9 @@ fun ListScreen(
 			}
 		) { innerPadding ->
 
-			val pager_state = rememberPagerState { 2 }
+			val pager_state = rememberPagerState(
+				initialPage = listState.currentPage
+			) { 2 }
 
 			LaunchedEffect(listState.currentPage) {
 				pager_state.animateScrollToPage(listState.currentPage)

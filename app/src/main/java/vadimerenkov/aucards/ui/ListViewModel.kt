@@ -19,9 +19,10 @@ private const val TAG = "ListViewModel"
 
 class ListViewModel(
 	private val aucardDao: AucardDao,
-	private val dispatchers: DispatchersProvider
+	private val dispatchers: DispatchersProvider,
+	initialPage: Int
 ): ViewModel() {
-	private val list_state: MutableStateFlow<ListState> = MutableStateFlow(ListState())
+	private val list_state: MutableStateFlow<ListState> = MutableStateFlow(ListState(currentPage = initialPage))
 
 	private val all_cards = aucardDao.getAllCards().onEach { list ->
 		list_state.update { it.copy(list = list, isLoading = false) }
@@ -101,7 +102,7 @@ data class ListState(
 	val list: List<Aucard> = emptyList(),
 	val selectedList: List<Int> = emptyList(),
 	val favouritesList: List<Aucard> = emptyList(),
-	val currentPage: Int = 0,
+	val currentPage: Int,
 	val isLoading: Boolean = true,
 	val isSelectMode: Boolean = false
 )

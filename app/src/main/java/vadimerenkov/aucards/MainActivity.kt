@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 			AucardsTheme(
 				darkTheme = isDarkTheme
 			) {
-				AucardsApp(isDarkTheme)
+				MainNavHost(isDarkTheme)
 			}
 		}
 	}
