@@ -82,6 +82,7 @@ dependencies {
 	implementation(libs.activity)
 	implementation(libs.androidx.activity.ktx)
 	implementation(libs.androidx.lifecycle.viewmodel.savedstate)
+	implementation(libs.androidx.media3.exoplayer)
 
 	//Room
 	implementation(libs.androidx.room.runtime)

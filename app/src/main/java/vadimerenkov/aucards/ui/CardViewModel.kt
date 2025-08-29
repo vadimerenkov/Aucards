@@ -1,5 +1,6 @@
 package vadimerenkov.aucards.ui
 
+import android.content.Context
 import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import androidx.core.graphics.toColorInt
@@ -110,6 +111,10 @@ class CardViewModel(
 		catch (e: Exception) {
 			card_state.update { it.copy(isHexCodeValid = false) }
 		}
+	}
+
+	fun hasPermission(context: Context): Boolean {
+		return android.provider.Settings.System.canWrite(context) && card_state.value.isMaxBrightness
 	}
 }
 

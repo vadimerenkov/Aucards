@@ -1,11 +1,10 @@
 package vadimerenkov.aucards.screens
 
 import android.content.pm.ActivityInfo
-import android.media.Ringtone
-import android.media.RingtoneManager
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -47,6 +46,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.Dispatchers
 import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.ui.CardViewModel
@@ -57,6 +60,7 @@ import vadimerenkov.aucards.ui.calculateContentColor
 
 private const val TAG = "CardFullscreen"
 
+@UnstableApi
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.CardFullscreen(
@@ -73,22 +77,14 @@ fun SharedTransitionScope.CardFullscreen(
 	val context = LocalContext.current
 
 	var controller: WindowInsetsControllerCompat? by remember { mutableStateOf(null) }
-	var ringtone: Ringtone? by remember { mutableStateOf(null) }
-
-	val window = LocalActivity.current?.window
-	if (window != null) {
-		controller = WindowCompat.getInsetsController(window, window.decorView)
-		controller?.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
-	}
-
-	fun hasPermission(): Boolean {
-		return Settings.System.canWrite(context) && state.isMaxBrightness
-	}
+	val soundPlayer = remember { ExoPlayer.Builder(context).build() }
+	var soundPlaying by remember { mutableStateOf(false) }
 
 	var current_brightness by remember { mutableIntStateOf(0) }
 
-	LaunchedEffect(hasPermission()) {
-		if (hasPermission()) {
+
+	LaunchedEffect(viewModel.hasPermission(context)) {
+		if (viewModel.hasPermission(context)) {
 			current_brightness = Settings.System.getInt(
 				context.contentResolver,
 				Settings.System.SCREEN_BRIGHTNESS
@@ -103,6 +99,11 @@ fun SharedTransitionScope.CardFullscreen(
 	}
 
 	LaunchedEffect(state.isLandscapeMode) {
+		val window = activity?.window
+		window?.let {
+			controller = WindowCompat.getInsetsController(it, it.decorView)
+			controller?.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
+		}
 		controller?.hide(WindowInsetsCompat.Type.systemBars())
 		if (state.isLandscapeMode == true) {
 			activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
@@ -115,17 +116,27 @@ fun SharedTransitionScope.CardFullscreen(
 
 	LaunchedEffect(state.isPlaySoundEnabled) {
 		if (state.isPlaySoundEnabled) {
-			Log.i(TAG, "Ringtone is ${state.ringtoneUri}")
-			ringtone = RingtoneManager.getRingtone(context, state.ringtoneUri)
-			ringtone?.play()
+			val sound = MediaItem.fromUri(state.ringtoneUri!!)
+			soundPlayer.addListener(
+				object : Player.Listener {
+					override fun onIsPlayingChanged(isPlaying: Boolean) {
+						super.onIsPlayingChanged(isPlaying)
+						soundPlaying = isPlaying
+					}
+				}
+			)
+			soundPlayer.setMediaItem(sound)
+			soundPlayer.prepare()
+			soundPlayer.play()
 		}
 	}
 
 	DisposableEffect(Unit) {
 		onDispose {
 			controller?.show(WindowInsetsCompat.Type.systemBars())
-			ringtone?.stop()
-			if (hasPermission()) {
+			soundPlayer.stop()
+			soundPlayer.release()
+			if (viewModel.hasPermission(context)) {
 				Settings.System.putInt(
 					activity?.contentResolver,
 					Settings.System.SCREEN_BRIGHTNESS,
@@ -209,28 +220,31 @@ fun SharedTransitionScope.CardFullscreen(
 					contentAlignment = Alignment.Center,
 					modifier = Modifier
 						.align(Alignment.BottomEnd)
-						.padding(45.dp)
+						.padding(vertical = 60.dp, horizontal = 30.dp)
 						.clip(CircleShape)
 						.clickable(
 							onClickLabel = "Play sound"
 						) {
-							if (ringtone?.isPlaying == true) {
-								ringtone?.stop()
+							if (soundPlaying) {
+								soundPlayer.pause()
 							} else {
-								ringtone?.play()
+								soundPlayer.seekTo(0)
+								soundPlayer.play()
 							}
 						}
-						.size(120.dp)
+						.size(100.dp)
 
 
 				) {
-					Icon(
-						imageVector = if (ringtone?.isPlaying == true) Icons.Default.Close else Icons.Default.PlayArrow,
-						contentDescription = null,
-						tint = contentColor.copy(alpha = 0.8f),
-						modifier = Modifier
-							.fillMaxSize(0.7f)
-					)
+					AnimatedContent(targetState = soundPlaying) { isPlaying ->
+						Icon(
+							imageVector = if (isPlaying) Icons.Default.Close else Icons.Default.PlayArrow,
+							contentDescription = null,
+							tint = contentColor.copy(alpha = 0.8f),
+							modifier = Modifier
+								.fillMaxSize(0.7f)
+						)
+					}
 				}
 			}
 		}
