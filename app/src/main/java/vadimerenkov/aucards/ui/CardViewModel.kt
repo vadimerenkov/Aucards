@@ -1,5 +1,6 @@
 package vadimerenkov.aucards.ui
 
+import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.ViewModel
@@ -37,10 +38,6 @@ class CardViewModel(
 		)
 	))
 
-	init {
-		//loadInitialData()
-	}
-
 	var cardState = card_state
 		.onStart {
 			loadInitialData()
@@ -57,6 +54,7 @@ class CardViewModel(
 			val brightness = settings.brightness.first() ?: false
 			val landscape = settings.landscape.first()
 			val playSound = settings.playSound.first() ?: false
+			val ringtoneUri = settings.readSoundUri()
 			if (id != 0) {
 				val card = aucardDao.getAucardByID(id).first()
 				card_state.update {
@@ -65,6 +63,7 @@ class CardViewModel(
 						isMaxBrightness = brightness,
 						isLandscapeMode = landscape,
 						isPlaySoundEnabled = playSound,
+						ringtoneUri = ringtoneUri,
 						isValid = card.text.isNotEmpty()
 					)
 				}
@@ -120,6 +119,7 @@ data class CardState(
 	val isMaxBrightness: Boolean = false,
 	val isLandscapeMode: Boolean? = null,
 	val isPlaySoundEnabled: Boolean = false,
+	val ringtoneUri: Uri? = null,
 	val hexColor: String = "",
 	val isHexCodeValid: Boolean = true
 )

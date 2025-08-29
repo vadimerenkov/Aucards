@@ -1,15 +1,20 @@
 package vadimerenkov.aucards.settings
 
+import android.media.RingtoneManager
+import android.net.Uri
 import androidx.annotation.StringRes
+import androidx.core.net.toUri
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.settings.Keys.BRIGHTNESS_STRING
 import vadimerenkov.aucards.settings.Keys.LANDSCAPE_STRING
+import vadimerenkov.aucards.settings.Keys.RINGTONE_URI
 import vadimerenkov.aucards.settings.Keys.SOUND_STRING
 import vadimerenkov.aucards.settings.Keys.THEME_STRING
 
@@ -52,8 +57,12 @@ class Settings(
 		.map { settings ->
 			settings[booleanPreferencesKey(SOUND_STRING)]
 		}
+	val soundUri = dataStore.data
+		.map { settings ->
+			settings[stringPreferencesKey(RINGTONE_URI)]
+		}
 
-	suspend fun saveEnumSettings(key: String, value: String) {
+	suspend fun saveStringSettings(key: String, value: String) {
 		val key = stringPreferencesKey(key)
 		dataStore.edit { settings ->
 			settings[key] = value
@@ -65,5 +74,12 @@ class Settings(
 		dataStore.edit { settings ->
 			settings[key] = value
 		}
+	}
+
+	suspend fun readSoundUri(): Uri {
+		var uri: Uri
+		val setting = soundUri.first()
+		uri = setting?.toUri() ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+		return uri
 	}
 }

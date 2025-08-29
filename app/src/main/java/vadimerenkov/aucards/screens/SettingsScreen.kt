@@ -2,8 +2,10 @@
 
 package vadimerenkov.aucards.screens
 
-import android.content.Context
 import android.content.Intent
+import android.media.RingtoneManager
+import android.media.RingtoneManager.ACTION_RINGTONE_PICKER
+import android.net.Uri
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -54,6 +56,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -96,35 +99,36 @@ fun SettingsScreen(
 	val context = LocalContext.current
 	val version = BuildConfig.VERSION_NAME
 	val lifecycleOwner = LocalLifecycleOwner.current
-	fun hasPermission(context: Context): Boolean {
-		return Settings.System.canWrite(context)
-	}
 
 	val state by viewModel.settingsState.collectAsState()
 	var showBrightnessContext by remember { mutableStateOf(false) }
 	var didWeClickOnBrightness by remember { mutableStateOf(false) }
+	var ringtoneName by remember { mutableStateOf("") }
 
-	if (!hasPermission(context)) {
-		DisposableEffect(Unit) {
-			val observer = LifecycleEventObserver { _, event ->
-				if (event == Lifecycle.Event.ON_RESUME) {
-					if (hasPermission(context)) {
-						viewModel.saveBrightnessSetting(true)
-						showBrightnessContext = false
-					} else {
-						if (didWeClickOnBrightness) {
-							showBrightnessContext = true
-							viewModel.saveBrightnessSetting(false)
-						}
+	LaunchedEffect(state.ringtoneUri) {
+		ringtoneName = RingtoneManager.getRingtone(context, state.ringtoneUri).getTitle(context)
+	}
+
+	DisposableEffect(viewModel.hasPermission(context)) {
+		val observer = LifecycleEventObserver { _, event ->
+			if (event == Lifecycle.Event.ON_RESUME) {
+				if (viewModel.hasPermission(context)) {
+					viewModel.saveBrightnessSetting(true)
+					showBrightnessContext = false
+				} else {
+					if (didWeClickOnBrightness) {
+						showBrightnessContext = true
+						viewModel.saveBrightnessSetting(false)
 					}
 				}
 			}
-			lifecycleOwner.lifecycle.addObserver(observer)
-			onDispose {
-				lifecycleOwner.lifecycle.removeObserver(observer)
-			}
+		}
+		lifecycleOwner.lifecycle.addObserver(observer)
+		onDispose {
+			lifecycleOwner.lifecycle.removeObserver(observer)
 		}
 	}
+
 	Row {
 		if (isWideScreen) {
 			NavigationRail(
@@ -242,7 +246,8 @@ fun SettingsScreen(
 					Column(
 						horizontalAlignment = Alignment.CenterHorizontally
 					) {
-						val saveLauncher = rememberLauncherForActivityResult(
+						val saveLauncher =
+							rememberLauncherForActivityResult(
 							ActivityResultContracts.CreateDocument("application/vnd.sqlite3")
 						) {
 							if (it != null) {
@@ -252,7 +257,8 @@ fun SettingsScreen(
 								Log.d(TAG, "Path not saved.")
 							}
 						}
-						val loadLauncher = rememberLauncherForActivityResult(
+						val loadLauncher =
+							rememberLauncherForActivityResult(
 							ActivityResultContracts.GetContent()
 						) {
 							if (it != null) {
@@ -260,12 +266,23 @@ fun SettingsScreen(
 								onBackClicked(0)
 							}
 						}
+						val pickSoundLauncher =
+							rememberLauncherForActivityResult(
+								contract = ActivityResultContracts.StartActivityForResult()
+							) {
+								val ringtone_uri = it
+									.data
+									?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+								ringtone_uri?.let {uri ->
+									viewModel.saveSoundUri(uri)
+								}
+							}
 						CheckboxSetting(
 							title = stringResource(R.string.brightness),
 							description = stringResource(R.string.brightness_permission),
 							isDescVisible = showBrightnessContext,
 							onCheckedChange = {
-								if (!hasPermission(context)) {
+								if (!viewModel.hasPermission(context)) {
 									val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
 										data = "package:${context.packageName}".toUri()
 										addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -279,11 +296,13 @@ fun SettingsScreen(
 							},
 							isChecked = state.isMaxBrightness
 						)
+						HorizontalDivider()
 						CheckboxSetting(
 							title = stringResource(R.string.landscape),
 							onCheckedChange = { viewModel.saveLandscapeSetting(it) },
 							isChecked = state.isLandscapeMode
 						)
+						HorizontalDivider()
 						CheckboxSetting(
 							isChecked = state.playSound,
 							title = "Play a sound when opening the card",
@@ -292,6 +311,22 @@ fun SettingsScreen(
 								viewModel.saveSoundSetting(it)
 							}
 						)
+						AnimatedVisibility(
+							visible = state.playSound
+						) {
+							Text(
+								text = "Chosen ringtone: $ringtoneName",
+								modifier = Modifier
+									.fillMaxWidth()
+									.clickable {
+										val intent = Intent(ACTION_RINGTONE_PICKER)
+										pickSoundLauncher.launch(intent)
+									}
+									.padding(bottom = 8.dp)
+
+							)
+						}
+						HorizontalDivider()
 						DropdownSetting(
 							options = Theme.entries.map { it.uiText },
 							icon = R.drawable.theme_mode,
@@ -484,7 +519,7 @@ private fun CheckboxSetting(
 			.clickable(onClick = {
 				onCheckedChange(!isChecked)
 			})
-			.padding(top = 8.dp)
+			.padding(vertical = 8.dp)
 	) {
 		Row(
 			verticalAlignment = Alignment.Top
@@ -513,6 +548,6 @@ private fun CheckboxSetting(
 				)
 			}
 		}
-		HorizontalDivider()
+		//HorizontalDivider()
 	}
 }

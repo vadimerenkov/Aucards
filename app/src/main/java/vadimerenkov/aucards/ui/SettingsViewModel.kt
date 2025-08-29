@@ -24,6 +24,7 @@ import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardsDatabase
 import vadimerenkov.aucards.settings.Keys.BRIGHTNESS_STRING
 import vadimerenkov.aucards.settings.Keys.LANDSCAPE_STRING
+import vadimerenkov.aucards.settings.Keys.RINGTONE_URI
 import vadimerenkov.aucards.settings.Keys.SOUND_STRING
 import vadimerenkov.aucards.settings.Keys.THEME_STRING
 import vadimerenkov.aucards.settings.Language
@@ -48,6 +49,7 @@ class SettingsViewModel(
 			val landscape = settings.landscape.first() ?: false
 			val brightness = settings.brightness.first() ?: false
 			val playSound = settings.playSound.first() ?: false
+			val ringtoneUri = settings.readSoundUri()
 			val theme = readThemeSetting()
 			val language = readLanguageSetting()
 			state.update { it.copy(
@@ -55,7 +57,8 @@ class SettingsViewModel(
 				isMaxBrightness = brightness,
 				isLandscapeMode = landscape,
 				language = language,
-				playSound = playSound
+				playSound = playSound,
+				ringtoneUri = ringtoneUri
 			) }
 		}
 		.launchIn(viewModelScope)
@@ -67,7 +70,7 @@ class SettingsViewModel(
 			initialValue = state.value
 		)
 
-	fun readLanguageSetting(): Language {
+	private fun readLanguageSetting(): Language {
 		val locales = getApplicationLocales()
 
 		Log.i(TAG, "Loaded $locales as saved locale.")
@@ -95,7 +98,7 @@ class SettingsViewModel(
 		return Language.ENGLISH
 	}
 
-	suspend fun readThemeSetting(): Theme {
+	private suspend fun readThemeSetting(): Theme {
 		val theme = settings.themeSetting.first()
 
 		Theme.entries.forEach { it ->
@@ -122,7 +125,7 @@ class SettingsViewModel(
 		}
 
 		viewModelScope.launch {
-			settings.saveEnumSettings(
+			settings.saveStringSettings(
 				key = THEME_STRING,
 				value = theme.name
 			)
@@ -172,6 +175,19 @@ class SettingsViewModel(
 				value = playSound
 			)
 		}
+	}
+
+	fun saveSoundUri(uri: Uri) {
+		viewModelScope.launch {
+			settings.saveStringSettings(
+				key = RINGTONE_URI,
+				value = uri.toString()
+			)
+		}
+	}
+
+	fun hasPermission(context: Context): Boolean {
+		return android.provider.Settings.System.canWrite(context)
 	}
 
 	fun exportDatabase(uri: Uri, context: Context) {
@@ -253,6 +269,7 @@ data class SettingsState(
 	val isMaxBrightness: Boolean = false,
 	val isLandscapeMode: Boolean = false,
 	val playSound: Boolean = false,
+	val ringtoneUri: Uri? = null,
 	val language: Language = Language.ENGLISH,
 	val isDbEmpty: Boolean = true
 )

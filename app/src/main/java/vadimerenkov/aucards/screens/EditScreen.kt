@@ -5,6 +5,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,13 +19,13 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -37,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -233,35 +235,43 @@ fun SharedTransitionScope.EditScreen(
 					.align(Alignment.BottomCenter)
 					.fillMaxWidth()
 			) {
-				IconButton(
-					onClick = onBackClicked,
+				Box(
+					contentAlignment = Alignment.Center,
 					modifier = Modifier
 						.navigationBarsPadding()
-						.size(120.dp)
+						.padding(24.dp)
+						.clip(CircleShape)
+						.clickable {
+							onBackClicked()
+						}
+						.size(90.dp)
 				) {
 					Icon(
 						imageVector = Icons.Default.Close,
 						contentDescription = "Cancel",
-						tint = contentColor
+						tint = contentColor,
+						modifier = Modifier
+							.fillMaxSize(0.7f)
 					)
 				}
-				IconButton(
-					enabled = state.isValid,
-					onClick = {
-						viewModel.saveAucard(state.aucard)
-						onBackClicked()
-					},
-					colors = IconButtonDefaults.iconButtonColors(
-						contentColor = contentColor,
-						disabledContentColor = contentColor.copy(alpha = 0.3f)
-					),
+				Box(
+					contentAlignment = Alignment.Center,
 					modifier = Modifier
 						.navigationBarsPadding()
-						.size(120.dp)
+						.padding(24.dp)
+						.clip(CircleShape)
+						.clickable(enabled = state.isValid) {
+							viewModel.saveAucard(state.aucard)
+							onBackClicked()
+						}
+						.size(90.dp)
 				) {
 					Icon(
 						imageVector = Icons.Default.Done,
-						contentDescription = stringResource(R.string.save)
+						contentDescription = stringResource(R.string.save),
+						tint = if (state.isValid) contentColor else contentColor.copy(alpha = 0.3f),
+						modifier = Modifier
+							.fillMaxSize(0.7f)
 					)
 				}
 			}
