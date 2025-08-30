@@ -110,11 +110,14 @@ fun ListScreen(
 					onClick = {
 						viewModel.deleteSelected()
 						deleteConfirmationOpen = false
-					}
+					},
+					shape = MaterialTheme.shapes.medium
 				) {
 					Text(stringResource(R.string.delete_button))
 				}
-			})
+			},
+			shape = MaterialTheme.shapes.medium
+		)
 	}
 
 	Row {

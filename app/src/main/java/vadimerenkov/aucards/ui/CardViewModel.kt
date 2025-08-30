@@ -1,7 +1,10 @@
 package vadimerenkov.aucards.ui
 
+import android.content.Context
+import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import androidx.core.graphics.toColorInt
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +31,7 @@ class CardViewModel(
 	private val index: Int?
 ): ViewModel() {
 
-	val color = if (isDarkTheme) Color.Black else Color.White
+	private val color = if (isDarkTheme) Color.Black else Color.White
 
 	private var card_state = MutableStateFlow(CardState(
 		aucard = Aucard(
@@ -36,10 +39,6 @@ class CardViewModel(
 			color = color
 		)
 	))
-
-	init {
-		//loadInitialData()
-	}
 
 	var cardState = card_state
 		.onStart {
@@ -56,6 +55,8 @@ class CardViewModel(
 		viewModelScope.launch(dispatchers.main) {
 			val brightness = settings.brightness.first() ?: false
 			val landscape = settings.landscape.first()
+			val playSound = settings.playSound.first() ?: false
+			val ringtoneUri = settings.soundUri.first()?.toUri()
 			if (id != 0) {
 				val card = aucardDao.getAucardByID(id).first()
 				card_state.update {
@@ -63,13 +64,14 @@ class CardViewModel(
 						aucard = card,
 						isMaxBrightness = brightness,
 						isLandscapeMode = landscape,
+						isPlaySoundEnabled = playSound,
+						ringtoneUri = ringtoneUri,
 						isValid = card.text.isNotEmpty()
 					)
 				}
 			} else {
 				card_state.update {
 					it.copy(
-						isMaxBrightness = brightness,
 						isLandscapeMode = landscape
 					)
 				}
@@ -111,6 +113,10 @@ class CardViewModel(
 			card_state.update { it.copy(isHexCodeValid = false) }
 		}
 	}
+
+	fun hasPermission(context: Context): Boolean {
+		return android.provider.Settings.System.canWrite(context) && card_state.value.isMaxBrightness
+	}
 }
 
 data class CardState(
@@ -118,6 +124,8 @@ data class CardState(
 	val isValid: Boolean = false,
 	val isMaxBrightness: Boolean = false,
 	val isLandscapeMode: Boolean? = null,
+	val isPlaySoundEnabled: Boolean = false,
+	val ringtoneUri: Uri? = null,
 	val hexColor: String = "",
 	val isHexCodeValid: Boolean = true
 )

@@ -2,8 +2,10 @@
 
 package vadimerenkov.aucards.screens
 
-import android.content.Context
 import android.content.Intent
+import android.media.RingtoneManager
+import android.media.RingtoneManager.ACTION_RINGTONE_PICKER
+import android.net.Uri
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -38,6 +40,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.NavigationRail
@@ -51,7 +54,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,13 +64,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
@@ -94,35 +99,36 @@ fun SettingsScreen(
 	val context = LocalContext.current
 	val version = BuildConfig.VERSION_NAME
 	val lifecycleOwner = LocalLifecycleOwner.current
-	fun hasPermission(context: Context): Boolean {
-		return Settings.System.canWrite(context)
-	}
 
 	val state by viewModel.settingsState.collectAsState()
 	var showBrightnessContext by remember { mutableStateOf(false) }
 	var didWeClickOnBrightness by remember { mutableStateOf(false) }
+	var ringtoneName by remember { mutableStateOf("") }
 
-	if (!hasPermission(context)) {
-		DisposableEffect(Unit) {
-			val observer = LifecycleEventObserver { _, event ->
-				if (event == Lifecycle.Event.ON_RESUME) {
-					if (hasPermission(context)) {
-						viewModel.saveBrightnessSetting(true)
-						showBrightnessContext = false
-					} else {
-						if (didWeClickOnBrightness) {
-							showBrightnessContext = true
-							viewModel.saveBrightnessSetting(false)
-						}
+	LaunchedEffect(state.ringtoneUri) {
+		ringtoneName = RingtoneManager.getRingtone(context, state.ringtoneUri).getTitle(context)
+	}
+
+	DisposableEffect(viewModel.hasPermission(context)) {
+		val observer = LifecycleEventObserver { _, event ->
+			if (event == Lifecycle.Event.ON_RESUME) {
+				if (viewModel.hasPermission(context)) {
+					viewModel.saveBrightnessSetting(true)
+					showBrightnessContext = false
+				} else {
+					if (didWeClickOnBrightness) {
+						showBrightnessContext = true
+						viewModel.saveBrightnessSetting(false)
 					}
 				}
 			}
-			lifecycleOwner.lifecycle.addObserver(observer)
-			onDispose {
-				lifecycleOwner.lifecycle.removeObserver(observer)
-			}
+		}
+		lifecycleOwner.lifecycle.addObserver(observer)
+		onDispose {
+			lifecycleOwner.lifecycle.removeObserver(observer)
 		}
 	}
+
 	Row {
 		if (isWideScreen) {
 			NavigationRail(
@@ -227,7 +233,6 @@ fun SettingsScreen(
 				modifier = modifier
 					.padding(innerPadding)
 					.padding(horizontal = 16.dp)
-					.padding(top = 8.dp)
 					.fillMaxSize()
 			) {
 				Column(
@@ -241,7 +246,8 @@ fun SettingsScreen(
 					Column(
 						horizontalAlignment = Alignment.CenterHorizontally
 					) {
-						val saveLauncher = rememberLauncherForActivityResult(
+						val saveLauncher =
+							rememberLauncherForActivityResult(
 							ActivityResultContracts.CreateDocument("application/vnd.sqlite3")
 						) {
 							if (it != null) {
@@ -251,7 +257,8 @@ fun SettingsScreen(
 								Log.d(TAG, "Path not saved.")
 							}
 						}
-						val loadLauncher = rememberLauncherForActivityResult(
+						val loadLauncher =
+							rememberLauncherForActivityResult(
 							ActivityResultContracts.GetContent()
 						) {
 							if (it != null) {
@@ -259,10 +266,23 @@ fun SettingsScreen(
 								onBackClicked(0)
 							}
 						}
+						val pickSoundLauncher =
+							rememberLauncherForActivityResult(
+								contract = ActivityResultContracts.StartActivityForResult()
+							) {
+								val ringtone_uri = it
+									.data
+									?.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+								ringtone_uri?.let {uri ->
+									viewModel.saveSoundUri(uri)
+								}
+							}
 						CheckboxSetting(
-							description = stringResource(R.string.brightness),
+							title = stringResource(R.string.brightness),
+							description = stringResource(R.string.brightness_permission),
+							isDescVisible = showBrightnessContext,
 							onCheckedChange = {
-								if (!hasPermission(context)) {
+								if (!viewModel.hasPermission(context)) {
 									val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
 										data = "package:${context.packageName}".toUri()
 										addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -276,32 +296,66 @@ fun SettingsScreen(
 							},
 							isChecked = state.isMaxBrightness
 						)
-						AnimatedVisibility(showBrightnessContext) {
-							Text(
-								text = stringResource(R.string.brightness_permission),
-								color = Color.Blue,
-								style = MaterialTheme.typography.bodyMedium
-							)
-						}
-						HorizontalDivider(
-							modifier = Modifier
-								.padding(vertical = 8.dp)
-						)
+						HorizontalDivider()
 						CheckboxSetting(
-							description = stringResource(R.string.landscape),
+							title = stringResource(R.string.landscape),
 							onCheckedChange = { viewModel.saveLandscapeSetting(it) },
 							isChecked = state.isLandscapeMode
 						)
-						HorizontalDivider(
-							modifier = Modifier
-								.padding(vertical = 8.dp)
+						HorizontalDivider()
+						CheckboxSetting(
+							isChecked = state.playSound,
+							title = stringResource(R.string.settings_play_sound) ,
+							description = stringResource(R.string.play_sound_description),
+							onCheckedChange = {
+								viewModel.saveSoundSetting(it)
+								if (state.ringtoneUri == null) {
+									val uri = RingtoneManager.getActualDefaultRingtoneUri(context,
+										RingtoneManager.TYPE_NOTIFICATION
+									)
+									viewModel.saveSoundUri(uri)
+								}
+							}
 						)
+						AnimatedVisibility(
+							visible = state.playSound
+						) {
+							Row(
+								verticalAlignment = Alignment.CenterVertically,
+								modifier = Modifier
+									.fillMaxWidth()
+							) {
+								Text(
+									text = stringResource(R.string.ringtone)
+								)
+								TextButton(
+									onClick = {
+										val intent = Intent(ACTION_RINGTONE_PICKER)
+										pickSoundLauncher.launch(intent)
+									}
+								) {
+									Text(
+										text = ringtoneName,
+										style = MaterialTheme.typography.bodyLarge,
+										textDecoration = TextDecoration.Underline
+									)
+									Spacer(modifier = Modifier.width(4.dp))
+									Icon(
+										painter = painterResource(R.drawable.open_in_new),
+										contentDescription = stringResource(R.string.choose_ringtone)
+									)
+								}
+							}
+						}
+						HorizontalDivider()
 						DropdownSetting(
 							options = Theme.entries.map { it.uiText },
 							icon = R.drawable.theme_mode,
 							description = stringResource(R.string.theme),
 							onOptionChosen = { viewModel.saveThemeSetting(it) },
-							chosenOption = stringResource(state.theme.uiText)
+							chosenOption = stringResource(state.theme.uiText),
+							modifier = Modifier
+							.padding(top = 8.dp)
 						)
 						DropdownSetting(
 							options = Language.entries.map { it.uiText }.sorted(),
@@ -311,16 +365,15 @@ fun SettingsScreen(
 							chosenOption = stringResource(state.language.uiText)
 						)
 						state.language.translator?.let { it ->
-							Spacer(modifier = Modifier.height(8.dp))
 							Text(
 								text = stringResource(it),
-								color = Color.Blue,
-								style = MaterialTheme.typography.bodyMedium,
-								modifier = Modifier
-									.padding(top = 8.dp)
-									.align(Alignment.End)
-							)
-						}
+								color = MaterialTheme.colorScheme.primary,
+									style = MaterialTheme.typography.bodyMedium,
+									modifier = Modifier
+										.padding(top = 8.dp)
+										.align(Alignment.End)
+								)
+							}
 						Spacer(modifier = Modifier.padding(8.dp))
 						OutlinedButton(
 							onClick = {
@@ -330,14 +383,16 @@ fun SettingsScreen(
 								val version = BuildConfig.VERSION_NAME
 								saveLauncher.launch("aucards-$version-exported-$now.db")
 							},
-							enabled = !state.isDbEmpty
+							enabled = !state.isDbEmpty,
+							shape = MaterialTheme.shapes.medium
 						) {
 							Text(text = stringResource(R.string.export))
 						}
 						OutlinedButton(
 							onClick = {
 								loadLauncher.launch("application/octet-stream")
-							}
+							},
+							shape = MaterialTheme.shapes.medium
 						) {
 							Text(text = stringResource(R.string.import_cards))
 						}
@@ -471,29 +526,49 @@ private fun DropdownSetting(
 
 @Composable
 private fun CheckboxSetting(
-	description: String,
+	title: String,
 	onCheckedChange: (Boolean) -> Unit,
 	modifier: Modifier = Modifier,
+	description: String? = null,
+	isDescVisible: Boolean = true,
 	isChecked: Boolean = false
 ) {
-	Row(
-		verticalAlignment = Alignment.CenterVertically,
+	Column(
+		verticalArrangement = Arrangement.spacedBy(8.dp),
 		modifier = modifier
 			.fillMaxWidth()
 			.clickable(onClick = {
 				onCheckedChange(!isChecked)
 			})
+			.padding(vertical = 8.dp)
 	) {
-		Text(
-			text = description,
-			style = MaterialTheme.typography.bodyLarge,
-			modifier = Modifier
-				.weight(1f)
-		)
-		Checkbox(
-			checked = isChecked,
-			onCheckedChange = onCheckedChange,
-			modifier = Modifier
-		)
+		Row(
+			verticalAlignment = Alignment.Top
+		) {
+			Text(
+				text = title,
+				style = MaterialTheme.typography.bodyLarge,
+				modifier = Modifier
+					.weight(1f)
+			)
+			CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified) {
+				Checkbox(
+					checked = isChecked,
+					onCheckedChange = onCheckedChange,
+					modifier = Modifier
+						.padding(start = 8.dp)
+				)
+			}
+		}
+		description?.let {
+			AnimatedVisibility(isDescVisible) {
+				Text(
+					text = it,
+					style = MaterialTheme.typography.bodyMedium,
+					color = MaterialTheme.colorScheme.primary
+				)
+			}
+		}
+		//HorizontalDivider()
 	}
 }

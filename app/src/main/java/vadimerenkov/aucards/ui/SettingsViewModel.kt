@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatDelegate.getApplicationLocales
 import androidx.appcompat.app.AppCompatDelegate.setApplicationLocales
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
+import androidx.core.net.toUri
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,6 +25,8 @@ import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardsDatabase
 import vadimerenkov.aucards.settings.Keys.BRIGHTNESS_STRING
 import vadimerenkov.aucards.settings.Keys.LANDSCAPE_STRING
+import vadimerenkov.aucards.settings.Keys.RINGTONE_URI
+import vadimerenkov.aucards.settings.Keys.SOUND_STRING
 import vadimerenkov.aucards.settings.Keys.THEME_STRING
 import vadimerenkov.aucards.settings.Language
 import vadimerenkov.aucards.settings.Settings
@@ -46,9 +49,18 @@ class SettingsViewModel(
 		.onEach {
 			val landscape = settings.landscape.first() ?: false
 			val brightness = settings.brightness.first() ?: false
+			val playSound = settings.playSound.first() ?: false
+			val ringtoneUri = settings.soundUri.first()?.toUri()
 			val theme = readThemeSetting()
 			val language = readLanguageSetting()
-			state.update { it.copy(theme, brightness, landscape, language) }
+			state.update { it.copy(
+				theme = theme,
+				isMaxBrightness = brightness,
+				isLandscapeMode = landscape,
+				language = language,
+				playSound = playSound,
+				ringtoneUri = ringtoneUri
+			) }
 		}
 		.launchIn(viewModelScope)
 
@@ -59,7 +71,7 @@ class SettingsViewModel(
 			initialValue = state.value
 		)
 
-	fun readLanguageSetting(): Language {
+	private fun readLanguageSetting(): Language {
 		val locales = getApplicationLocales()
 
 		Log.i(TAG, "Loaded $locales as saved locale.")
@@ -87,7 +99,7 @@ class SettingsViewModel(
 		return Language.ENGLISH
 	}
 
-	suspend fun readThemeSetting(): Theme {
+	private suspend fun readThemeSetting(): Theme {
 		val theme = settings.themeSetting.first()
 
 		Theme.entries.forEach { it ->
@@ -114,7 +126,7 @@ class SettingsViewModel(
 		}
 
 		viewModelScope.launch {
-			settings.saveEnumSettings(
+			settings.saveStringSettings(
 				key = THEME_STRING,
 				value = theme.name
 			)
@@ -155,6 +167,28 @@ class SettingsViewModel(
 				value = brightness
 			)
 		}
+	}
+
+	fun saveSoundSetting(playSound: Boolean) {
+		viewModelScope.launch {
+			settings.saveBoolSettings(
+				key = SOUND_STRING,
+				value = playSound
+			)
+		}
+	}
+
+	fun saveSoundUri(uri: Uri) {
+		viewModelScope.launch {
+			settings.saveStringSettings(
+				key = RINGTONE_URI,
+				value = uri.toString()
+			)
+		}
+	}
+
+	fun hasPermission(context: Context): Boolean {
+		return android.provider.Settings.System.canWrite(context)
 	}
 
 	fun exportDatabase(uri: Uri, context: Context) {
@@ -235,6 +269,8 @@ data class SettingsState(
 	val theme: Theme = Theme.DEVICE,
 	val isMaxBrightness: Boolean = false,
 	val isLandscapeMode: Boolean = false,
+	val playSound: Boolean = false,
+	val ringtoneUri: Uri? = null,
 	val language: Language = Language.ENGLISH,
 	val isDbEmpty: Boolean = true
 )

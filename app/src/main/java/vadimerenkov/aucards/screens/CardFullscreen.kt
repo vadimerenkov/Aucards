@@ -4,12 +4,17 @@ import android.content.pm.ActivityInfo
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.LocalActivity
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,15 +22,25 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,7 +49,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.Dispatchers
+import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.ui.CardViewModel
 import vadimerenkov.aucards.ui.ContentType
@@ -44,6 +64,7 @@ import vadimerenkov.aucards.ui.calculateContentColor
 
 private const val TAG = "CardFullscreen"
 
+@UnstableApi
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.CardFullscreen(
@@ -59,21 +80,15 @@ fun SharedTransitionScope.CardFullscreen(
 	val activity = LocalActivity.current
 	val context = LocalContext.current
 
-	var controller: WindowInsetsControllerCompat? = null
-	val window = LocalActivity.current?.window
-	if (window != null) {
-		controller = WindowCompat.getInsetsController(window, window.decorView)
-		controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
-	}
+	var controller: WindowInsetsControllerCompat? by remember { mutableStateOf(null) }
+	val soundPlayer = remember { ExoPlayer.Builder(context).build() }
+	var soundPlaying by remember { mutableStateOf(false) }
 
-	fun hasPermission(): Boolean {
-		return Settings.System.canWrite(context) && state.isMaxBrightness
-	}
+	var current_brightness by remember { mutableIntStateOf(0) }
 
-	var current_brightness = 0
 
-	LaunchedEffect(hasPermission()) {
-		if (hasPermission()) {
+	LaunchedEffect(viewModel.hasPermission(context)) {
+		if (viewModel.hasPermission(context)) {
 			current_brightness = Settings.System.getInt(
 				context.contentResolver,
 				Settings.System.SCREEN_BRIGHTNESS
@@ -88,6 +103,11 @@ fun SharedTransitionScope.CardFullscreen(
 	}
 
 	LaunchedEffect(state.isLandscapeMode) {
+		val window = activity?.window
+		window?.let {
+			controller = WindowCompat.getInsetsController(it, it.decorView)
+			controller?.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
+		}
 		controller?.hide(WindowInsetsCompat.Type.systemBars())
 		if (state.isLandscapeMode == true) {
 			activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
@@ -98,10 +118,29 @@ fun SharedTransitionScope.CardFullscreen(
 		}
 	}
 
+	LaunchedEffect(state.isPlaySoundEnabled) {
+		if (state.isPlaySoundEnabled) {
+			val sound = MediaItem.fromUri(state.ringtoneUri!!)
+			soundPlayer.addListener(
+				object : Player.Listener {
+					override fun onIsPlayingChanged(isPlaying: Boolean) {
+						super.onIsPlayingChanged(isPlaying)
+						soundPlaying = isPlaying
+					}
+				}
+			)
+			soundPlayer.setMediaItem(sound)
+			soundPlayer.prepare()
+			soundPlayer.play()
+		}
+	}
+
 	DisposableEffect(Unit) {
 		onDispose {
 			controller?.show(WindowInsetsCompat.Type.systemBars())
-			if (hasPermission()) {
+			soundPlayer.stop()
+			soundPlayer.release()
+			if (viewModel.hasPermission(context)) {
 				Settings.System.putInt(
 					activity?.contentResolver,
 					Settings.System.SCREEN_BRIGHTNESS,
@@ -129,55 +168,97 @@ fun SharedTransitionScope.CardFullscreen(
 		)
 	)
 
-	with(scope) {
-		Box(
-			modifier = modifier
-				.fillMaxSize()
-				.background(state.aucard.color)
-				.clickable(
-					onClick = {
-						onBackClicked()
-					}
-				)
-				.sharedBounds(
-					sharedContentState = contentState,
-					animatedVisibilityScope = scope,
-					enter = expandIn(),
-					exit = shrinkOut(),
-					resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
-				)
+	Box(
+		modifier = modifier
+			.sharedBounds(
+				sharedContentState = contentState,
+				animatedVisibilityScope = scope,
+				enter = expandIn(),
+				exit = shrinkOut(),
+				resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
+			)
+			.fillMaxSize()
+			.background(state.aucard.color)
+			.clickable(
+				onClick = {
+					onBackClicked()
+				}
+			)
+
+	) {
+		Column(
+			verticalArrangement = Arrangement.Center,
+			horizontalAlignment = Alignment.CenterHorizontally,
+			modifier = Modifier
+				.align(Alignment.Center)
+				.padding(16.dp)
 		) {
-			Column(
-				verticalArrangement = Arrangement.Center,
-				horizontalAlignment = Alignment.CenterHorizontally,
+			Text(
+				text = state.aucard.text,
+				color = contentColor,
+				style = MaterialTheme.typography.displayLarge.copy(
+					hyphens = Hyphens.Auto
+				),
+				textAlign = TextAlign.Center,
 				modifier = Modifier
-					.align(Alignment.Center)
-					.padding(16.dp)
-			) {
+					.sharedBounds(
+						sharedContentState = textContentState,
+						animatedVisibilityScope = scope
+					)
+			)
+			if (state.aucard.description != null) {
 				Text(
-					text = state.aucard.text,
+					text = state.aucard.description!!,
 					color = contentColor,
-					style = MaterialTheme.typography.displayLarge.copy(
+					style = MaterialTheme.typography.titleLarge.copy(
 						hyphens = Hyphens.Auto
 					),
-					textAlign = TextAlign.Center,
-					modifier = Modifier
-						.sharedBounds(
-							sharedContentState = textContentState,
-							animatedVisibilityScope = scope
-						)
+					textAlign = TextAlign.Justify
 				)
-				state.aucard.description?.let {
-					AnimatedVisibility(!this@with.transition.isRunning) {
-						Text(
-							text = it,
-							color = contentColor,
-							style = MaterialTheme.typography.titleLarge.copy(
-								hyphens = Hyphens.Auto
-							),
-							textAlign = TextAlign.Justify
-						)
+			}
+		}
+		if (state.isPlaySoundEnabled) {
+			Box(
+				contentAlignment = Alignment.Center,
+				modifier = Modifier
+					.align(Alignment.BottomEnd)
+					.padding(vertical = 60.dp, horizontal = 30.dp)
+					.clip(CircleShape)
+					.clickable(
+						onClickLabel = "Play sound"
+					) {
+						if (soundPlaying) {
+							soundPlayer.pause()
+						} else {
+							soundPlayer.seekTo(0)
+							soundPlayer.play()
+						}
 					}
+					.size(100.dp)
+
+			) {
+				AnimatedContent(
+					targetState = soundPlaying,
+					transitionSpec = {
+						scaleIn() + fadeIn() togetherWith scaleOut() + fadeOut()
+					}
+				) { isPlaying ->
+					Icon(
+						painter = if (isPlaying) {
+							painterResource(R.drawable.pause)
+						} else {
+							painterResource(R.drawable.play)
+						},
+						contentDescription = if (isPlaying) {
+							stringResource(R.string.pause)
+						} else {
+							stringResource(R.string.play)
+						},
+						tint = contentColor.copy(alpha = 0.8f),
+						modifier = Modifier
+							.fillMaxSize(0.7f)
+
+					)
 				}
 			}
 		}

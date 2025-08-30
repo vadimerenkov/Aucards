@@ -219,6 +219,11 @@ private fun AucardItem(
 			),
 			elevation = CardDefaults.cardElevation(elevation),
 			modifier = modifier
+				.sharedBounds(
+					sharedContentState = if (!isSelectMode) contentState else editContentState,
+					animatedVisibilityScope = animatedVisibilityScope,
+					resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
+				)
 				.heightIn(max = 100.dp)
 				.combinedClickable(
 					enabled = true,
@@ -235,11 +240,7 @@ private fun AucardItem(
 					border = BorderStroke(border, color),
 					shape = MaterialTheme.shapes.medium
 				)
-				.sharedBounds(
-					sharedContentState = if (!isSelectMode) contentState else editContentState,
-					animatedVisibilityScope = animatedVisibilityScope,
-					resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
-				)
+
 		) {
 			Box {
 				this@ElevatedCard.AnimatedVisibility(
@@ -346,7 +347,7 @@ private fun AucardItem(
 						color = textColor,
 						textAlign = TextAlign.Center,
 						modifier = Modifier
-							.padding(4.dp)
+							.padding(8.dp)
 							.sharedBounds(
 								sharedContentState = if (!isSelectMode) textContentState else editTextContentState,
 								animatedVisibilityScope = animatedVisibilityScope
