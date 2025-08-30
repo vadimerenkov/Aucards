@@ -39,7 +39,7 @@
     <string name="import_cards">Import cards from file</string>
     <string name="export">Export cards to file</string>
     <string name="settings_play_sound">Play a sound when opening the card</string>
-    <string name="play_sound_description">Play a ringtone to alert others that you are about to say something.</string>
+    <string name="play_sound_description">Play a ringtone to let others know you want to say something.</string>
     <string name="ringtone">Ringtone:</string>
     <string name="choose_ringtone">Choose a ringtone</string>
     <string name="pause">Pause</string>

@@ -13,6 +13,7 @@ It is designed to be as frictionless as possible to minimize the effort needed t
 <li>Organize your cards however you like: drag them around or add to favourites</li>
 <li>Easy to use: just tap on the card to open it in fullscreen!</li>
 <li>Bring your cards to any device: easily export and transfer them wherever you like</li>
+<li>Play a sound to let others know you want to say something</li>
 <li>Completely free, open source and no ads – ever!</li>
 
 <p><b>Who can benefit from this app:</b></p>
