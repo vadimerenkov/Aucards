@@ -5,12 +5,16 @@ import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,9 +24,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -51,6 +53,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.Dispatchers
+import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.ui.CardViewModel
 import vadimerenkov.aucards.ui.ContentType
@@ -164,87 +167,93 @@ fun SharedTransitionScope.CardFullscreen(
 		)
 	)
 
-	with(scope) {
-		Box(
-			modifier = modifier
-				.fillMaxSize()
-				.background(state.aucard.color)
-				.clickable(
-					onClick = {
-						onBackClicked()
-					}
-				)
-				.sharedBounds(
-					sharedContentState = contentState,
-					animatedVisibilityScope = scope,
-					enter = expandIn(),
-					exit = shrinkOut(),
-					resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
-				)
+	Box(
+		modifier = modifier
+			.sharedBounds(
+				sharedContentState = contentState,
+				animatedVisibilityScope = scope,
+				enter = expandIn(),
+				exit = shrinkOut(),
+				resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
+			)
+			.fillMaxSize()
+			.background(state.aucard.color)
+			.clickable(
+				onClick = {
+					onBackClicked()
+				}
+			)
+
+	) {
+		Column(
+			verticalArrangement = Arrangement.Center,
+			horizontalAlignment = Alignment.CenterHorizontally,
+			modifier = Modifier
+				.align(Alignment.Center)
+				.padding(16.dp)
 		) {
-			Column(
-				verticalArrangement = Arrangement.Center,
-				horizontalAlignment = Alignment.CenterHorizontally,
+			Text(
+				text = state.aucard.text,
+				color = contentColor,
+				style = MaterialTheme.typography.displayLarge.copy(
+					hyphens = Hyphens.Auto
+				),
+				textAlign = TextAlign.Center,
 				modifier = Modifier
-					.align(Alignment.Center)
-					.padding(16.dp)
-			) {
+					.sharedBounds(
+						sharedContentState = textContentState,
+						animatedVisibilityScope = scope
+					)
+			)
+			if (state.aucard.description != null) {
 				Text(
-					text = state.aucard.text,
+					text = state.aucard.description!!,
 					color = contentColor,
-					style = MaterialTheme.typography.displayLarge.copy(
+					style = MaterialTheme.typography.titleLarge.copy(
 						hyphens = Hyphens.Auto
 					),
-					textAlign = TextAlign.Center,
-					modifier = Modifier
-						.sharedBounds(
-							sharedContentState = textContentState,
-							animatedVisibilityScope = scope
-						)
+					textAlign = TextAlign.Justify
 				)
-				state.aucard.description?.let {
-					AnimatedVisibility(!this@with.transition.isRunning) {
-						Text(
-							text = it,
-							color = contentColor,
-							style = MaterialTheme.typography.titleLarge.copy(
-								hyphens = Hyphens.Auto
-							),
-							textAlign = TextAlign.Justify
-						)
-					}
-				}
 			}
-			if (state.isPlaySoundEnabled) {
-				Box(
-					contentAlignment = Alignment.Center,
-					modifier = Modifier
-						.align(Alignment.BottomEnd)
-						.padding(vertical = 60.dp, horizontal = 30.dp)
-						.clip(CircleShape)
-						.clickable(
-							onClickLabel = "Play sound"
-						) {
-							if (soundPlaying) {
-								soundPlayer.pause()
-							} else {
-								soundPlayer.seekTo(0)
-								soundPlayer.play()
-							}
+		}
+		if (state.isPlaySoundEnabled) {
+			Box(
+				contentAlignment = Alignment.Center,
+				modifier = Modifier
+					.align(Alignment.BottomEnd)
+					.padding(vertical = 60.dp, horizontal = 30.dp)
+					.clip(CircleShape)
+					.clickable(
+						onClickLabel = "Play sound"
+					) {
+						if (soundPlaying) {
+							soundPlayer.pause()
+						} else {
+							soundPlayer.seekTo(0)
+							soundPlayer.play()
 						}
-						.size(100.dp)
-
-
-				) {
-					AnimatedContent(targetState = soundPlaying) { isPlaying ->
-						Icon(
-							imageVector = if (isPlaying) Icons.Default.Close else Icons.Default.PlayArrow,
-							contentDescription = null,
-							tint = contentColor.copy(alpha = 0.8f),
-							modifier = Modifier
-								.fillMaxSize(0.7f)
-						)
 					}
+					.size(100.dp)
+
+			) {
+				AnimatedContent(
+					targetState = soundPlaying,
+					transitionSpec = {
+						scaleIn() + fadeIn() togetherWith scaleOut() + fadeOut()
+					}
+				) { isPlaying ->
+					Icon(
+						painter = if (isPlaying) {
+							painterResource(R.drawable.pause)
+						} else {
+							painterResource(R.drawable.play)
+						},
+						contentDescription = null,
+						tint = contentColor.copy(alpha = 0.8f),
+						modifier = Modifier
+							.fillMaxSize(0.7f)
+
+					)
 				}
 			}
 		}

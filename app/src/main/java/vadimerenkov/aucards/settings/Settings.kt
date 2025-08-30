@@ -1,6 +1,5 @@
 package vadimerenkov.aucards.settings
 
-import android.media.RingtoneManager
 import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.core.net.toUri
@@ -57,7 +56,7 @@ class Settings(
 		.map { settings ->
 			settings[booleanPreferencesKey(SOUND_STRING)]
 		}
-	val soundUri = dataStore.data
+	private val soundUri = dataStore.data
 		.map { settings ->
 			settings[stringPreferencesKey(RINGTONE_URI)]
 		}
@@ -76,10 +75,8 @@ class Settings(
 		}
 	}
 
-	suspend fun readSoundUri(): Uri {
-		var uri: Uri
+	suspend fun readSoundUri(): Uri? {
 		val setting = soundUri.first()
-		uri = setting?.toUri() ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-		return uri
+		return setting?.toUri()
 	}
 }

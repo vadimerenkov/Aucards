@@ -25,7 +25,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -187,29 +186,37 @@ fun SharedTransitionScope.EditScreen(
 					modifier = Modifier
 						.fillMaxWidth()
 				)
+			}
+			Column(
+				modifier = Modifier
+					.align(Alignment.BottomCenter)
+					.background(
+						color = Color.Black.copy(alpha = 0.4f)
+					)
+					.padding(horizontal = 24.dp)
+			) {
 				Row(
-					verticalAlignment = Alignment.CenterVertically
+					verticalAlignment = Alignment.CenterVertically,
+					modifier = Modifier
+						.padding(top = 8.dp)
 				) {
 					Spacer(modifier = Modifier.weight(1f))
-
 					Box(
-
-					) {
-						IconButton(
-							onClick = {
+						contentAlignment = Alignment.Center,
+						modifier = Modifier
+							.clip(CircleShape)
+							.size(70.dp)
+							.clickable {
 								keyboardController?.hide()
 								colorPaletteOpen = !colorPaletteOpen
-							},
-							modifier = Modifier
-								.padding(vertical = 8.dp, horizontal = 24.dp)
-								.size(48.dp)
+							}
 						) {
 							Icon(
 								painter = painterResource(R.drawable.palette),
-								tint = contentColor,
+								tint = Color.White,
 								contentDescription = stringResource(R.string.choose_color),
 								modifier = Modifier
-									.size(48.dp)
+									.fillMaxSize(0.7f)
 							)
 						}
 
@@ -225,54 +232,50 @@ fun SharedTransitionScope.EditScreen(
 							offset = DpOffset(-(50).dp, 0.dp),
 							tabRowSize = DpSize(250.dp, 50.dp)
 						)
-
 					}
-				}
-			}
-			Row(
-				horizontalArrangement = Arrangement.SpaceBetween,
-				modifier = Modifier
-					.align(Alignment.BottomCenter)
-					.fillMaxWidth()
-			) {
-				Box(
-					contentAlignment = Alignment.Center,
+
+				Row(
+					horizontalArrangement = Arrangement.SpaceBetween,
 					modifier = Modifier
+						.fillMaxWidth()
 						.navigationBarsPadding()
-						.padding(24.dp)
-						.clip(CircleShape)
-						.clickable {
-							onBackClicked()
-						}
-						.size(90.dp)
+						.padding(bottom = 24.dp)
 				) {
-					Icon(
-						imageVector = Icons.Default.Close,
-						contentDescription = "Cancel",
-						tint = contentColor,
+					Box(
+						contentAlignment = Alignment.Center,
 						modifier = Modifier
-							.fillMaxSize(0.7f)
-					)
-				}
-				Box(
-					contentAlignment = Alignment.Center,
-					modifier = Modifier
-						.navigationBarsPadding()
-						.padding(24.dp)
-						.clip(CircleShape)
-						.clickable(enabled = state.isValid) {
-							viewModel.saveAucard(state.aucard)
-							onBackClicked()
-						}
-						.size(90.dp)
-				) {
-					Icon(
-						imageVector = Icons.Default.Done,
-						contentDescription = stringResource(R.string.save),
-						tint = if (state.isValid) contentColor else contentColor.copy(alpha = 0.3f),
+							.clip(CircleShape)
+							.clickable {
+								onBackClicked()
+							}
+							.size(70.dp)
+					) {
+						Icon(
+							imageVector = Icons.Default.Close,
+							contentDescription = "Cancel",
+							tint = Color.White,
+							modifier = Modifier
+								.fillMaxSize(0.7f)
+						)
+					}
+					Box(
+						contentAlignment = Alignment.Center,
 						modifier = Modifier
-							.fillMaxSize(0.7f)
-					)
+							.clip(CircleShape)
+							.clickable(enabled = state.isValid) {
+								viewModel.saveAucard(state.aucard)
+								onBackClicked()
+							}
+							.size(70.dp)
+					) {
+						Icon(
+							imageVector = Icons.Default.Done,
+							contentDescription = stringResource(R.string.save),
+							tint = if (state.isValid) Color.White else Color.White.copy(alpha = 0.3f),
+							modifier = Modifier
+								.fillMaxSize(0.7f)
+						)
+					}
 				}
 			}
 		}

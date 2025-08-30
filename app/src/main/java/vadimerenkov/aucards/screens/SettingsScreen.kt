@@ -306,25 +306,46 @@ fun SettingsScreen(
 						CheckboxSetting(
 							isChecked = state.playSound,
 							title = "Play a sound when opening the card",
-							description = "Play a sound to alert others that you are about to say something.",
+							description = "Play a ringtone to alert others that you are about to say something.",
 							onCheckedChange = {
 								viewModel.saveSoundSetting(it)
+								if (state.ringtoneUri == null) {
+									val uri = RingtoneManager.getActualDefaultRingtoneUri(context,
+										RingtoneManager.TYPE_NOTIFICATION
+									)
+									viewModel.saveSoundUri(uri)
+								}
 							}
 						)
 						AnimatedVisibility(
 							visible = state.playSound
 						) {
-							Text(
-								text = "Chosen ringtone: $ringtoneName",
+							Row(
+								verticalAlignment = Alignment.CenterVertically,
 								modifier = Modifier
 									.fillMaxWidth()
-									.clickable {
+							) {
+								Text(
+									text = "Ringtone:"
+								)
+								TextButton(
+									onClick = {
 										val intent = Intent(ACTION_RINGTONE_PICKER)
 										pickSoundLauncher.launch(intent)
 									}
-									.padding(bottom = 8.dp)
-
-							)
+								) {
+									Text(
+										text = ringtoneName,
+										style = MaterialTheme.typography.bodyLarge,
+										textDecoration = TextDecoration.Underline
+									)
+									Spacer(modifier = Modifier.width(4.dp))
+									Icon(
+										painter = painterResource(R.drawable.open_in_new),
+										contentDescription = "Choose a ringtone"
+									)
+								}
+							}
 						}
 						HorizontalDivider()
 						DropdownSetting(
