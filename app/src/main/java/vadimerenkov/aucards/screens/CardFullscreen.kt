@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -248,7 +249,11 @@ fun SharedTransitionScope.CardFullscreen(
 						} else {
 							painterResource(R.drawable.play)
 						},
-						contentDescription = null,
+						contentDescription = if (isPlaying) {
+							stringResource(R.string.pause)
+						} else {
+							stringResource(R.string.play)
+						},
 						tint = contentColor.copy(alpha = 0.8f),
 						modifier = Modifier
 							.fillMaxSize(0.7f)

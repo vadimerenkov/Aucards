@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import androidx.core.graphics.toColorInt
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,7 +56,7 @@ class CardViewModel(
 			val brightness = settings.brightness.first() ?: false
 			val landscape = settings.landscape.first()
 			val playSound = settings.playSound.first() ?: false
-			val ringtoneUri = settings.readSoundUri()
+			val ringtoneUri = settings.soundUri.first()?.toUri()
 			if (id != 0) {
 				val card = aucardDao.getAucardByID(id).first()
 				card_state.update {

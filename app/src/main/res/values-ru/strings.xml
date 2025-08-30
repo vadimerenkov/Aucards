@@ -26,7 +26,7 @@
     <string name="selected_number">Выбрано: %s</string>
     <string name="delete_button">Удалить</string>
     <string name="cancel">Отмена</string>
-    <string name="landscape">Переходить в горизонтальный режим при открытии карточки</string>
+    <string name="landscape">Перейти в горизонтальный режим при открытии карточки</string>
     <string name="all_cards">Все карточки</string>
     <string name="favourites">Избранное</string>
     <string name="mark_as_favourite">Добавить в избранное</string>
@@ -36,4 +36,10 @@
     <string name="custom_color">Свой цвет</string>
     <string name="import_cards">Загрузить карточки из файла</string>
     <string name="export">Сохранить карточки в файл</string>
+    <string name="settings_play_sound">Воспроизвести звук при открытии карточки</string>
+    <string name="play_sound_description">Проиграть мелодию, чтобы привлечь внимание к тому, что вы хотите сказать.</string>
+    <string name="ringtone">Мелодия:</string>
+    <string name="choose_ringtone">Выбрать мелодию</string>
+    <string name="pause">Пауза</string>
+    <string name="play">Воспроизвести</string>
 </resources>

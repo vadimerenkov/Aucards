@@ -1,14 +1,11 @@
 package vadimerenkov.aucards.settings
 
-import android.net.Uri
 import androidx.annotation.StringRes
-import androidx.core.net.toUri
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.settings.Keys.BRIGHTNESS_STRING
@@ -56,7 +53,7 @@ class Settings(
 		.map { settings ->
 			settings[booleanPreferencesKey(SOUND_STRING)]
 		}
-	private val soundUri = dataStore.data
+	val soundUri = dataStore.data
 		.map { settings ->
 			settings[stringPreferencesKey(RINGTONE_URI)]
 		}
@@ -73,10 +70,5 @@ class Settings(
 		dataStore.edit { settings ->
 			settings[key] = value
 		}
-	}
-
-	suspend fun readSoundUri(): Uri? {
-		val setting = soundUri.first()
-		return setting?.toUri()
 	}
 }

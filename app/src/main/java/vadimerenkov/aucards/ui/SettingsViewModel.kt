@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatDelegate.getApplicationLocales
 import androidx.appcompat.app.AppCompatDelegate.setApplicationLocales
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
+import androidx.core.net.toUri
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -49,7 +50,7 @@ class SettingsViewModel(
 			val landscape = settings.landscape.first() ?: false
 			val brightness = settings.brightness.first() ?: false
 			val playSound = settings.playSound.first() ?: false
-			val ringtoneUri = settings.readSoundUri()
+			val ringtoneUri = settings.soundUri.first()?.toUri()
 			val theme = readThemeSetting()
 			val language = readLanguageSetting()
 			state.update { it.copy(

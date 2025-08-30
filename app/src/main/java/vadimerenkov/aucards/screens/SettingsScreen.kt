@@ -305,8 +305,8 @@ fun SettingsScreen(
 						HorizontalDivider()
 						CheckboxSetting(
 							isChecked = state.playSound,
-							title = "Play a sound when opening the card",
-							description = "Play a ringtone to alert others that you are about to say something.",
+							title = stringResource(R.string.settings_play_sound) ,
+							description = stringResource(R.string.play_sound_description),
 							onCheckedChange = {
 								viewModel.saveSoundSetting(it)
 								if (state.ringtoneUri == null) {
@@ -326,7 +326,7 @@ fun SettingsScreen(
 									.fillMaxWidth()
 							) {
 								Text(
-									text = "Ringtone:"
+									text = stringResource(R.string.ringtone)
 								)
 								TextButton(
 									onClick = {
@@ -342,7 +342,7 @@ fun SettingsScreen(
 									Spacer(modifier = Modifier.width(4.dp))
 									Icon(
 										painter = painterResource(R.drawable.open_in_new),
-										contentDescription = "Choose a ringtone"
+										contentDescription = stringResource(R.string.choose_ringtone)
 									)
 								}
 							}
