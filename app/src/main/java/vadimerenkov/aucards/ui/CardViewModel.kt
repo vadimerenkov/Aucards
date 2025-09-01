@@ -65,8 +65,7 @@ class CardViewModel(
 						isMaxBrightness = brightness,
 						isLandscapeMode = landscape,
 						isPlaySoundEnabled = playSound,
-						ringtoneUri = ringtoneUri,
-						isValid = card.text.isNotEmpty()
+						ringtoneUri = ringtoneUri
 					)
 				}
 			} else {
@@ -89,7 +88,9 @@ class CardViewModel(
 	}
 
 	fun updateText(text: String) {
-		card_state.update { it.copy(aucard = it.aucard.copy(text = text), isValid = text.isNotEmpty()) }
+		card_state.update { it.copy(
+			aucard = it.aucard.copy(text = text)
+		) }
 	}
 
 	fun updateDescription(description: String) {
@@ -121,11 +122,13 @@ class CardViewModel(
 
 data class CardState(
 	val aucard: Aucard,
-	val isValid: Boolean = false,
 	val isMaxBrightness: Boolean = false,
 	val isLandscapeMode: Boolean? = null,
 	val isPlaySoundEnabled: Boolean = false,
 	val ringtoneUri: Uri? = null,
 	val hexColor: String = "",
 	val isHexCodeValid: Boolean = true
-)
+) {
+	val isValid: Boolean
+		get() = aucard.text.isNotBlank()
+}

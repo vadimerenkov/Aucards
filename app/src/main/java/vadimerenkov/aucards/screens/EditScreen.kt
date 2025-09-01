@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -190,6 +191,7 @@ fun SharedTransitionScope.EditScreen(
 			Column(
 				modifier = Modifier
 					.align(Alignment.BottomCenter)
+					.clip(RoundedCornerShape(32.dp))
 					.background(
 						color = Color.Black.copy(alpha = 0.4f)
 					)
@@ -198,7 +200,8 @@ fun SharedTransitionScope.EditScreen(
 				Row(
 					verticalAlignment = Alignment.CenterVertically,
 					modifier = Modifier
-						.padding(top = 8.dp)
+						.padding(top = 16.dp)
+
 				) {
 					Spacer(modifier = Modifier.weight(1f))
 					Box(
@@ -239,7 +242,7 @@ fun SharedTransitionScope.EditScreen(
 					modifier = Modifier
 						.fillMaxWidth()
 						.navigationBarsPadding()
-						.padding(bottom = 24.dp)
+						.padding(bottom = 16.dp)
 				) {
 					Box(
 						contentAlignment = Alignment.Center,

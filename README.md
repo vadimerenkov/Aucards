@@ -18,6 +18,7 @@ Highlights:
 - Organize your cards however you like: drag them around or add to favourites
 - Easy to use: just tap on the card to open it in fullscreen!
 - Bring your cards to any device: easily export and transfer them wherever you like
+- Play a sound to let others know you want to say something
 - Completely free, open source and no ads – ever!
 
 Who can benefit from this app:
