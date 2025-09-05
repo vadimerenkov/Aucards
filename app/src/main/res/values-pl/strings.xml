@@ -47,6 +47,7 @@
     <string name="play">Odtwórz</string>
     <plurals name="delete_confirmation">
         <item quantity="one">Czy na pewno chcesz usunąć tą fiszkę?</item>
-        <item quantity="other">Czy na pewno chcesz usunąć %s fiszki/fiszek?</item>
+        <item quantity="few">Czy na pewno chcesz usunąć %s fiszki?</item>
+        <item quantity="many">Czy na pewno chcesz usunąć %s fiszek?</item>
     </plurals>
 </resources>
