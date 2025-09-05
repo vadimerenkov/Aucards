@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <string name="help">Potrzebuję pomocy</string>
+    <string name="hug">Czy możesz mnie przytulić?</string>
+    <string name="alone">Potrzebuję trochę czasu w samotności</string>
+</resources>
