@@ -18,13 +18,14 @@ class MainActivity : AppCompatActivity() {
 		super.onCreate(savedInstanceState)
 		enableEdgeToEdge()
 		setContent {
-			val app = this.application as AucardsApplication
-			val theme_string by app.settings.themeSetting.collectAsState("why are we here")
-			val isDarkTheme = when (theme_string) {
-				Theme.LIGHT.name -> false
-				Theme.DARK.name -> true
-				else -> isSystemInDarkTheme()
-			}
+                        val app = this.application as AucardsApplication
+                        val theme_string by app.settings.themeSetting.collectAsState("why are we here")
+                        val fontScale by app.settings.fontScale.collectAsState(1f)
+                        val isDarkTheme = when (theme_string) {
+                                Theme.LIGHT.name -> false
+                                Theme.DARK.name -> true
+                                else -> isSystemInDarkTheme()
+                        }
 
 			val locales = getApplicationLocales()
 			setApplicationLocales(locales)
@@ -36,11 +37,12 @@ class MainActivity : AppCompatActivity() {
 				)
 			}
 
-			AucardsTheme(
-				darkTheme = isDarkTheme
-			) {
-				MainNavHost(isDarkTheme)
-			}
+                        AucardsTheme(
+                                darkTheme = isDarkTheme,
+                                fontScale = fontScale
+                        ) {
+                                MainNavHost(isDarkTheme)
+                        }
 		}
 	}
 }

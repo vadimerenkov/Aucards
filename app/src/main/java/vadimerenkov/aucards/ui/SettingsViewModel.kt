@@ -25,6 +25,7 @@ import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardsDatabase
 import vadimerenkov.aucards.settings.Keys.BRIGHTNESS_STRING
 import vadimerenkov.aucards.settings.Keys.LANDSCAPE_STRING
+import vadimerenkov.aucards.settings.Keys.FONT_SCALE_STRING
 import vadimerenkov.aucards.settings.Keys.RINGTONE_URI
 import vadimerenkov.aucards.settings.Keys.SOUND_STRING
 import vadimerenkov.aucards.settings.Keys.THEME_STRING
@@ -49,20 +50,22 @@ class SettingsViewModel(
 		.onEach {
 			val landscape = settings.landscape.first() ?: false
 			val brightness = settings.brightness.first() ?: false
-			val playSound = settings.playSound.first() ?: false
-			val ringtoneUri = settings.soundUri.first()?.toUri()
-			val theme = readThemeSetting()
-			val language = readLanguageSetting()
-			state.update { it.copy(
-				theme = theme,
-				isMaxBrightness = brightness,
-				isLandscapeMode = landscape,
-				language = language,
-				playSound = playSound,
-				ringtoneUri = ringtoneUri
-			) }
-		}
-		.launchIn(viewModelScope)
+                        val playSound = settings.playSound.first() ?: false
+                        val ringtoneUri = settings.soundUri.first()?.toUri()
+                        val fontScale = settings.fontScale.first() ?: 1f
+                        val theme = readThemeSetting()
+                        val language = readLanguageSetting()
+                        state.update { it.copy(
+                                theme = theme,
+                                isMaxBrightness = brightness,
+                                isLandscapeMode = landscape,
+                                language = language,
+                                playSound = playSound,
+                                ringtoneUri = ringtoneUri,
+                                fontScale = fontScale
+                        ) }
+                }
+                .launchIn(viewModelScope)
 
 	val settingsState = state
 		.stateIn(
@@ -169,14 +172,23 @@ class SettingsViewModel(
 		}
 	}
 
-	fun saveSoundSetting(playSound: Boolean) {
-		viewModelScope.launch {
-			settings.saveBoolSettings(
-				key = SOUND_STRING,
-				value = playSound
-			)
-		}
-	}
+        fun saveSoundSetting(playSound: Boolean) {
+                viewModelScope.launch {
+                        settings.saveBoolSettings(
+                                key = SOUND_STRING,
+                                value = playSound
+                        )
+                }
+        }
+
+        fun saveFontScaleSetting(scale: Float) {
+                viewModelScope.launch {
+                        settings.saveFloatSettings(
+                                key = FONT_SCALE_STRING,
+                                value = scale
+                        )
+                }
+        }
 
 	fun saveSoundUri(uri: Uri) {
 		viewModelScope.launch {
@@ -266,13 +278,14 @@ class SettingsViewModel(
 }
 
 data class SettingsState(
-	val theme: Theme = Theme.DEVICE,
-	val isMaxBrightness: Boolean = false,
-	val isLandscapeMode: Boolean = false,
-	val playSound: Boolean = false,
-	val ringtoneUri: Uri? = null,
-	val language: Language = Language.ENGLISH,
-	val isDbEmpty: Boolean = true
+        val theme: Theme = Theme.DEVICE,
+        val isMaxBrightness: Boolean = false,
+        val isLandscapeMode: Boolean = false,
+        val playSound: Boolean = false,
+        val ringtoneUri: Uri? = null,
+        val language: Language = Language.ENGLISH,
+        val isDbEmpty: Boolean = true,
+        val fontScale: Float = 1f
 )
 
 class InvalidSettingsException(setting: Any): Exception() {
