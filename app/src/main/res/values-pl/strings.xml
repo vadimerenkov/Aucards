@@ -15,10 +15,10 @@
     <string name="light">Jasny</string>
     <string name="dark">Ciemny</string>
     <string name="device">Motyw urządzenia</string>
-    <string name="english" translatable="false">English</string>
-    <string name="russian" translatable="false">Русский</string>
-    <string name="ukrainian" translatable="false">Українська</string>
-    <string name="georgian" translatable="false">ქართული</string>
+    <string name="english" translatable="false">angielski</string>
+    <string name="russian" translatable="false">rosyjski</string>
+    <string name="ukrainian" translatable="false">ukraiński</string>
+    <string name="georgian" translatable="false">gruziński</string>
     <string name="brightness">Ustaw maksymalną jasność ekranu gdy otwierasz fiszkę</string>
     <string name="theme">Motyw</string>
     <string name="language">Język</string>
