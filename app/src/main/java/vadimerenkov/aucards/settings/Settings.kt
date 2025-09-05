@@ -5,11 +5,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.map
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.settings.Keys.BRIGHTNESS_STRING
 import vadimerenkov.aucards.settings.Keys.LANDSCAPE_STRING
+import vadimerenkov.aucards.settings.Keys.FONT_SCALE_STRING
 import vadimerenkov.aucards.settings.Keys.RINGTONE_URI
 import vadimerenkov.aucards.settings.Keys.SOUND_STRING
 import vadimerenkov.aucards.settings.Keys.THEME_STRING
@@ -53,10 +55,14 @@ class Settings(
 		.map { settings ->
 			settings[booleanPreferencesKey(SOUND_STRING)]
 		}
-	val soundUri = dataStore.data
-		.map { settings ->
-			settings[stringPreferencesKey(RINGTONE_URI)]
-		}
+        val soundUri = dataStore.data
+                .map { settings ->
+                        settings[stringPreferencesKey(RINGTONE_URI)]
+                }
+        val fontScale = dataStore.data
+                .map { settings ->
+                        settings[floatPreferencesKey(FONT_SCALE_STRING)]
+                }
 
 	suspend fun saveStringSettings(key: String, value: String) {
 		val key = stringPreferencesKey(key)
@@ -65,10 +71,17 @@ class Settings(
 		}
 	}
 
-	suspend fun saveBoolSettings(key: String, value: Boolean) {
-		val key = booleanPreferencesKey(key)
-		dataStore.edit { settings ->
-			settings[key] = value
-		}
-	}
+        suspend fun saveBoolSettings(key: String, value: Boolean) {
+                val key = booleanPreferencesKey(key)
+                dataStore.edit { settings ->
+                        settings[key] = value
+                }
+        }
+
+        suspend fun saveFloatSettings(key: String, value: Float) {
+                val key = floatPreferencesKey(key)
+                dataStore.edit { settings ->
+                        settings[key] = value
+                }
+        }
 }

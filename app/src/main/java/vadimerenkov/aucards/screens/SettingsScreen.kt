@@ -357,18 +357,36 @@ fun SettingsScreen(
 							modifier = Modifier
 							.padding(top = 8.dp)
 						)
-						DropdownSetting(
-							options = Language.entries.map { it.uiText }.sorted(),
-							icon = R.drawable.language,
-							description = stringResource(R.string.language),
-							onOptionChosen = { viewModel.saveLanguageSetting(it) },
-							chosenOption = stringResource(state.language.uiText)
-						)
-						state.language.translator?.let { it ->
-							Text(
-								text = stringResource(it),
-								color = MaterialTheme.colorScheme.primary,
-									style = MaterialTheme.typography.bodyMedium,
+                                                DropdownSetting(
+                                                        options = Language.entries.map { it.uiText }.sorted(),
+                                                        icon = R.drawable.language,
+                                                        description = stringResource(R.string.language),
+                                                        onOptionChosen = { viewModel.saveLanguageSetting(it) },
+                                                        chosenOption = stringResource(state.language.uiText)
+                                                )
+                                                DropdownSetting(
+                                                        options = listOf(R.string.small, R.string.medium, R.string.large),
+                                                        description = stringResource(R.string.font_size),
+                                                        onOptionChosen = {
+                                                                val scale = when (it) {
+                                                                        R.string.small -> 0.85f
+                                                                        R.string.medium -> 1f
+                                                                        R.string.large -> 1.15f
+                                                                        else -> 1f
+                                                                }
+                                                                viewModel.saveFontScaleSetting(scale)
+                                                        },
+                                                        chosenOption = when (state.fontScale) {
+                                                                in 0f..0.9f -> stringResource(R.string.small)
+                                                                in 0.9f..1.1f -> stringResource(R.string.medium)
+                                                                else -> stringResource(R.string.large)
+                                                        }
+                                                )
+                                                state.language.translator?.let { it ->
+                                                        Text(
+                                                                text = stringResource(it),
+                                                                color = MaterialTheme.colorScheme.primary,
+                                                                        style = MaterialTheme.typography.bodyMedium,
 									modifier = Modifier
 										.padding(top = 8.dp)
 										.align(Alignment.End)
