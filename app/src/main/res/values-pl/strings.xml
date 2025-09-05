@@ -1,0 +1,53 @@
+<resources>
+    <string name="app_name" translatable="false">Aucards</string>
+    <string name="add_card">Dodaj nową fiszkę</string>
+    <string name="save">Zapisz</string>
+    <string name="empty_list_prompt">Stwórz swoją pierwszą fiszkę!</string>
+    <string name="your_text">Tekst fiszki...</string>
+    <string name="description">Dodatkowy tekst...</string>
+    <string name="choose_color">Wybierz kolor</string>
+    <string name="delete">Usuń fiszkę</string>
+    <string name="edit">Edytuj fiszkę</string>
+    <string name="open_settings">Otwórz ustawienia</string>
+    <string name="settings">Ustawienia</string>
+    <string name="go_back">Wstecz</string>
+    <string name="about" translatable="false">Aucards\nVadim Erenkov © 2025\nv. %s</string>
+    <string name="light">Jasny</string>
+    <string name="dark">Ciemny</string>
+    <string name="device">Motyw urządzenia</string>
+    <string name="english" translatable="false">English</string>
+    <string name="russian" translatable="false">Русский</string>
+    <string name="ukrainian" translatable="false">Українська</string>
+    <string name="georgian" translatable="false">ქართული</string>
+    <string name="polish" translatable="false">polski</string>
+    <string name="brightness">Ustaw maksymalną jasność ekranu gdy otwierasz fiszkę</string>
+    <string name="theme">Motyw</string>
+    <string name="language">Język</string>
+    <string name="source_code">Kod źródłowy: </string>
+    <string name="source_code_link" translatable="false">https://github.com/vadimerenkov/Aucards</string>
+    <string name="selected_number">Wybrano: %s</string>
+    <string name="delete_button">Usuń</string>
+    <string name="cancel">Anuluj</string>
+    <string name="translator">Tłumacz: tensaro@github</string>
+    <string name="landscape">Przełącz do trybu krajobrazowego gdy otwierasz fiszkę</string>
+    <string name="all_cards">Wszystkie fiszki</string>
+    <string name="favourites">Ulubione</string>
+    <string name="mark_as_favourite">Dodaj do ulubionych</string>
+    <string name="add_to_fav_prompt">Tutaj będą widoczne wszystkie Twoje ulubione fiszki!</string>
+    <string name="brightness_permission">Ta opcja wymaga nadania uprawnienia aplikacji, do zapisania pliku na urządzeniu</string>
+    <string name="palette">Paleta kolorów</string>
+    <string name="custom_color">Własny kolor</string>
+    <string name="import_cards">Zaimportuj fiszki z pliku</string>
+    <string name="export">Wyeksportuj fiszki do pliku</string>
+    <string name="settings_play_sound">Odtwórz dzwonek, kiedy otwierasz fiszkę</string>
+    <string name="play_sound_description">Odtwórz dzwonek, aby inni wiedzieli, że chcesz im coś powiedzieć.</string>
+    <string name="ringtone">Dzwonek:</string>
+    <string name="choose_ringtone">Wybierz dzwonek</string>
+    <string name="pause">Pauza</string>
+    <string name="play">Odtwórz</string>
+    <plurals name="delete_confirmation">
+        <item quantity="one">Czy na pewno chcesz usunąć tą fiszkę?</item>
+        <item quantity="few">Czy na pewno chcesz usunąć %s fiszki?</item>
+        <item quantity="many">Czy na pewno chcesz usunąć %s fiszek?</item>
+    </plurals>
+</resources>

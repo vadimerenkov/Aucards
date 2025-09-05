@@ -1,0 +1,24 @@
+<p><i>Aucards</i> to darmowa i otwartoźródłowa aplikacja, w której możesz stworzyć własne kolorowe fiszki, aby ułatwić komunikację z innymi ludźmi.</p>
+
+<p>Aplikacja jest bazowana na koncepcie "autystycznych kart", którch ludzie ze specjalnymi potrzebami używają, aby szybko zakomunikować innym swoje uczucia, prośby lub poinformować ich o tym, jak się czują.</p>
+
+<p>Jeśli kiedykolwiek zdarzyło Ci się, że nie jesteś w stanie czegoś powiedzieć przez np. przebodźcowanie w danej chwili lub autystyczne wyłączenie się, to ta aplikacja jest dla Ciebie.
+Jest ona zaprojektowana w taki sposób, aby była jak najprostsza w użyciu i wymagała jak najmniejszej ilości wysiłku, aby móc przekazać swoje myśli w danej chwili.
+</p>
+
+<p><b>Cechy aplikacji:</b></p>
+
+<li>Twórz nielimitowane fiszki z unikalnymi tekstami!</li>
+<li>Wybierz kolor fiszki z gotowej palety - albo wybierz własny!</li>
+<li>Zorganizuj swoje fiszki wedle uznania: zmieniaj ich miejsca na ekranie albo dodawaj je do ulubionych!</li>
+<li>Proste w użyciu: naciśnij na fiszkę, aby pokazała się ona w trybie pełnoekranowym!</li>
+<li>Przenoś swoje fiszki między urządzeniami: łatwo eksportuj fiszki do pliku i przenieś je gdziekolwiek chcesz!</li>
+<li>Odtwórz dźwięk, aby inni wiedzieli, że chcesz im coś powiedzieć!</li>
+<li>Aplikacja jest całkowicie darmowa, otwartoźródłowa i bez reklam - na zawsze!</li>
+
+<p><b>Osoby, dla których ta aplikacja może okazać się przydatna:</b></p>
+
+<li>Ludzie z autyzmem/ADHD</li>
+<li>Dzieci, które mają problem z komunikacją werbalną</li>
+<li>Starsi ludzie, którzy potrzebują wparcia</li>
+<li>Ktokolwiek w sytuacji, w której nie może akurat mówić: osoby na głośnym koncercie lub w bibliotece!</li>
