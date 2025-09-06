@@ -2,9 +2,9 @@ plugins {
 	alias(libs.plugins.android.application)
 	alias(libs.plugins.kotlin.android)
 	alias(libs.plugins.kotlin.compose)
-	id("com.google.devtools.ksp")
-	id("org.jetbrains.kotlin.plugin.serialization")
-	id("androidx.room")
+	alias(libs.plugins.ksp)
+	alias(libs.plugins.kotlin.serialization)
+	alias(libs.plugins.room)
 }
 
 android {
@@ -15,8 +15,8 @@ android {
 		applicationId = "vadimerenkov.aucards"
 		minSdk = 26
 		targetSdk = 36
-		versionCode = 11
-		versionName = "2.1.1"
+		versionCode = 12
+		versionName = "2.1.2"
 
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 	}
