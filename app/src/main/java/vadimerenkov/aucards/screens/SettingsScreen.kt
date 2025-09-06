@@ -436,7 +436,7 @@ fun SettingsScreen(
 						}
 						Spacer(modifier = Modifier.height(48.dp))
 						Text(
-							text = "logo: Olga Prilutskaia",
+							text = stringResource(R.string.logo),
 							style = MaterialTheme.typography.bodyLarge,
 							textAlign = TextAlign.Center,
 							modifier = Modifier

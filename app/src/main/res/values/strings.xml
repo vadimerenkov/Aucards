@@ -19,6 +19,7 @@
     <string name="russian" translatable="false">Русский</string>
     <string name="ukrainian" translatable="false">Українська</string>
     <string name="georgian" translatable="false">ქართული</string>
+    <string name="polish" translatable="false">Polski</string>
     <string name="brightness">Set brightness to max when opening the card</string>
     <string name="theme">Theme</string>
     <string name="language">Language</string>
@@ -44,6 +45,7 @@
     <string name="choose_ringtone">Choose a ringtone</string>
     <string name="pause">Pause</string>
     <string name="play">Play</string>
+    <string name="logo" translatable="false">logo: Olga Prilutskaia</string>
     <plurals name="delete_confirmation">
         <item quantity="one">Are you sure you want to delete this card?</item>
         <item quantity="other">Are you sure you want to delete %s cards?</item>

@@ -191,7 +191,7 @@ fun SharedTransitionScope.EditScreen(
 			Column(
 				modifier = Modifier
 					.align(Alignment.BottomCenter)
-					.clip(RoundedCornerShape(32.dp))
+					.clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
 					.background(
 						color = Color.Black.copy(alpha = 0.4f)
 					)
