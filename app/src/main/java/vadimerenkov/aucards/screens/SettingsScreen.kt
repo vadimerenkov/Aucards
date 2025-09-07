@@ -103,10 +103,13 @@ fun SettingsScreen(
 	val state by viewModel.settingsState.collectAsState()
 	var showBrightnessContext by remember { mutableStateOf(false) }
 	var didWeClickOnBrightness by remember { mutableStateOf(false) }
-	var ringtoneName by remember { mutableStateOf("") }
+	var ringtoneName by remember { mutableStateOf("None") }
 
 	LaunchedEffect(state.ringtoneUri) {
-		ringtoneName = RingtoneManager.getRingtone(context, state.ringtoneUri).getTitle(context)
+		if (state.ringtoneUri != null) {
+			val ringtone = RingtoneManager.getRingtone(context, state.ringtoneUri)
+			ringtoneName = ringtone.getTitle(context)
+		}
 	}
 
 	DisposableEffect(viewModel.hasPermission(context)) {
@@ -310,10 +313,15 @@ fun SettingsScreen(
 							onCheckedChange = {
 								viewModel.saveSoundSetting(it)
 								if (state.ringtoneUri == null) {
-									val uri = RingtoneManager.getActualDefaultRingtoneUri(context,
-										RingtoneManager.TYPE_NOTIFICATION
-									)
-									viewModel.saveSoundUri(uri)
+									try {
+										val uri = RingtoneManager.getActualDefaultRingtoneUri(
+											context,
+											RingtoneManager.TYPE_NOTIFICATION
+										)
+										viewModel.saveSoundUri(uri)
+									} catch (e: Exception) {
+										Log.e(TAG, "Error when getting default ringtone: $e")
+									}
 								}
 							}
 						)

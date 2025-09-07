@@ -119,7 +119,7 @@ fun SharedTransitionScope.CardFullscreen(
 	}
 
 	LaunchedEffect(state.isPlaySoundEnabled) {
-		if (state.isPlaySoundEnabled) {
+		if (state.isPlaySoundEnabled && state.ringtoneUri != null) {
 			val sound = MediaItem.fromUri(state.ringtoneUri!!)
 			soundPlayer.addListener(
 				object : Player.Listener {
@@ -217,7 +217,7 @@ fun SharedTransitionScope.CardFullscreen(
 				)
 			}
 		}
-		if (state.isPlaySoundEnabled) {
+		if (state.isPlaySoundEnabled && state.ringtoneUri != null) {
 			Box(
 				contentAlignment = Alignment.Center,
 				modifier = Modifier
