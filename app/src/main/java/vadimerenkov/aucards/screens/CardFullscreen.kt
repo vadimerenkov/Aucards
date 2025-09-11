@@ -20,7 +20,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -42,6 +44,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.Hyphens
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
@@ -191,13 +194,14 @@ fun SharedTransitionScope.CardFullscreen(
 			horizontalAlignment = Alignment.CenterHorizontally,
 			modifier = Modifier
 				.align(Alignment.Center)
-				.padding(16.dp)
+				.padding(24.dp)
 		) {
 			Text(
 				text = state.aucard.text,
 				color = contentColor,
 				style = MaterialTheme.typography.displayLarge.copy(
-					hyphens = Hyphens.Auto
+					hyphens = Hyphens.Auto,
+					lineBreak = LineBreak.Heading
 				),
 				textAlign = TextAlign.Center,
 				modifier = Modifier
@@ -207,13 +211,19 @@ fun SharedTransitionScope.CardFullscreen(
 					)
 			)
 			if (state.aucard.description != null) {
+				var lines by remember { mutableIntStateOf(0) }
+				Spacer(modifier = Modifier.height(24.dp))
 				Text(
 					text = state.aucard.description!!,
 					color = contentColor,
 					style = MaterialTheme.typography.titleLarge.copy(
-						hyphens = Hyphens.Auto
+						hyphens = Hyphens.Auto,
+						lineBreak = LineBreak.Paragraph
 					),
-					textAlign = TextAlign.Justify
+					textAlign = if (lines > 2) TextAlign.Start else TextAlign.Center,
+					onTextLayout = {
+						lines = it.lineCount
+					}
 				)
 			}
 		}

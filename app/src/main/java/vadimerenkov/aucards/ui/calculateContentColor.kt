@@ -1,7 +1,7 @@
 package vadimerenkov.aucards.ui
 
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.luminance
 
 private const val TAG = "calculateContentColor"
 /**
@@ -9,18 +9,4 @@ private const val TAG = "calculateContentColor"
  * @param color background color for this content
  */
 
-fun calculateContentColor(color: Color): Color {
-
-	val hsv = FloatArray(3)
-	android.graphics.Color.colorToHSV(color.toArgb(), hsv)
-
-	val animatedColor =
-		if (hsv[0] in (210f..280f)
-			&& hsv[1] in (0.75f..1f)
-			|| hsv[2] in (0f..0.5f)
-			) {
-			Color.White
-		} else Color.Black
-
-	return animatedColor
-}
+fun calculateContentColor(color: Color): Color = if (color.luminance() >= 0.3f) Color.Black else Color.White
