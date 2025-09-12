@@ -1,9 +1,14 @@
 package vadimerenkov.aucards.screens
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -16,25 +21,25 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.Icon
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,21 +55,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
+import vadimerenkov.aucards.ui.ActionButton
 import vadimerenkov.aucards.ui.CardViewModel
 import vadimerenkov.aucards.ui.ColorPickerPopup
 import vadimerenkov.aucards.ui.ContentType
+import vadimerenkov.aucards.ui.OpenPopup
 import vadimerenkov.aucards.ui.SharedContentStateKey
 import vadimerenkov.aucards.ui.Target
 import vadimerenkov.aucards.ui.calculateContentColor
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SharedTransitionScope.EditScreen(
 	isDarkTheme: Boolean,
@@ -77,10 +82,13 @@ fun SharedTransitionScope.EditScreen(
 ) {
 	val state by viewModel.cardState.collectAsStateWithLifecycle()
 
-	var colorPaletteOpen by remember { mutableStateOf(false) }
 	val focusRequester = remember { FocusRequester() }
 	val contentColor by animateColorAsState(calculateContentColor(state.aucard.color))
 	val keyboardController = LocalSoftwareKeyboardController.current
+
+	BackHandler(state.openPopup != OpenPopup.NONE) {
+		viewModel.changePopup(OpenPopup.NONE)
+	}
 
 	LaunchedEffect(true) {
 		focusRequester.requestFocus()
@@ -104,6 +112,7 @@ fun SharedTransitionScope.EditScreen(
 
 	with(scope) {
 		val source = remember { MutableInteractionSource() }
+		val source2 = remember { MutableInteractionSource() }
 		Box(
 			modifier = modifier
 				.fillMaxSize()
@@ -113,6 +122,7 @@ fun SharedTransitionScope.EditScreen(
 					indication = null
 				) {
 					keyboardController?.hide()
+					viewModel.changePopup(OpenPopup.NONE)
 				}
 				.sharedBounds(
 					contentState,
@@ -203,47 +213,81 @@ fun SharedTransitionScope.EditScreen(
 					.background(
 						color = Color.Black.copy(alpha = 0.4f)
 					)
-					.padding(horizontal = 24.dp)
+					.clickable(
+						interactionSource = source2,
+						indication = null
+					) {
+
+					}
+
 			) {
+				var value by remember { mutableFloatStateOf(0f) }
+
+				AnimatedContent(
+					targetState = state.openPopup,
+					transitionSpec = {
+						fadeIn() togetherWith fadeOut()
+					}
+				) { it ->
+					when (it) {
+						OpenPopup.NONE -> {
+							Spacer(modifier = Modifier.height(16.dp))
+						}
+						OpenPopup.PALETTE -> {
+							ColorPickerPopup(
+								selectedColor = state.aucard.color,
+								onColorSelected = { viewModel.updateColor(it) },
+								selectedHexCode = state.hexColor,
+								onHexCodeChanged = { viewModel.updateHexCode(it) },
+								isHexCodeValid = state.isHexCodeValid,
+								contentColor = contentColor
+							)
+						}
+						OpenPopup.FONT_SIZE -> {
+							Column(
+								modifier = Modifier
+
+									.padding(16.dp)
+							) {
+								Slider(
+									value = value,
+									onValueChange = {
+										value = it
+									}
+								)
+								Slider(
+									value = value,
+									onValueChange = {
+										value = it
+									}
+								)
+								Text(text = value.toString())
+							}
+						}
+					}
+				}
+
 				Row(
 					verticalAlignment = Alignment.CenterVertically,
 					modifier = Modifier
-						.padding(top = 16.dp)
-
+						.padding(horizontal = 16.dp)
 				) {
 					Spacer(modifier = Modifier.weight(1f))
-					Box(
-						contentAlignment = Alignment.Center,
-						modifier = Modifier
-							.clip(CircleShape)
-							.size(70.dp)
-							.clickable {
-								keyboardController?.hide()
-								colorPaletteOpen = !colorPaletteOpen
-							}
-						) {
-							Icon(
-								painter = painterResource(R.drawable.palette),
-								tint = Color.White,
-								contentDescription = stringResource(R.string.choose_color),
-								modifier = Modifier
-									.fillMaxSize(0.7f)
-							)
+					ActionButton(
+						icon = painterResource(R.drawable.font_size),
+						contentDescription = "Choose font size",
+						onClick = {
+							viewModel.changePopup(OpenPopup.FONT_SIZE)
 						}
-
-						ColorPickerPopup(
-							isOpen = colorPaletteOpen,
-							onDismissRequest = { colorPaletteOpen = false },
-							selectedColor = state.aucard.color,
-							onColorSelected = { viewModel.updateColor(it) },
-							selectedHexCode = state.hexColor,
-							onHexCodeChanged = { viewModel.updateHexCode(it) },
-							isHexCodeValid = state.isHexCodeValid,
-							contentColor = contentColor,
-							offset = DpOffset(-(50).dp, 0.dp),
-							tabRowSize = DpSize(250.dp, 50.dp)
-						)
-					}
+					)
+					ActionButton(
+						icon = painterResource(R.drawable.palette),
+						contentDescription = stringResource(R.string.choose_color),
+						onClick = {
+							viewModel.changePopup(OpenPopup.PALETTE)
+						}
+					)
+				}
 
 				Row(
 					horizontalArrangement = Arrangement.SpaceBetween,
@@ -251,42 +295,23 @@ fun SharedTransitionScope.EditScreen(
 						.fillMaxWidth()
 						.navigationBarsPadding()
 						.padding(bottom = 16.dp)
+						.padding(horizontal = 16.dp)
 				) {
-					Box(
-						contentAlignment = Alignment.Center,
-						modifier = Modifier
-							.clip(CircleShape)
-							.clickable {
-								onBackClicked()
-							}
-							.size(70.dp)
-					) {
-						Icon(
-							imageVector = Icons.Default.Close,
-							contentDescription = "Cancel",
-							tint = Color.White,
-							modifier = Modifier
-								.fillMaxSize(0.7f)
-						)
-					}
-					Box(
-						contentAlignment = Alignment.Center,
-						modifier = Modifier
-							.clip(CircleShape)
-							.clickable(enabled = state.isValid) {
-								viewModel.saveAucard(state.aucard)
-								onBackClicked()
-							}
-							.size(70.dp)
-					) {
-						Icon(
-							imageVector = Icons.Default.Done,
-							contentDescription = stringResource(R.string.save),
-							tint = if (state.isValid) Color.White else Color.White.copy(alpha = 0.3f),
-							modifier = Modifier
-								.fillMaxSize(0.7f)
-						)
-					}
+					ActionButton(
+						icon = Icons.Default.Close,
+						onClick = onBackClicked,
+						contentDescription = stringResource(R.string.cancel)
+					)
+					ActionButton(
+						icon = Icons.Default.Done,
+						enabled = state.isValid,
+						contentDescription = stringResource(R.string.save),
+						tint = if (state.isValid) Color.White else Color.White.copy(alpha = 0.3f),
+						onClick = {
+							viewModel.saveAucard(state.aucard)
+							onBackClicked()
+						}
+					)
 				}
 			}
 		}

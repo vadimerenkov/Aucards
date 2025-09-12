@@ -115,6 +115,11 @@ class CardViewModel(
 		}
 	}
 
+	fun changePopup(popup: OpenPopup) {
+		val new_popup = if (popup == cardState.value.openPopup) OpenPopup.NONE else popup
+		card_state.update { it.copy(openPopup = new_popup) }
+	}
+
 	fun hasPermission(context: Context): Boolean {
 		return android.provider.Settings.System.canWrite(context) && card_state.value.isMaxBrightness
 	}
@@ -122,6 +127,7 @@ class CardViewModel(
 
 data class CardState(
 	val aucard: Aucard,
+	val openPopup: OpenPopup = OpenPopup.NONE,
 	val isMaxBrightness: Boolean = false,
 	val isLandscapeMode: Boolean? = null,
 	val isPlaySoundEnabled: Boolean = false,
@@ -131,4 +137,10 @@ data class CardState(
 ) {
 	val isValid: Boolean
 		get() = aucard.text.isNotBlank()
+}
+
+enum class OpenPopup {
+	NONE,
+	PALETTE,
+	FONT_SIZE
 }
