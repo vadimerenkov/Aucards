@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 import vadimerenkov.aucards.DispatchersProvider
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardDao
+import vadimerenkov.aucards.data.CardLayout
 import vadimerenkov.aucards.settings.Settings
 
 private const val TAG = "CardViewModel"
@@ -148,6 +149,10 @@ class CardViewModel(
 		card_state.update { it.copy(aucard = cardState.value.aucard.copy(descriptionFontSize = size)) }
 	}
 
+	fun changeLayout(layout: CardLayout) {
+		card_state.update { it.copy(aucard = cardState.value.aucard.copy(layout = layout)) }
+	}
+
 	fun hasPermission(context: Context): Boolean {
 		return android.provider.Settings.System.canWrite(context) && card_state.value.isMaxBrightness
 	}
@@ -170,5 +175,6 @@ data class CardState(
 enum class OpenPopup {
 	NONE,
 	PALETTE,
-	FONT_SIZE
+	FONT_SIZE,
+	LAYOUT
 }

@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -31,7 +32,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -43,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -59,6 +63,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
+import vadimerenkov.aucards.data.CardLayout
 import vadimerenkov.aucards.ui.ActionButton
 import vadimerenkov.aucards.ui.CardViewModel
 import vadimerenkov.aucards.ui.ColorPickerPopup
@@ -66,6 +71,7 @@ import vadimerenkov.aucards.ui.ContentType
 import vadimerenkov.aucards.ui.OpenPopup
 import vadimerenkov.aucards.ui.SharedContentStateKey
 import vadimerenkov.aucards.ui.Target
+import vadimerenkov.aucards.ui.applyIf
 import vadimerenkov.aucards.ui.calculateContentColor
 import kotlin.math.roundToInt
 
@@ -249,9 +255,15 @@ fun SharedTransitionScope.EditScreen(
 						}
 						OpenPopup.FONT_SIZE -> {
 							Column(
+								horizontalAlignment = Alignment.CenterHorizontally,
 								modifier = Modifier
 									.padding(16.dp)
 							) {
+								Text(
+									text = "Text size",
+									style = MaterialTheme.typography.titleLarge,
+									color = Color.White
+								)
 								Slider(
 									valueRange = 12f..64f,
 									value = state.aucard.titleFontSize.toFloat(),
@@ -268,6 +280,45 @@ fun SharedTransitionScope.EditScreen(
 								)
 							}
 						}
+						OpenPopup.LAYOUT -> {
+							Column(
+								modifier = Modifier
+									.padding(16.dp)
+							) {
+								CardLayout.entries.forEach { layout ->
+									Row(
+										verticalAlignment = Alignment.CenterVertically,
+										modifier = Modifier
+											.clickable {
+												viewModel.changeLayout(layout)
+											}
+											.fillMaxWidth()
+									) {
+										RadioButton(
+											selected = state.aucard.layout == layout,
+											onClick = {
+												viewModel.changeLayout(layout)
+											}
+										)
+										Icon(
+											painter = painterResource(layout.icon),
+											tint = Color.White,
+											contentDescription = null,
+											modifier = Modifier
+												.applyIf(layout == CardLayout.TWO_HALVES) {
+													rotate(90f)
+												}
+										)
+										Spacer(modifier = Modifier.width(8.dp))
+										Text(
+											text = stringResource(layout.description),
+											style = MaterialTheme.typography.titleLarge,
+											color = Color.White
+										)
+									}
+								}
+							}
+						}
 					}
 				}
 
@@ -278,7 +329,16 @@ fun SharedTransitionScope.EditScreen(
 				) {
 					Spacer(modifier = Modifier.weight(1f))
 					ActionButton(
+						icon = painterResource(R.drawable.format),
+						selected = state.openPopup == OpenPopup.LAYOUT,
+						contentDescription = "Layout",
+						onClick = {
+							viewModel.changePopup(OpenPopup.LAYOUT)
+						}
+					)
+					ActionButton(
 						icon = painterResource(R.drawable.font_size),
+						selected = state.openPopup == OpenPopup.FONT_SIZE,
 						contentDescription = "Choose font size",
 						onClick = {
 							viewModel.changePopup(OpenPopup.FONT_SIZE)
@@ -286,6 +346,7 @@ fun SharedTransitionScope.EditScreen(
 					)
 					ActionButton(
 						icon = painterResource(R.drawable.palette),
+						selected = state.openPopup == OpenPopup.PALETTE,
 						contentDescription = stringResource(R.string.choose_color),
 						onClick = {
 							viewModel.changePopup(OpenPopup.PALETTE)

@@ -143,7 +143,10 @@ fun ColorPickerPopup(
 						)
 						Column(
 							verticalArrangement = Arrangement.spacedBy(8.dp),
-							horizontalAlignment = Alignment.CenterHorizontally
+							horizontalAlignment = Alignment.CenterHorizontally,
+							modifier = Modifier
+								.background(MaterialTheme.colorScheme.background)
+								.padding(8.dp)
 						) {
 							BrightnessSlider(
 								controller = colorController,

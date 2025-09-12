@@ -46,6 +46,8 @@
     <string name="pause">Pause</string>
     <string name="play">Play</string>
     <string name="logo" translatable="false">logo: Olga Prilutskaia</string>
+    <string name="title_subtitle">Title and description</string>
+    <string name="two_halves">Two equal titles</string>
     <plurals name="delete_confirmation">
         <item quantity="one">Are you sure you want to delete this card?</item>
         <item quantity="other">Are you sure you want to delete %s cards?</item>

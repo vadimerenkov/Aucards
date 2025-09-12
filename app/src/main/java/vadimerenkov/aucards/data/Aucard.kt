@@ -1,9 +1,12 @@
 package vadimerenkov.aucards.data
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import vadimerenkov.aucards.R
 
 @Entity
 data class Aucard(
@@ -18,7 +21,10 @@ data class Aucard(
 	@ColumnInfo(defaultValue = "0") var index: Int = 0
 )
 
-enum class CardLayout {
-	TITLE_SUBTITLE,
-	TWO_HALVES
+enum class CardLayout(
+	@DrawableRes val icon: Int,
+	@StringRes val description: Int
+) {
+	TITLE_SUBTITLE(R.drawable.title_layout, R.string.title_subtitle),
+	TWO_HALVES(R.drawable.split, R.string.two_halves)
 }
