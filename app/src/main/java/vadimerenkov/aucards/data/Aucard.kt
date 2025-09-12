@@ -9,10 +9,16 @@ import androidx.room.PrimaryKey
 data class Aucard(
 	@PrimaryKey(autoGenerate = true) val id: Int = 0,
 	val text: String,
-	@ColumnInfo(defaultValue = "false")
-	val isFavourite: Boolean = false,
+	@ColumnInfo(defaultValue = "false") val isFavourite: Boolean = false,
 	val description: String? = null,
 	val color: Color = Color.White,
-	@ColumnInfo(defaultValue = "0")
-	var index: Int = 0
+	@ColumnInfo(defaultValue = "57") val titleFontSize: Int = 57,
+	@ColumnInfo(defaultValue = "24") val descriptionFontSize: Int = 24,
+	@ColumnInfo(defaultValue = "TITLE_SUBTITLE") val layout: CardLayout = CardLayout.TITLE_SUBTITLE,
+	@ColumnInfo(defaultValue = "0") var index: Int = 0
 )
+
+enum class CardLayout {
+	TITLE_SUBTITLE,
+	TWO_HALVES
+}

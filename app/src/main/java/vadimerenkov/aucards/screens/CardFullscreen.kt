@@ -47,6 +47,7 @@ import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -199,9 +200,11 @@ fun SharedTransitionScope.CardFullscreen(
 			Text(
 				text = state.aucard.text,
 				color = contentColor,
+				fontSize = state.aucard.titleFontSize.sp,
 				style = MaterialTheme.typography.displayLarge.copy(
 					hyphens = Hyphens.Auto,
-					lineBreak = LineBreak.Heading
+					lineBreak = LineBreak.Heading,
+					lineHeight = (state.aucard.titleFontSize + 8).sp
 				),
 				textAlign = TextAlign.Center,
 				modifier = Modifier
@@ -216,9 +219,11 @@ fun SharedTransitionScope.CardFullscreen(
 				Text(
 					text = state.aucard.description!!,
 					color = contentColor,
+					fontSize = state.aucard.descriptionFontSize.sp,
 					style = MaterialTheme.typography.titleLarge.copy(
 						hyphens = Hyphens.Auto,
-						lineBreak = LineBreak.Paragraph
+						lineBreak = LineBreak.Paragraph,
+						lineHeight = (state.aucard.descriptionFontSize + 8).sp
 					),
 					textAlign = if (lines > 2) TextAlign.Start else TextAlign.Center,
 					onTextLayout = {

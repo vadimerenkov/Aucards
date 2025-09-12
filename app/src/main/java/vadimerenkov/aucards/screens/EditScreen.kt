@@ -39,9 +39,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,6 +54,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import vadimerenkov.aucards.R
@@ -68,6 +67,7 @@ import vadimerenkov.aucards.ui.OpenPopup
 import vadimerenkov.aucards.ui.SharedContentStateKey
 import vadimerenkov.aucards.ui.Target
 import vadimerenkov.aucards.ui.calculateContentColor
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -141,11 +141,12 @@ fun SharedTransitionScope.EditScreen(
 			) {
 				TextField(
 					value = state.aucard.text,
+					interactionSource = viewModel.titleInteractionSource,
 					onValueChange = { viewModel.updateText(it) },
 					placeholder = {
 						Text(
 							text = stringResource(R.string.your_text),
-							style = MaterialTheme.typography.displayLarge,
+							fontSize = state.aucard.titleFontSize.sp,
 							textAlign = TextAlign.Center,
 							color = contentColor.copy(alpha = 0.3f),
 							modifier = Modifier
@@ -158,7 +159,9 @@ fun SharedTransitionScope.EditScreen(
 					),
 					textStyle = MaterialTheme.typography.displayLarge.copy(
 						textAlign = TextAlign.Center,
-						hyphens = Hyphens.Auto
+						hyphens = Hyphens.Auto,
+						fontSize = state.aucard.titleFontSize.sp,
+						lineHeight = (state.aucard.titleFontSize + 8).sp
 					),
 					colors = TextFieldDefaults.colors(
 						focusedTextColor = contentColor,
@@ -179,9 +182,12 @@ fun SharedTransitionScope.EditScreen(
 				TextField(
 					value = state.aucard.description ?: "",
 					onValueChange = { viewModel.updateDescription(it) },
+					interactionSource = viewModel.descriptionInteractionSource,
 					textStyle = MaterialTheme.typography.titleLarge.copy(
 						textAlign = TextAlign.Center,
-						hyphens = Hyphens.Auto
+						hyphens = Hyphens.Auto,
+						fontSize = state.aucard.descriptionFontSize.sp,
+						lineHeight = (state.aucard.descriptionFontSize + 8).sp
 					),
 					colors = TextFieldDefaults.colors(
 						focusedTextColor = contentColor,
@@ -194,7 +200,7 @@ fun SharedTransitionScope.EditScreen(
 					placeholder = {
 						Text(
 							text = stringResource(R.string.description),
-							style = MaterialTheme.typography.titleLarge,
+							fontSize = state.aucard.descriptionFontSize.sp,
 							textAlign = TextAlign.Center,
 							color = contentColor.copy(alpha = 0.3f),
 							modifier = Modifier
@@ -221,8 +227,6 @@ fun SharedTransitionScope.EditScreen(
 					}
 
 			) {
-				var value by remember { mutableFloatStateOf(0f) }
-
 				AnimatedContent(
 					targetState = state.openPopup,
 					transitionSpec = {
@@ -246,22 +250,22 @@ fun SharedTransitionScope.EditScreen(
 						OpenPopup.FONT_SIZE -> {
 							Column(
 								modifier = Modifier
-
 									.padding(16.dp)
 							) {
 								Slider(
-									value = value,
+									valueRange = 12f..64f,
+									value = state.aucard.titleFontSize.toFloat(),
 									onValueChange = {
-										value = it
+										viewModel.changeTextFontSize(it.roundToInt())
 									}
 								)
 								Slider(
-									value = value,
+									valueRange = 12f..64f,
+									value = state.aucard.descriptionFontSize.toFloat(),
 									onValueChange = {
-										value = it
+										viewModel.changeDescFontSize(it.roundToInt())
 									}
 								)
-								Text(text = value.toString())
 							}
 						}
 					}
