@@ -13,12 +13,13 @@ import vadimerenkov.aucards.converters.Converters
 @Database(
 	entities = [Aucard::class],
 	exportSchema = true,
-	version = 4,
+	version = 5,
 	autoMigrations = [
 		AutoMigration(2, 3,
 			spec = AucardsDatabase.Migrations::class
 		),
-		AutoMigration(3, 4)
+		AutoMigration(3, 4),
+		AutoMigration(4, 5)
 	]
 )
 @TypeConverters(Converters::class)
