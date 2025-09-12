@@ -97,7 +97,7 @@ fun SettingsScreen(
 	viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory.Factory())
 ) {
 	val context = LocalContext.current
-	val version = BuildConfig.VERSION_NAME
+	val version = if (BuildConfig.DEBUG) BuildConfig.VERSION_NAME + "-debug" else BuildConfig.VERSION_NAME
 	val lifecycleOwner = LocalLifecycleOwner.current
 
 	val state by viewModel.settingsState.collectAsState()

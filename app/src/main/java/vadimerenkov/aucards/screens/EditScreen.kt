@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,10 +33,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -46,10 +49,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -119,7 +124,8 @@ fun SharedTransitionScope.EditScreen(
 	with(scope) {
 		val source = remember { MutableInteractionSource() }
 		val source2 = remember { MutableInteractionSource() }
-		Box(
+		Column(
+			horizontalAlignment = Alignment.CenterHorizontally,
 			modifier = modifier
 				.fillMaxSize()
 				.background(state.aucard.color)
@@ -135,95 +141,208 @@ fun SharedTransitionScope.EditScreen(
 					scope
 				)
 		) {
-			Column(
-				verticalArrangement = Arrangement.Center,
-				horizontalAlignment = Alignment.CenterHorizontally,
+			AnimatedContent(
+				targetState = state.aucard.layout,
 				modifier = Modifier
-					.align(Alignment.Center)
-					.scrollable(
-						state = rememberScrollState(),
-						orientation = Orientation.Vertical
-					)
+					.weight(1f)
+					.statusBarsPadding()
 			) {
-				TextField(
-					value = state.aucard.text,
-					interactionSource = viewModel.titleInteractionSource,
-					onValueChange = { viewModel.updateText(it) },
-					placeholder = {
-						Text(
-							text = stringResource(R.string.your_text),
-							fontSize = state.aucard.titleFontSize.sp,
-							textAlign = TextAlign.Center,
-							color = contentColor.copy(alpha = 0.3f),
+				when (it) {
+					CardLayout.TITLE_SUBTITLE -> {
+						Column(
+							verticalArrangement = Arrangement.Center,
+							horizontalAlignment = Alignment.CenterHorizontally,
 							modifier = Modifier
-								.align(Alignment.CenterHorizontally)
-								.fillMaxWidth()
-						)
-					},
-					keyboardOptions = KeyboardOptions(
-						imeAction = ImeAction.Done
-					),
-					textStyle = MaterialTheme.typography.displayLarge.copy(
-						textAlign = TextAlign.Center,
-						hyphens = Hyphens.Auto,
-						fontSize = state.aucard.titleFontSize.sp,
-						lineHeight = (state.aucard.titleFontSize + 8).sp
-					),
-					colors = TextFieldDefaults.colors(
-						focusedTextColor = contentColor,
-						focusedContainerColor = Color.Transparent,
-						unfocusedTextColor = contentColor,
-						unfocusedContainerColor = Color.Transparent,
-						focusedIndicatorColor = Color.Transparent,
-						unfocusedIndicatorColor = Color.Transparent
-					),
-					modifier = Modifier
-						.focusRequester(focusRequester)
-						.testTag("TextField")
-						.sharedBounds(
-							sharedContentState = textState,
-							animatedVisibilityScope = scope
-						)
-				)
-				TextField(
-					value = state.aucard.description ?: "",
-					onValueChange = { viewModel.updateDescription(it) },
-					interactionSource = viewModel.descriptionInteractionSource,
-					textStyle = MaterialTheme.typography.titleLarge.copy(
-						textAlign = TextAlign.Center,
-						hyphens = Hyphens.Auto,
-						fontSize = state.aucard.descriptionFontSize.sp,
-						lineHeight = (state.aucard.descriptionFontSize + 8).sp
-					),
-					colors = TextFieldDefaults.colors(
-						focusedTextColor = contentColor,
-						focusedContainerColor = Color.Transparent,
-						unfocusedTextColor = contentColor,
-						unfocusedContainerColor = Color.Transparent,
-						focusedIndicatorColor = Color.Transparent,
-						unfocusedIndicatorColor = Color.Transparent
-					),
-					placeholder = {
-						Text(
-							text = stringResource(R.string.description),
-							fontSize = state.aucard.descriptionFontSize.sp,
-							textAlign = TextAlign.Center,
-							color = contentColor.copy(alpha = 0.3f),
+								.scrollable(
+									state = rememberScrollState(),
+									orientation = Orientation.Vertical
+								)
+						) {
+							TextField(
+								value = state.aucard.text,
+								interactionSource = viewModel.titleInteractionSource,
+								onValueChange = { viewModel.updateText(it) },
+								placeholder = {
+									Text(
+										text = stringResource(R.string.your_text),
+										fontSize = state.aucard.titleFontSize.sp,
+										textAlign = TextAlign.Center,
+										color = contentColor.copy(alpha = 0.3f),
+										modifier = Modifier
+											.align(Alignment.CenterHorizontally)
+											.fillMaxWidth()
+									)
+								},
+								keyboardOptions = KeyboardOptions(
+									imeAction = ImeAction.Done
+								),
+								textStyle = MaterialTheme.typography.displayLarge.copy(
+									textAlign = TextAlign.Center,
+									hyphens = Hyphens.Auto,
+									fontSize = state.aucard.titleFontSize.sp,
+									lineHeight = (state.aucard.titleFontSize + 8).sp
+								),
+								colors = TextFieldDefaults.colors(
+									focusedTextColor = contentColor,
+									focusedContainerColor = Color.Transparent,
+									unfocusedTextColor = contentColor,
+									unfocusedContainerColor = Color.Transparent,
+									focusedIndicatorColor = Color.Transparent,
+									unfocusedIndicatorColor = Color.Transparent
+								),
+								modifier = Modifier
+									.focusRequester(focusRequester)
+									.testTag("TextField")
+									.sharedBounds(
+										sharedContentState = textState,
+										animatedVisibilityScope = scope
+									)
+							)
+							TextField(
+								value = state.aucard.description ?: "",
+								onValueChange = { viewModel.updateDescription(it) },
+								interactionSource = viewModel.descriptionInteractionSource,
+								textStyle = MaterialTheme.typography.titleLarge.copy(
+									textAlign = TextAlign.Center,
+									hyphens = Hyphens.Auto,
+									fontSize = state.aucard.descriptionFontSize.sp,
+									lineHeight = (state.aucard.descriptionFontSize + 8).sp
+								),
+								colors = TextFieldDefaults.colors(
+									focusedTextColor = contentColor,
+									focusedContainerColor = Color.Transparent,
+									unfocusedTextColor = contentColor,
+									unfocusedContainerColor = Color.Transparent,
+									focusedIndicatorColor = Color.Transparent,
+									unfocusedIndicatorColor = Color.Transparent
+								),
+								placeholder = {
+									Text(
+										text = stringResource(R.string.description),
+										fontSize = state.aucard.descriptionFontSize.sp,
+										textAlign = TextAlign.Center,
+										color = contentColor.copy(alpha = 0.3f),
+										modifier = Modifier
+											.align(Alignment.CenterHorizontally)
+											.fillMaxWidth()
+									)
+								},
+								modifier = Modifier
+									.fillMaxWidth()
+							)
+						}
+					}
+
+					CardLayout.TWO_HALVES -> {
+						Column(
 							modifier = Modifier
-								.align(Alignment.CenterHorizontally)
-								.fillMaxWidth()
-						)
-					},
-					modifier = Modifier
-						.fillMaxWidth()
-				)
+								.fillMaxSize()
+						) {
+							Box(
+								contentAlignment = Alignment.Center,
+								modifier = Modifier
+									.weight(1f)
+							) {
+								TextField(
+									value = state.aucard.text,
+									interactionSource = viewModel.titleInteractionSource,
+									onValueChange = { viewModel.updateText(it) },
+									placeholder = {
+										Text(
+											text = stringResource(R.string.your_text),
+											fontSize = state.aucard.titleFontSize.sp,
+											textAlign = TextAlign.Center,
+											lineHeight = (state.aucard.titleFontSize + 8).sp,
+											color = contentColor.copy(alpha = 0.3f),
+											modifier = Modifier
+												.fillMaxWidth()
+										)
+									},
+									keyboardOptions = KeyboardOptions(
+										imeAction = ImeAction.Done
+									),
+									textStyle = MaterialTheme.typography.displayLarge.copy(
+										textAlign = TextAlign.Center,
+										hyphens = Hyphens.Auto,
+										fontSize = state.aucard.titleFontSize.sp,
+										lineHeight = (state.aucard.titleFontSize + 8).sp
+									),
+									colors = TextFieldDefaults.colors(
+										focusedTextColor = contentColor,
+										focusedContainerColor = Color.Transparent,
+										unfocusedTextColor = contentColor,
+										unfocusedContainerColor = Color.Transparent,
+										focusedIndicatorColor = Color.Transparent,
+										unfocusedIndicatorColor = Color.Transparent
+									),
+									modifier = Modifier
+										.focusRequester(focusRequester)
+										.testTag("TextField")
+										.sharedBounds(
+											sharedContentState = textState,
+											animatedVisibilityScope = scope
+										)
+								)
+							}
+							HorizontalDivider(
+								thickness = 8.dp,
+								color = contentColor.copy(alpha = 0.5f)
+							)
+							Box(
+								contentAlignment = Alignment.Center,
+								modifier = Modifier
+									.weight(1f)
+							) {
+								TextField(
+									value = state.aucard.description ?: "",
+									onValueChange = { viewModel.updateDescription(it) },
+									interactionSource = viewModel.descriptionInteractionSource,
+									textStyle = MaterialTheme.typography.titleLarge.copy(
+										textAlign = TextAlign.Center,
+										hyphens = Hyphens.Auto,
+										fontSize = state.aucard.descriptionFontSize.sp,
+										lineHeight = (state.aucard.descriptionFontSize + 8).sp
+									),
+									colors = TextFieldDefaults.colors(
+										focusedTextColor = contentColor,
+										focusedContainerColor = Color.Transparent,
+										unfocusedTextColor = contentColor,
+										unfocusedContainerColor = Color.Transparent,
+										focusedIndicatorColor = Color.Transparent,
+										unfocusedIndicatorColor = Color.Transparent
+									),
+									placeholder = {
+										Text(
+											text = stringResource(R.string.description),
+											fontSize = state.aucard.descriptionFontSize.sp,
+											lineHeight = (state.aucard.descriptionFontSize + 8).sp,
+											textAlign = TextAlign.Center,
+											color = contentColor.copy(alpha = 0.3f),
+											modifier = Modifier
+												.fillMaxWidth()
+										)
+									},
+									modifier = Modifier
+										.fillMaxWidth()
+								)
+							}
+						}
+					}
+				}
 			}
 			Column(
 				modifier = Modifier
-					.align(Alignment.BottomCenter)
+					.navigationBarsPadding()
+					.dropShadow(
+						shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+						shadow = Shadow(
+							radius = 20.dp,
+							color = Color.Gray
+						)
+					)
 					.clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
 					.background(
-						color = Color.Black.copy(alpha = 0.4f)
+						color = MaterialTheme.colorScheme.primaryContainer
 					)
 					.clickable(
 						interactionSource = source2,
@@ -262,11 +381,14 @@ fun SharedTransitionScope.EditScreen(
 								Text(
 									text = "Text size",
 									style = MaterialTheme.typography.titleLarge,
-									color = Color.White
+									color = MaterialTheme.colorScheme.onBackground
 								)
 								Slider(
 									valueRange = 12f..64f,
 									value = state.aucard.titleFontSize.toFloat(),
+									colors = SliderDefaults.colors(
+										inactiveTrackColor = MaterialTheme.colorScheme.onPrimary
+									),
 									onValueChange = {
 										viewModel.changeTextFontSize(it.roundToInt())
 									}
@@ -274,6 +396,9 @@ fun SharedTransitionScope.EditScreen(
 								Slider(
 									valueRange = 12f..64f,
 									value = state.aucard.descriptionFontSize.toFloat(),
+									colors = SliderDefaults.colors(
+										inactiveTrackColor = MaterialTheme.colorScheme.onPrimary
+									),
 									onValueChange = {
 										viewModel.changeDescFontSize(it.roundToInt())
 									}
@@ -282,9 +407,15 @@ fun SharedTransitionScope.EditScreen(
 						}
 						OpenPopup.LAYOUT -> {
 							Column(
+								horizontalAlignment = Alignment.CenterHorizontally,
 								modifier = Modifier
 									.padding(16.dp)
 							) {
+								Text(
+									text = "Layout",
+									style = MaterialTheme.typography.titleLarge,
+									color = MaterialTheme.colorScheme.onBackground
+								)
 								CardLayout.entries.forEach { layout ->
 									Row(
 										verticalAlignment = Alignment.CenterVertically,
@@ -302,8 +433,8 @@ fun SharedTransitionScope.EditScreen(
 										)
 										Icon(
 											painter = painterResource(layout.icon),
-											tint = Color.White,
 											contentDescription = null,
+											tint = MaterialTheme.colorScheme.primary,
 											modifier = Modifier
 												.applyIf(layout == CardLayout.TWO_HALVES) {
 													rotate(90f)
@@ -313,7 +444,7 @@ fun SharedTransitionScope.EditScreen(
 										Text(
 											text = stringResource(layout.description),
 											style = MaterialTheme.typography.titleLarge,
-											color = Color.White
+											color = MaterialTheme.colorScheme.onBackground
 										)
 									}
 								}
@@ -358,7 +489,6 @@ fun SharedTransitionScope.EditScreen(
 					horizontalArrangement = Arrangement.SpaceBetween,
 					modifier = Modifier
 						.fillMaxWidth()
-						.navigationBarsPadding()
 						.padding(bottom = 16.dp)
 						.padding(horizontal = 16.dp)
 				) {
@@ -371,7 +501,7 @@ fun SharedTransitionScope.EditScreen(
 						icon = Icons.Default.Done,
 						enabled = state.isValid,
 						contentDescription = stringResource(R.string.save),
-						tint = if (state.isValid) Color.White else Color.White.copy(alpha = 0.3f),
+						tint = if (state.isValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
 						onClick = {
 							viewModel.saveAucard(state.aucard)
 							onBackClicked()

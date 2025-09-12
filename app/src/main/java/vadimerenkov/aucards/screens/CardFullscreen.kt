@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -60,6 +61,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.Dispatchers
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
+import vadimerenkov.aucards.data.CardLayout
 import vadimerenkov.aucards.ui.CardViewModel
 import vadimerenkov.aucards.ui.ContentType
 import vadimerenkov.aucards.ui.SharedContentStateKey
@@ -190,46 +192,102 @@ fun SharedTransitionScope.CardFullscreen(
 			)
 
 	) {
-		Column(
-			verticalArrangement = Arrangement.Center,
-			horizontalAlignment = Alignment.CenterHorizontally,
-			modifier = Modifier
-				.align(Alignment.Center)
-				.padding(24.dp)
-		) {
-			Text(
-				text = state.aucard.text,
-				color = contentColor,
-				fontSize = state.aucard.titleFontSize.sp,
-				style = MaterialTheme.typography.displayLarge.copy(
-					hyphens = Hyphens.Auto,
-					lineBreak = LineBreak.Heading,
-					lineHeight = (state.aucard.titleFontSize + 8).sp
-				),
-				textAlign = TextAlign.Center,
-				modifier = Modifier
-					.sharedBounds(
-						sharedContentState = textContentState,
-						animatedVisibilityScope = scope
+		when (state.aucard.layout) {
+			CardLayout.TITLE_SUBTITLE -> {
+				Column(
+					verticalArrangement = Arrangement.Center,
+					horizontalAlignment = Alignment.CenterHorizontally,
+					modifier = Modifier
+						.align(Alignment.Center)
+						.padding(24.dp)
+				) {
+					Text(
+						text = state.aucard.text,
+						color = contentColor,
+						fontSize = state.aucard.titleFontSize.sp,
+						style = MaterialTheme.typography.displayLarge.copy(
+							hyphens = Hyphens.Auto,
+							lineBreak = LineBreak.Heading,
+							lineHeight = (state.aucard.titleFontSize + 8).sp
+						),
+						textAlign = TextAlign.Center,
+						modifier = Modifier
+							.sharedBounds(
+								sharedContentState = textContentState,
+								animatedVisibilityScope = scope
+							)
 					)
-			)
-			if (state.aucard.description != null) {
-				var lines by remember { mutableIntStateOf(0) }
-				Spacer(modifier = Modifier.height(24.dp))
-				Text(
-					text = state.aucard.description!!,
-					color = contentColor,
-					fontSize = state.aucard.descriptionFontSize.sp,
-					style = MaterialTheme.typography.titleLarge.copy(
-						hyphens = Hyphens.Auto,
-						lineBreak = LineBreak.Paragraph,
-						lineHeight = (state.aucard.descriptionFontSize + 8).sp
-					),
-					textAlign = if (lines > 2) TextAlign.Start else TextAlign.Center,
-					onTextLayout = {
-						lines = it.lineCount
+					if (state.aucard.description != null) {
+						var lines by remember { mutableIntStateOf(0) }
+						Spacer(modifier = Modifier.height(24.dp))
+						Text(
+							text = state.aucard.description!!,
+							color = contentColor,
+							fontSize = state.aucard.descriptionFontSize.sp,
+							style = MaterialTheme.typography.titleLarge.copy(
+								hyphens = Hyphens.Auto,
+								lineBreak = LineBreak.Paragraph,
+								lineHeight = (state.aucard.descriptionFontSize + 8).sp
+							),
+							textAlign = if (lines > 2) TextAlign.Start else TextAlign.Center,
+							onTextLayout = {
+								lines = it.lineCount
+							}
+						)
 					}
-				)
+				}
+			}
+			CardLayout.TWO_HALVES -> {
+				Column(
+					modifier = Modifier
+						.fillMaxSize()
+				) {
+					Box(
+						contentAlignment = Alignment.Center,
+						modifier = Modifier
+							.weight(1f)
+					) {
+						Text(
+							text = state.aucard.text,
+							color = contentColor,
+							fontSize = state.aucard.titleFontSize.sp,
+							style = MaterialTheme.typography.displayLarge.copy(
+								hyphens = Hyphens.Auto,
+								lineBreak = LineBreak.Heading,
+								lineHeight = (state.aucard.titleFontSize + 8).sp
+							),
+							textAlign = TextAlign.Center,
+							modifier = Modifier
+								.sharedBounds(
+									sharedContentState = textContentState,
+									animatedVisibilityScope = scope
+								)
+						)
+					}
+					HorizontalDivider(
+						thickness = 8.dp,
+						color = contentColor.copy(alpha = 0.5f)
+					)
+					Box(
+						contentAlignment = Alignment.Center,
+						modifier = Modifier
+							.weight(1f)
+					) {
+						if (state.aucard.description != null) {
+							Text(
+								text = state.aucard.description!!,
+								color = contentColor,
+								fontSize = state.aucard.descriptionFontSize.sp,
+								style = MaterialTheme.typography.titleLarge.copy(
+									hyphens = Hyphens.Auto,
+									lineBreak = LineBreak.Heading,
+									lineHeight = (state.aucard.descriptionFontSize + 8).sp
+								),
+								textAlign = TextAlign.Center
+							)
+						}
+					}
+				}
 			}
 		}
 		if (state.isPlaySoundEnabled && state.ringtoneUri != null) {

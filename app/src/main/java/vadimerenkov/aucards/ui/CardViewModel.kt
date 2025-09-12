@@ -131,7 +131,7 @@ class CardViewModel(
 			val color = Color(color_int).copy(alpha = 1f)
 			card_state.update { it.copy(isHexCodeValid = true, aucard = it.aucard.copy(color = color)) }
 		}
-		catch (e: Exception) {
+		catch (_: Exception) {
 			card_state.update { it.copy(isHexCodeValid = false) }
 		}
 	}
@@ -150,7 +150,19 @@ class CardViewModel(
 	}
 
 	fun changeLayout(layout: CardLayout) {
-		card_state.update { it.copy(aucard = cardState.value.aucard.copy(layout = layout)) }
+		if (layout == CardLayout.TWO_HALVES) {
+			card_state.update { it.copy(aucard = cardState.value.aucard.copy(
+				layout = layout,
+				titleFontSize = 57,
+				descriptionFontSize = 57
+			)) }
+		} else {
+			card_state.update { it.copy(aucard = cardState.value.aucard.copy(
+				layout = layout,
+				titleFontSize = 57,
+				descriptionFontSize = 24
+			)) }
+		}
 	}
 
 	fun hasPermission(context: Context): Boolean {

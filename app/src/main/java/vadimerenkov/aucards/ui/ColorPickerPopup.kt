@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Icon
@@ -64,9 +63,6 @@ fun ColorPickerPopup(
 			selectedTabIndex = selectedTab,
 			modifier = Modifier
 				.fillMaxWidth()
-				.padding(top = 3.dp)
-				.padding(horizontal = 2.dp)
-				.clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
 		) {
 			Tab(
 				selected = selectedTab == 0,
@@ -145,7 +141,7 @@ fun ColorPickerPopup(
 							verticalArrangement = Arrangement.spacedBy(8.dp),
 							horizontalAlignment = Alignment.CenterHorizontally,
 							modifier = Modifier
-								.background(MaterialTheme.colorScheme.background)
+								//.background(MaterialTheme.colorScheme.background)
 								.padding(8.dp)
 						) {
 							BrightnessSlider(
@@ -163,7 +159,7 @@ fun ColorPickerPopup(
 								singleLine = true,
 								textStyle = LocalTextStyle.current.copy(
 									textAlign = TextAlign.Center,
-									color = Color.White
+									color = MaterialTheme.colorScheme.primary
 								),
 								onValueChange = onHexCodeChanged,
 								modifier = Modifier

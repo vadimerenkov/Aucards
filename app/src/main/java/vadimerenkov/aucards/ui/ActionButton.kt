@@ -1,6 +1,7 @@
 package vadimerenkov.aucards.ui
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +26,7 @@ fun ActionButton(
 	modifier: Modifier = Modifier,
 	enabled: Boolean = true,
 	contentDescription: String? = null,
-	tint: Color = Color.White
+	tint: Color = MaterialTheme.colorScheme.primary
 ) {
 	Box(
 		contentAlignment = Alignment.Center,
@@ -57,10 +58,10 @@ fun ActionButton(
 	selected: Boolean = false,
 	enabled: Boolean = true,
 	contentDescription: String? = null,
-	tint: Color = Color.White
+	tint: Color = MaterialTheme.colorScheme.primary
 ) {
 	val animatedColor by animateColorAsState(
-		if (selected) MaterialTheme.colorScheme.primary else tint
+		if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else Color.Transparent
 	)
 	Box(
 		contentAlignment = Alignment.Center,
@@ -73,11 +74,12 @@ fun ActionButton(
 				onClick()
 			}
 			.size(70.dp)
+			.background(animatedColor)
 	) {
 		Icon(
 			painter = icon,
 			contentDescription = null,
-			tint = animatedColor,
+			tint = tint,
 			modifier = Modifier
 				.fillMaxSize(0.7f)
 		)
