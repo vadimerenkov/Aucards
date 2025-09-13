@@ -23,14 +23,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardsDatabase
-import vadimerenkov.aucards.settings.Keys.BRIGHTNESS_STRING
-import vadimerenkov.aucards.settings.Keys.LANDSCAPE_STRING
-import vadimerenkov.aucards.settings.Keys.RINGTONE_URI
-import vadimerenkov.aucards.settings.Keys.SOUND_STRING
-import vadimerenkov.aucards.settings.Keys.THEME_STRING
-import vadimerenkov.aucards.settings.Language
-import vadimerenkov.aucards.settings.Settings
-import vadimerenkov.aucards.settings.Theme
 import java.io.File
 
 private const val TAG = "SettingsViewModel"

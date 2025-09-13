@@ -26,7 +26,7 @@ import vadimerenkov.aucards.DispatchersProvider
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardDao
 import vadimerenkov.aucards.data.CardLayout
-import vadimerenkov.aucards.settings.Settings
+import vadimerenkov.aucards.screens.settings.Settings
 
 private const val TAG = "CardViewModel"
 

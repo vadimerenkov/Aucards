@@ -6,7 +6,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import vadimerenkov.aucards.data.AucardsDatabase
-import vadimerenkov.aucards.settings.Settings
+import vadimerenkov.aucards.screens.settings.Settings
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("aucards_settings")
 

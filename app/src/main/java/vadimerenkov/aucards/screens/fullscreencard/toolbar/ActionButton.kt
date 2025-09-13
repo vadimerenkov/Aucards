@@ -19,6 +19,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
+private const val BUTTON_SIZE = 64
+
 @Composable
 fun ActionButton(
 	onClick: () -> Unit,
@@ -38,7 +40,7 @@ fun ActionButton(
 			) {
 				onClick()
 			}
-			.size(70.dp)
+			.size(BUTTON_SIZE.dp)
 	) {
 		Icon(
 			imageVector = icon,
@@ -73,7 +75,7 @@ fun ActionButton(
 			) {
 				onClick()
 			}
-			.size(70.dp)
+			.size(BUTTON_SIZE.dp)
 			.background(animatedColor)
 	) {
 		Icon(

@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.test.core.app.ApplicationProvider
-import vadimerenkov.aucards.settings.Settings
+import vadimerenkov.aucards.screens.settings.Settings
 
 fun getSettings(): Settings {
 	val context: Context = ApplicationProvider.getApplicationContext()
