@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalSharedTransitionApi::class)
 
-package vadimerenkov.aucards.ui
+package vadimerenkov.aucards.screens.list
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -64,6 +64,10 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyGridState
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.data.Aucard
+import vadimerenkov.aucards.ui.ContentType
+import vadimerenkov.aucards.ui.SharedContentStateKey
+import vadimerenkov.aucards.ui.Target
+import vadimerenkov.aucards.ui.calculateContentColor
 
 @Composable
 fun GridOfCards(

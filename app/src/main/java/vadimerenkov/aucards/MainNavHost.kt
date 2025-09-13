@@ -14,10 +14,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.serialization.Serializable
-import vadimerenkov.aucards.screens.CardFullscreen
-import vadimerenkov.aucards.screens.EditScreen
-import vadimerenkov.aucards.screens.ListScreen
-import vadimerenkov.aucards.screens.SettingsScreen
+import vadimerenkov.aucards.screens.fullscreencard.CardFullscreen
+import vadimerenkov.aucards.screens.fullscreencard.EditScreen
+import vadimerenkov.aucards.screens.list.ListScreen
+import vadimerenkov.aucards.screens.settings.SettingsScreen
 
 @Serializable
 data class ListScreen(

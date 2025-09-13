@@ -1,4 +1,4 @@
-package vadimerenkov.aucards.ui
+package vadimerenkov.aucards.screens.fullscreencard.toolbar
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
@@ -40,13 +40,13 @@ import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import vadimerenkov.aucards.R
+import vadimerenkov.aucards.screens.fullscreencard.CardAction
 
 @Composable
 fun ColorPickerPopup(
+	onAction: (CardAction) -> Unit,
 	selectedColor: Color,
-	onColorSelected: (Color) -> Unit,
 	selectedHexCode: String,
-	onHexCodeChanged: (String) -> Unit,
 	isHexCodeValid: Boolean,
 	modifier: Modifier = Modifier,
 	contentColor: Color = MaterialTheme.colorScheme.primary
@@ -103,7 +103,7 @@ fun ColorPickerPopup(
 									.padding(4.dp)
 									.clip(MaterialTheme.shapes.medium)
 									.clickable(
-										onClick = { onColorSelected(color) }
+										onClick = { onAction(CardAction.ColorSelected(color)) }
 									)
 									.background(color)
 									.minimumInteractiveComponentSize()
@@ -130,8 +130,8 @@ fun ColorPickerPopup(
 						HsvColorPicker(
 							controller = colorController,
 							onColorChanged = {
-								onColorSelected(it.color)
-								onHexCodeChanged(it.hexCode)
+								onAction(CardAction.ColorSelected(it.color))
+								onAction(CardAction.HexCodeChanged(it.hexCode))
 							},
 							initialColor = selectedColor,
 							modifier = Modifier
@@ -141,7 +141,6 @@ fun ColorPickerPopup(
 							verticalArrangement = Arrangement.spacedBy(8.dp),
 							horizontalAlignment = Alignment.CenterHorizontally,
 							modifier = Modifier
-								//.background(MaterialTheme.colorScheme.background)
 								.padding(8.dp)
 						) {
 							BrightnessSlider(
@@ -161,7 +160,9 @@ fun ColorPickerPopup(
 									textAlign = TextAlign.Center,
 									color = MaterialTheme.colorScheme.primary
 								),
-								onValueChange = onHexCodeChanged,
+								onValueChange = {
+									onAction(CardAction.HexCodeChanged(it))
+								},
 								modifier = Modifier
 							)
 						}
@@ -181,10 +182,9 @@ private fun ColorPickerPreview() {
 			.padding(16.dp)
 	) {
 		ColorPickerPopup(
+			onAction = {},
 			selectedColor = Color.Red,
-			onColorSelected = {},
 			selectedHexCode = "",
-			onHexCodeChanged = {},
 			isHexCodeValid = true,
 		)
 	}

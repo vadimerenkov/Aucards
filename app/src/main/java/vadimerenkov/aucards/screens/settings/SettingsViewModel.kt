@@ -1,4 +1,4 @@
-package vadimerenkov.aucards.ui
+package vadimerenkov.aucards.screens.settings
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase

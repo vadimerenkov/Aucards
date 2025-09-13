@@ -1,4 +1,4 @@
-package vadimerenkov.aucards.ui
+package vadimerenkov.aucards.screens.fullscreencard
 
 import android.content.Context
 import android.net.Uri
@@ -99,7 +99,7 @@ class CardViewModel(
 		}
 	}
 
-	fun saveAucard(aucard: Aucard) {
+	private fun saveAucard(aucard: Aucard) {
 		if (index != null) {
 			aucard.index = index
 		}
@@ -118,11 +118,11 @@ class CardViewModel(
 		card_state.update { it.copy(aucard = it.aucard.copy(description = description)) }
 	}
 
-	fun updateColor(color: Color) {
+	private fun updateColor(color: Color) {
 		card_state.update { it.copy(aucard = it.aucard.copy(color = color)) }
 	}
 
-	fun updateHexCode(hex: String) {
+	private fun updateHexCode(hex: String) {
 		var hex_code = if (hex.startsWith("#")) hex else "#$hex"
 		if (hex_code.endsWith("#")) hex_code = hex_code.dropLast(1)
 		card_state.update { it.copy(hexColor = hex_code) }
@@ -136,20 +136,20 @@ class CardViewModel(
 		}
 	}
 
-	fun changePopup(popup: OpenPopup) {
+	private fun changePopup(popup: OpenPopup) {
 		val new_popup = if (popup == cardState.value.openPopup) OpenPopup.NONE else popup
 		card_state.update { it.copy(openPopup = new_popup) }
 	}
 
-	fun changeTextFontSize(size: Int) {
+	private fun changeTextFontSize(size: Int) {
 		card_state.update { it.copy(aucard = cardState.value.aucard.copy(titleFontSize = size)) }
 	}
 
-	fun changeDescFontSize(size: Int) {
+	private fun changeDescFontSize(size: Int) {
 		card_state.update { it.copy(aucard = cardState.value.aucard.copy(descriptionFontSize = size)) }
 	}
 
-	fun changeLayout(layout: CardLayout) {
+	private fun changeLayout(layout: CardLayout) {
 		if (layout == CardLayout.TWO_HALVES) {
 			card_state.update { it.copy(aucard = cardState.value.aucard.copy(
 				layout = layout,
@@ -162,6 +162,32 @@ class CardViewModel(
 				titleFontSize = 57,
 				descriptionFontSize = 24
 			)) }
+		}
+	}
+
+	fun onAction(action: CardAction) {
+		when (action) {
+			is CardAction.Saved -> {
+				saveAucard(action.aucard)
+			}
+			is CardAction.LayoutChanged -> {
+				changeLayout(action.layout)
+			}
+			is CardAction.PopupChanged -> {
+				changePopup(action.openPopup)
+			}
+			is CardAction.ColorSelected -> {
+				updateColor(action.color)
+			}
+			is CardAction.DescSizeChanged -> {
+				changeDescFontSize(action.size)
+			}
+			is CardAction.HexCodeChanged -> {
+				updateHexCode(action.hex)
+			}
+			is CardAction.TextSizeChanged -> {
+				changeTextFontSize(action.size)
+			}
 		}
 	}
 
@@ -182,6 +208,16 @@ data class CardState(
 ) {
 	val isValid: Boolean
 		get() = aucard.text.isNotBlank()
+}
+
+sealed interface CardAction {
+	data class PopupChanged(val openPopup: OpenPopup): CardAction
+	data class Saved(val aucard: Aucard): CardAction
+	data class LayoutChanged(val layout: CardLayout): CardAction
+	data class ColorSelected(val color: Color): CardAction
+	data class HexCodeChanged(val hex: String): CardAction
+	data class TextSizeChanged(val size: Int): CardAction
+	data class DescSizeChanged(val size: Int): CardAction
 }
 
 enum class OpenPopup {

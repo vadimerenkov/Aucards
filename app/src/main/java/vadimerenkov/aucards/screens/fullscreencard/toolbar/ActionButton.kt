@@ -1,4 +1,4 @@
-package vadimerenkov.aucards.ui
+package vadimerenkov.aucards.screens.fullscreencard.toolbar
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background

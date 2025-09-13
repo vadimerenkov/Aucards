@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package vadimerenkov.aucards.screens
+package vadimerenkov.aucards.screens.settings
 
 import android.content.Intent
 import android.media.RingtoneManager
@@ -82,7 +82,6 @@ import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.settings.Language
 import vadimerenkov.aucards.settings.Theme
-import vadimerenkov.aucards.ui.SettingsViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 

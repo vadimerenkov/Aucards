@@ -1,4 +1,4 @@
-package vadimerenkov.aucards.ui
+package vadimerenkov.aucards.screens.list
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

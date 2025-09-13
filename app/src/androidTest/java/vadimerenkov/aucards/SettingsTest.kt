@@ -7,7 +7,7 @@ import androidx.compose.ui.test.performClick
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import vadimerenkov.aucards.screens.SettingsScreen
+import vadimerenkov.aucards.screens.settings.SettingsScreen
 
 class SettingsTest {
 	@get:Rule

@@ -42,4 +42,8 @@
     <string name="choose_ringtone">Выбрать мелодию</string>
     <string name="pause">Пауза</string>
     <string name="play">Воспроизвести</string>
+    <string name="text_size">Размер шрифта</string>
+    <string name="layout">Макет</string>
+    <string name="title_subtitle">Заголовок и описание</string>
+    <string name="two_halves">Два заголовка</string>
 </resources>
