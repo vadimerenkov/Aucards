@@ -1,7 +1,6 @@
 package vadimerenkov.aucards.screens.fullscreencard
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.interaction.FocusInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -11,6 +10,9 @@ import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
@@ -31,15 +33,15 @@ import vadimerenkov.aucards.screens.settings.Settings
 private const val TAG = "CardViewModel"
 
 class CardViewModel(
-	val settings: Settings,
+	isDarkTheme: Boolean,
+	val soundPlayer: ExoPlayer,
+	private val settings: Settings,
 	private val aucardDao: AucardDao,
 	private val dispatchers: DispatchersProvider,
-	isDarkTheme: Boolean,
 	private val id: Int,
 	private val index: Int?
 ): ViewModel() {
-
-	private val color = if (isDarkTheme) Color.Black else Color.White
+	private val color = if (isDarkTheme) Color(0xFF263F71) else Color.White
 	val titleInteractionSource = MutableInteractionSource()
 	val descriptionInteractionSource = MutableInteractionSource()
 
@@ -64,6 +66,14 @@ class CardViewModel(
 	var cardState = card_state
 		.onStart {
 			loadInitialData()
+			soundPlayer.addListener(
+				object : Player.Listener {
+					override fun onIsPlayingChanged(isPlaying: Boolean) {
+						super.onIsPlayingChanged(isPlaying)
+						card_state.update { it.copy(isSoundPlaying = isPlaying) }
+					}
+				}
+			)
 		}
 		.flowOn(dispatchers.main)
 		.stateIn(
@@ -76,17 +86,28 @@ class CardViewModel(
 		viewModelScope.launch(dispatchers.main) {
 			val brightness = settings.brightness.first() ?: false
 			val landscape = settings.landscape.first()
-			val playSound = settings.playSound.first() ?: false
+			var playSound = settings.playSound.first() ?: false
 			val ringtoneUri = settings.soundUri.first()?.toUri()
 			if (id != 0) {
 				val card = aucardDao.getAucardByID(id).first()
+
+				if (ringtoneUri == null) {
+					playSound = false
+				} else {
+					if (playSound) {
+						val sound = MediaItem.fromUri(ringtoneUri)
+						soundPlayer.setMediaItem(sound)
+						soundPlayer.prepare()
+						soundPlayer.play()
+					}
+				}
+
 				card_state.update {
 					it.copy(
 						aucard = card,
 						isMaxBrightness = brightness,
 						isLandscapeMode = landscape,
 						isPlaySoundEnabled = playSound,
-						ringtoneUri = ringtoneUri
 					)
 				}
 			} else {
@@ -194,6 +215,13 @@ class CardViewModel(
 	fun hasPermission(context: Context): Boolean {
 		return android.provider.Settings.System.canWrite(context) && card_state.value.isMaxBrightness
 	}
+
+	override fun onCleared() {
+		super.onCleared()
+		soundPlayer.stop()
+		soundPlayer.release()
+		Log.i(TAG, "Cleared the viewmodel and player")
+	}
 }
 
 data class CardState(
@@ -202,7 +230,7 @@ data class CardState(
 	val isMaxBrightness: Boolean = false,
 	val isLandscapeMode: Boolean? = null,
 	val isPlaySoundEnabled: Boolean = false,
-	val ringtoneUri: Uri? = null,
+	val isSoundPlaying: Boolean = false,
 	val hexColor: String = "",
 	val isHexCodeValid: Boolean = true
 ) {

@@ -44,10 +44,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.Dispatchers
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
@@ -79,9 +76,6 @@ fun SharedTransitionScope.CardFullscreen(
 	val context = LocalContext.current
 
 	var controller: WindowInsetsControllerCompat? by remember { mutableStateOf(null) }
-	val soundPlayer = remember { ExoPlayer.Builder(context).build() }
-	var soundPlaying by remember { mutableStateOf(false) }
-
 	var current_brightness by remember { mutableIntStateOf(0) }
 
 
@@ -116,28 +110,9 @@ fun SharedTransitionScope.CardFullscreen(
 		}
 	}
 
-	LaunchedEffect(state.isPlaySoundEnabled) {
-		if (state.isPlaySoundEnabled && state.ringtoneUri != null) {
-			val sound = MediaItem.fromUri(state.ringtoneUri!!)
-			soundPlayer.addListener(
-				object : Player.Listener {
-					override fun onIsPlayingChanged(isPlaying: Boolean) {
-						super.onIsPlayingChanged(isPlaying)
-						soundPlaying = isPlaying
-					}
-				}
-			)
-			soundPlayer.setMediaItem(sound)
-			soundPlayer.prepare()
-			soundPlayer.play()
-		}
-	}
-
 	DisposableEffect(Unit) {
 		onDispose {
 			controller?.show(WindowInsetsCompat.Type.systemBars())
-			soundPlayer.stop()
-			soundPlayer.release()
 			if (viewModel.hasPermission(context)) {
 				Settings.System.putInt(
 					activity?.contentResolver,
@@ -239,7 +214,7 @@ fun SharedTransitionScope.CardFullscreen(
 				)
 			}
 		}
-		if (state.isPlaySoundEnabled && state.ringtoneUri != null) {
+		if (state.isPlaySoundEnabled) {
 			Box(
 				contentAlignment = Alignment.Center,
 				modifier = Modifier
@@ -249,18 +224,18 @@ fun SharedTransitionScope.CardFullscreen(
 					.clickable(
 						onClickLabel = "Play sound"
 					) {
-						if (soundPlaying) {
-							soundPlayer.pause()
+						if (state.isSoundPlaying) {
+							viewModel.soundPlayer.pause()
 						} else {
-							soundPlayer.seekTo(0)
-							soundPlayer.play()
+							viewModel.soundPlayer.seekTo(0)
+							viewModel.soundPlayer.play()
 						}
 					}
 					.size(100.dp)
 
 			) {
 				AnimatedContent(
-					targetState = soundPlaying,
+					targetState = state.isSoundPlaying,
 					transitionSpec = {
 						scaleIn() + fadeIn() togetherWith scaleOut() + fadeOut()
 					}

@@ -35,7 +35,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -81,7 +80,7 @@ internal fun AucardItem(
 	val favColor by animateColorAsState(
 		targetValue = if (aucard.isFavourite) Color.Red else Color.White
 	)
-	val textColor = remember { calculateContentColor(aucard.color) }
+	val textColor = calculateContentColor(aucard.color)
 	val border by animateDpAsState(
 		targetValue = if (isSelected) 4.dp else 0.dp
 	)
