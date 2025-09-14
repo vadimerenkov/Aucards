@@ -41,6 +41,7 @@ import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.screens.fullscreencard.CardAction
+import vadimerenkov.aucards.ui.theme.AucardsTheme
 
 @Composable
 fun ColorPickerPopup(
@@ -92,6 +93,7 @@ fun ColorPickerPopup(
 			when (tab) {
 				0 -> {
 					FlowRow(
+						maxItemsInEachRow = 6,
 						modifier = Modifier
 							.padding(8.dp)
 							.wrapContentSize()
@@ -176,16 +178,18 @@ fun ColorPickerPopup(
 @Preview
 @Composable
 private fun ColorPickerPreview() {
-	Box(
-		modifier = Modifier
-			.background(Color.Black)
-			.padding(16.dp)
-	) {
-		ColorPickerPopup(
-			onAction = {},
-			selectedColor = Color.Red,
-			selectedHexCode = "",
-			isHexCodeValid = true,
-		)
+	AucardsTheme {
+		Box(
+			modifier = Modifier
+				.background(MaterialTheme.colorScheme.primaryContainer)
+				.padding(16.dp)
+		) {
+			ColorPickerPopup(
+				onAction = {},
+				selectedColor = Color.Red,
+				selectedHexCode = "",
+				isHexCodeValid = true
+			)
+		}
 	}
 }
