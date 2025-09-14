@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardsDatabase
+import vadimerenkov.aucards.data.CardLayout
 import java.io.File
 
 private const val TAG = "SettingsViewModel"
@@ -211,38 +212,59 @@ class SettingsViewModel(
 				var current_index = database.aucardDao().getAllCards().first().size
 
 				val file = context.contentResolver.openInputStream(uri)
-				val temp = File.createTempFile("asdf", "qwer")
+				val temp = File.createTempFile("aucards_import", ".db")
 				val stream = temp.outputStream()
 				file?.copyTo(stream)
 
 				val database = SQLiteDatabase.openDatabase(temp.path, null, SQLiteDatabase.OPEN_READONLY)
 				val cursor = database.rawQuery("SELECT * FROM aucard", null)
 				cursor.use {
-					if (it.moveToFirst()) {
-						do {
-							val text = it.getColumnIndex("text")
-							val color = it.getColumnIndex("color")
-							val desc = it.getColumnIndex("description")
-							val fav = it.getColumnIndex("isFavourite")
+					with (it) {
+						if (moveToFirst()) {
+							do {
+								val text = getColumnIndex("text")
+								val color = getColumnIndex("color")
+								val desc = getColumnIndex("description")
+								val fav = getColumnIndex("isFavourite")
 
-							val text_value = it.getString(text)
-							val color_value = it.getInt(color)
-							val desc_value = it.getString(desc)
-							val fav_value = it.getInt(fav)
+								val textSize = getColumnIndex("titleFontSize")
+								val descSize = getColumnIndex("descriptionFontSize")
+								val layout = getColumnIndex("layout")
 
-							val card = Aucard(
-								text = text_value,
-								color = Color(color_value).copy(alpha = 1f),
-								description = desc_value,
-								isFavourite = fav_value.toBoolean(),
-								index = current_index + 1
-							)
+								val text_value = getString(text)
+								val color_value = getInt(color)
+								val desc_value = getString(desc)
+								val fav_value = getInt(fav)
 
-							this@SettingsViewModel.database.aucardDao().saveAucard(card)
-							Log.d(TAG, "We made a new card: $card")
-							current_index++
+								val textSizeValue = if (textSize == -1) 57 else getInt(textSize)
+								val descSizeValue = if (descSize == -1) 24 else getInt(descSize)
+								val layoutValue = if (layout == -1) CardLayout.TITLE_SUBTITLE.name else getString(layout)
 
-						} while (it.moveToNext())
+								val safeValueLayout = try {
+									CardLayout.valueOf(layoutValue)
+								} catch (e: IllegalArgumentException) {
+									Log.e(TAG, "Invalid layout value: $e")
+									CardLayout.TITLE_SUBTITLE
+								}
+
+								val card = Aucard(
+									text = text_value,
+									color = Color(color_value).copy(alpha = 1f),
+									description = desc_value,
+									isFavourite = fav_value.toBoolean(),
+									index = current_index + 1,
+
+									titleFontSize = textSizeValue,
+									descriptionFontSize = descSizeValue,
+									layout = safeValueLayout
+								)
+
+								this@SettingsViewModel.database.aucardDao().saveAucard(card)
+								Log.d(TAG, "We made a new card: $card")
+								current_index++
+
+							} while (moveToNext())
+						}
 					}
 				}
 
