@@ -1,6 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
-package vadimerenkov.aucards.screens
+package vadimerenkov.aucards.screens.settings
 
 import android.content.Intent
 import android.media.RingtoneManager
@@ -10,9 +8,7 @@ import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,20 +25,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.NavigationRailItemDefaults
@@ -50,11 +39,9 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -70,7 +57,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
@@ -80,9 +66,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import vadimerenkov.aucards.BuildConfig
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
-import vadimerenkov.aucards.settings.Language
-import vadimerenkov.aucards.settings.Theme
-import vadimerenkov.aucards.ui.SettingsViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -97,7 +80,7 @@ fun SettingsScreen(
 	viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory.Factory())
 ) {
 	val context = LocalContext.current
-	val version = BuildConfig.VERSION_NAME
+	val version = if (BuildConfig.DEBUG) BuildConfig.VERSION_NAME + "-debug" else BuildConfig.VERSION_NAME
 	val lifecycleOwner = LocalLifecycleOwner.current
 
 	val state by viewModel.settingsState.collectAsState()
@@ -454,129 +437,5 @@ fun SettingsScreen(
 				}
 			}
 		}
-
-	}
-}
-
-@Composable
-private fun DropdownSetting(
-	options: List<Int>,
-	description: String,
-	chosenOption: String,
-	onOptionChosen: (Int) -> Unit,
-	modifier: Modifier = Modifier,
-	@DrawableRes icon: Int? = null
-) {
-	var expanded by remember { mutableStateOf(false) }
-
-	Row(
-		verticalAlignment = Alignment.CenterVertically,
-		modifier = modifier
-			.fillMaxWidth()
-	) {
-		Row(
-			modifier = Modifier
-				.weight(2f)
-		) {
-			icon?.let {
-				Icon(
-					painter = painterResource(it),
-					contentDescription = null,
-					tint = MaterialTheme.colorScheme.primary
-				)
-				Spacer(modifier = Modifier.width(8.dp))
-			}
-			Text(
-				text = description,
-				style = MaterialTheme.typography.bodyLarge
-			)
-		}
-		ExposedDropdownMenuBox(
-			expanded = expanded,
-			onExpandedChange = { expanded = it },
-			modifier = Modifier
-				.weight(3f)
-		) {
-			TextField(
-				value = chosenOption,
-				onValueChange = {},
-				readOnly = true,
-				modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
-				trailingIcon = { Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null) }
-			)
-			ExposedDropdownMenu(
-				expanded = expanded,
-				onDismissRequest = { expanded = !expanded }
-			) {
-				options.forEach { option ->
-					val text = stringResource(option)
-
-					DropdownMenuItem(
-						text = { Text(text) },
-						trailingIcon = {
-							if (text == chosenOption) {
-								Icon(
-									imageVector = Icons.Default.Check,
-									contentDescription = null
-								)
-							} else null
-						},
-						onClick = {
-							onOptionChosen(option)
-							expanded = false
-						}
-					)
-				}
-			}
-		}
-	}
-}
-
-@Composable
-private fun CheckboxSetting(
-	title: String,
-	onCheckedChange: (Boolean) -> Unit,
-	modifier: Modifier = Modifier,
-	description: String? = null,
-	isDescVisible: Boolean = true,
-	isChecked: Boolean = false
-) {
-	Column(
-		verticalArrangement = Arrangement.spacedBy(8.dp),
-		modifier = modifier
-			.fillMaxWidth()
-			.clickable(onClick = {
-				onCheckedChange(!isChecked)
-			})
-			.padding(vertical = 8.dp)
-	) {
-		Row(
-			verticalAlignment = Alignment.Top
-		) {
-			Text(
-				text = title,
-				style = MaterialTheme.typography.bodyLarge,
-				modifier = Modifier
-					.weight(1f)
-			)
-			CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides Dp.Unspecified) {
-				Checkbox(
-					checked = isChecked,
-					onCheckedChange = onCheckedChange,
-					modifier = Modifier
-						.padding(start = 8.dp)
-				)
-			}
-		}
-		description?.let {
-			AnimatedVisibility(isDescVisible) {
-				Text(
-					text = it,
-					style = MaterialTheme.typography.bodyMedium,
-					color = MaterialTheme.colorScheme.primary
-				)
-			}
-		}
-		//HorizontalDivider()
 	}
 }

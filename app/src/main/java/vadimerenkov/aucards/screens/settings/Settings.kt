@@ -1,38 +1,11 @@
-package vadimerenkov.aucards.settings
+package vadimerenkov.aucards.screens.settings
 
-import androidx.annotation.StringRes
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.map
-import vadimerenkov.aucards.R
-import vadimerenkov.aucards.settings.Keys.BRIGHTNESS_STRING
-import vadimerenkov.aucards.settings.Keys.LANDSCAPE_STRING
-import vadimerenkov.aucards.settings.Keys.RINGTONE_URI
-import vadimerenkov.aucards.settings.Keys.SOUND_STRING
-import vadimerenkov.aucards.settings.Keys.THEME_STRING
-
-enum class Language(
-	@StringRes val uiText: Int,
-	val code: String,
-	@StringRes val translator: Int? = R.string.translator
-) {
-	ENGLISH(R.string.english, "en", null),
-	RUSSIAN(R.string.russian, "ru", null),
-	UKRAINIAN(R.string.ukrainian, "uk"),
-	GEORGIAN(R.string.georgian, "ka"),
-	POLISH(R.string.polish, "pl")
-}
-
-enum class Theme(
-	@StringRes val uiText: Int
-) {
-	LIGHT(R.string.light),
-	DARK(R.string.dark),
-	DEVICE(R.string.device)
-}
 
 class Settings(
 	private val dataStore: DataStore<Preferences>

@@ -1,4 +1,4 @@
-package vadimerenkov.aucards.screens
+package vadimerenkov.aucards.screens.fullscreencard
 
 import android.content.pm.ActivityInfo
 import android.provider.Settings
@@ -17,16 +17,12 @@ import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -41,22 +37,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.Hyphens
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.Dispatchers
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
-import vadimerenkov.aucards.ui.CardViewModel
+import vadimerenkov.aucards.data.CardLayout
+import vadimerenkov.aucards.screens.fullscreencard.layouts.DisplayText
+import vadimerenkov.aucards.screens.fullscreencard.layouts.TitleSubtitleLayout
+import vadimerenkov.aucards.screens.fullscreencard.layouts.TwoHalvesLayout
 import vadimerenkov.aucards.ui.ContentType
 import vadimerenkov.aucards.ui.SharedContentStateKey
 import vadimerenkov.aucards.ui.Target
@@ -81,9 +76,6 @@ fun SharedTransitionScope.CardFullscreen(
 	val context = LocalContext.current
 
 	var controller: WindowInsetsControllerCompat? by remember { mutableStateOf(null) }
-	val soundPlayer = remember { ExoPlayer.Builder(context).build() }
-	var soundPlaying by remember { mutableStateOf(false) }
-
 	var current_brightness by remember { mutableIntStateOf(0) }
 
 
@@ -118,28 +110,9 @@ fun SharedTransitionScope.CardFullscreen(
 		}
 	}
 
-	LaunchedEffect(state.isPlaySoundEnabled) {
-		if (state.isPlaySoundEnabled && state.ringtoneUri != null) {
-			val sound = MediaItem.fromUri(state.ringtoneUri!!)
-			soundPlayer.addListener(
-				object : Player.Listener {
-					override fun onIsPlayingChanged(isPlaying: Boolean) {
-						super.onIsPlayingChanged(isPlaying)
-						soundPlaying = isPlaying
-					}
-				}
-			)
-			soundPlayer.setMediaItem(sound)
-			soundPlayer.prepare()
-			soundPlayer.play()
-		}
-	}
-
 	DisposableEffect(Unit) {
 		onDispose {
 			controller?.show(WindowInsetsCompat.Type.systemBars())
-			soundPlayer.stop()
-			soundPlayer.release()
 			if (viewModel.hasPermission(context)) {
 				Settings.System.putInt(
 					activity?.contentResolver,
@@ -169,6 +142,7 @@ fun SharedTransitionScope.CardFullscreen(
 	)
 
 	Box(
+		contentAlignment = Alignment.Center,
 		modifier = modifier
 			.sharedBounds(
 				sharedContentState = contentState,
@@ -186,38 +160,61 @@ fun SharedTransitionScope.CardFullscreen(
 			)
 
 	) {
-		Column(
-			verticalArrangement = Arrangement.Center,
-			horizontalAlignment = Alignment.CenterHorizontally,
-			modifier = Modifier
-				.align(Alignment.Center)
-				.padding(16.dp)
-		) {
-			Text(
-				text = state.aucard.text,
-				color = contentColor,
-				style = MaterialTheme.typography.displayLarge.copy(
-					hyphens = Hyphens.Auto
-				),
-				textAlign = TextAlign.Center,
-				modifier = Modifier
-					.sharedBounds(
-						sharedContentState = textContentState,
-						animatedVisibilityScope = scope
-					)
-			)
-			if (state.aucard.description != null) {
-				Text(
-					text = state.aucard.description!!,
-					color = contentColor,
-					style = MaterialTheme.typography.titleLarge.copy(
-						hyphens = Hyphens.Auto
-					),
-					textAlign = TextAlign.Justify
+		when (state.aucard.layout) {
+			CardLayout.TITLE_SUBTITLE -> {
+				TitleSubtitleLayout(
+					displayText = {
+						DisplayText(
+							text = state.aucard.text,
+							textSize = state.aucard.titleFontSize,
+							color = contentColor,
+							modifier = Modifier
+								.sharedBounds(
+									sharedContentState = textContentState,
+									animatedVisibilityScope = scope
+								)
+						)
+					},
+					descriptionText = {
+						state.aucard.description?.let {
+							DisplayText(
+								text = it,
+								textSize = state.aucard.descriptionFontSize,
+								color = contentColor,
+								lineBreak = LineBreak.Paragraph
+							)
+						}
+					}
+				)
+			}
+			CardLayout.TWO_HALVES -> {
+				TwoHalvesLayout(
+					contentColor = contentColor,
+					displayText = {
+						DisplayText(
+							text = state.aucard.text,
+							textSize = state.aucard.titleFontSize,
+							color = contentColor,
+							modifier = Modifier
+								.sharedBounds(
+									sharedContentState = textContentState,
+									animatedVisibilityScope = scope
+								)
+						)
+					},
+					descriptionText = {
+						state.aucard.description?.let {
+							DisplayText(
+								text = it,
+								textSize = state.aucard.descriptionFontSize,
+								color = contentColor
+							)
+						}
+					}
 				)
 			}
 		}
-		if (state.isPlaySoundEnabled && state.ringtoneUri != null) {
+		if (state.isPlaySoundEnabled) {
 			Box(
 				contentAlignment = Alignment.Center,
 				modifier = Modifier
@@ -227,18 +224,18 @@ fun SharedTransitionScope.CardFullscreen(
 					.clickable(
 						onClickLabel = "Play sound"
 					) {
-						if (soundPlaying) {
-							soundPlayer.pause()
+						if (state.isSoundPlaying) {
+							viewModel.soundPlayer.pause()
 						} else {
-							soundPlayer.seekTo(0)
-							soundPlayer.play()
+							viewModel.soundPlayer.seekTo(0)
+							viewModel.soundPlayer.play()
 						}
 					}
 					.size(100.dp)
 
 			) {
 				AnimatedContent(
-					targetState = soundPlaying,
+					targetState = state.isSoundPlaying,
 					transitionSpec = {
 						scaleIn() + fadeIn() togetherWith scaleOut() + fadeOut()
 					}

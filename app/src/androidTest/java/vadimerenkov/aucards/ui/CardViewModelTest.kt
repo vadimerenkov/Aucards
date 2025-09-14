@@ -19,6 +19,8 @@ import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.fakes.FakeDao
 import vadimerenkov.aucards.fakes.TestDispatchers
 import vadimerenkov.aucards.fakes.getSettings
+import vadimerenkov.aucards.screens.fullscreencard.CardState
+import vadimerenkov.aucards.screens.fullscreencard.CardViewModel
 
 class CardViewModelTest {
 

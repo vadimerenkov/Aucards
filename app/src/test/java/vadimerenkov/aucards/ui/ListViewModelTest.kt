@@ -13,6 +13,7 @@ import org.junit.Test
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.fakes.FakeDao
 import vadimerenkov.aucards.fakes.TestDispatchers
+import vadimerenkov.aucards.screens.list.ListViewModel
 
 class ListViewModelTest {
 

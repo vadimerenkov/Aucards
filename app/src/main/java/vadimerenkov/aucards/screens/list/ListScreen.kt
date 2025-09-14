@@ -2,7 +2,7 @@
 	ExperimentalSharedTransitionApi::class
 )
 
-package vadimerenkov.aucards.screens
+package vadimerenkov.aucards.screens.list
 
 import android.content.pm.ActivityInfo
 import androidx.activity.compose.BackHandler
@@ -61,8 +61,6 @@ import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.ui.AucardsTopBar
 import vadimerenkov.aucards.ui.ContentType
-import vadimerenkov.aucards.ui.GridOfCards
-import vadimerenkov.aucards.ui.ListViewModel
 import vadimerenkov.aucards.ui.SharedContentStateKey
 import vadimerenkov.aucards.ui.Target
 import vadimerenkov.aucards.ui.applyIf

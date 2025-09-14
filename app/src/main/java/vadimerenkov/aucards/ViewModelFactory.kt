@@ -4,9 +4,10 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import vadimerenkov.aucards.ui.CardViewModel
-import vadimerenkov.aucards.ui.ListViewModel
-import vadimerenkov.aucards.ui.SettingsViewModel
+import androidx.media3.exoplayer.ExoPlayer
+import vadimerenkov.aucards.screens.fullscreencard.CardViewModel
+import vadimerenkov.aucards.screens.list.ListViewModel
+import vadimerenkov.aucards.screens.settings.SettingsViewModel
 
 object ViewModelFactory {
 	fun Factory(
@@ -29,7 +30,8 @@ object ViewModelFactory {
 				dispatchers = DefaultDispatchers(),
 				isDarkTheme = isDarkTheme,
 				id = id,
-				index = index
+				index = index,
+				soundPlayer = ExoPlayer.Builder(app().applicationContext).build()
 			)
 		}
 		initializer {
