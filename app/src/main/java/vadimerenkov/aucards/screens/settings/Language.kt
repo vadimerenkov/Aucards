@@ -12,5 +12,6 @@ enum class Language(
 	RUSSIAN(R.string.russian, "ru", null),
 	UKRAINIAN(R.string.ukrainian, "uk"),
 	GEORGIAN(R.string.georgian, "ka"),
-	POLISH(R.string.polish, "pl")
+	POLISH(R.string.polish, "pl"),
+	PORTUGUESE_BRAZIL(R.string.portuguese_brazil, "pt-BR")
 }
