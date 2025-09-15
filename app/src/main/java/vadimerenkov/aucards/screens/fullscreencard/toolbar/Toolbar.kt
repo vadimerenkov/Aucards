@@ -50,7 +50,6 @@ fun Toolbar(
 ) {
 	Column(
 		modifier = modifier
-			.navigationBarsPadding()
 			.dropShadow(
 				shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
 				shadow = Shadow(
@@ -143,6 +142,7 @@ fun Toolbar(
 				.fillMaxWidth()
 				.padding(bottom = 16.dp)
 				.padding(horizontal = 16.dp)
+				.navigationBarsPadding()
 		) {
 			ActionButton(
 				icon = Icons.Default.Close,

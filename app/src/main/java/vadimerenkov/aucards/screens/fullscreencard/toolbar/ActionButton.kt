@@ -61,19 +61,22 @@ fun ActionButton(
 	selected: Boolean = false,
 	enabled: Boolean = true,
 	contentDescription: String? = null,
-	tint: Color = MaterialTheme.colorScheme.primary
+	iconSize: Int = BUTTON_SIZE,
+	tint: Color = MaterialTheme.colorScheme.secondary
 ) {
 	val strokeWidth by animateFloatAsState(if (selected) 10f else 0f)
 	Box(
 		contentAlignment = Alignment.Center,
 		modifier = modifier
 			.drawBehind {
-				drawLine(
-					color = tint,
-					start = Offset(0f,size.height),
-					end = Offset(size.width, size.height),
-					strokeWidth = strokeWidth
-				)
+				if (selected) {
+					drawLine(
+						color = tint,
+						start = Offset(0f, size.height),
+						end = Offset(size.width, size.height),
+						strokeWidth = strokeWidth
+					)
+				}
 			}
 			.clip(CircleShape)
 			.clickable(
@@ -82,7 +85,7 @@ fun ActionButton(
 			) {
 				onClick()
 			}
-			.size(BUTTON_SIZE.dp)
+			.size(iconSize.dp)
 	) {
 		Icon(
 			painter = icon,
