@@ -43,7 +43,7 @@
     <string name="layout">Organização</string>
     <plurals name="delete_confirmation">
         <item quantity="one">Tem certeza que quer apagar %d cartão?</item>
-	<item quantity="many">Tem certeza que quer apagar %d de cartões?</item>
+	    <item quantity="many">Tem certeza que quer apagar %d de cartões?</item>
         <item quantity="other">Tem certeza que quer apagar %d cartões?</item>
     </plurals>
 </resources>

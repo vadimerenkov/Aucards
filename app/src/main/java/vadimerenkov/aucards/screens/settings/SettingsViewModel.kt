@@ -65,24 +65,24 @@ class SettingsViewModel(
 		)
 
 	private fun readLanguageSetting(): Language {
-		val locales = getApplicationLocales()
+		val locales = getApplicationLocales().toLanguageTags()
 
 		Log.i(TAG, "Loaded $locales as saved locale.")
 
 		Language.entries.forEach { it ->
-			if (locales.toString().contains(it.code)) {
+			if (locales.contains(it.code)) {
 				return it
 			}
 		}
 
 		Log.w(TAG, "Could not load language settings.")
 		val current_locale = Locale.current
-		val default_language = current_locale.language
+		val default_language = current_locale.toLanguageTag()
 
 		Log.i(TAG, "Current locale is $current_locale, defaulting to $default_language.")
 
 		Language.entries.forEach { it ->
-			if (default_language.contains(it.code)) {
+			if (it.code == default_language) {
 				return it
 			}
 		}
@@ -101,7 +101,7 @@ class SettingsViewModel(
 			}
 		}
 
-		Log.e(TAG, "Could not load theme settings; defaulting to Device.")
+		Log.w(TAG, "Could not load theme settings; defaulting to Device.")
 		return Theme.DEVICE
 	}
 

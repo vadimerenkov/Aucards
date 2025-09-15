@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="add_card">Dodaj nową fiszkę</string>
     <string name="save">Zapisz</string>
@@ -42,4 +43,5 @@
         <item quantity="few">Czy na pewno chcesz usunąć %s fiszki?</item>
         <item quantity="many">Czy na pewno chcesz usunąć %s fiszek?</item>
     </plurals>
+
 </resources>
