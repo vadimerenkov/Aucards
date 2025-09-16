@@ -8,7 +8,7 @@ enum class Language(
 	val code: String,
 	@StringRes val translator: Int? = R.string.translator
 ) {
-	ENGLISH(R.string.english, "en", null),
+	ENGLISH(R.string.english, "en-US", null),
 	RUSSIAN(R.string.russian, "ru-RU", null),
 	UKRAINIAN(R.string.ukrainian, "uk-UA"),
 	GEORGIAN(R.string.georgian, "ka-GE"),

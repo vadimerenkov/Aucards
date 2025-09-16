@@ -81,7 +81,8 @@ fun MainNavHost(
 					onBackClicked = { navController.navigateUp() },
 					scope = this,
 					id = route.id,
-					index = route.index
+					index = route.index,
+					isWideScreen = isWideScreen
 				)
 			}
 			composable<SettingsScreen>(

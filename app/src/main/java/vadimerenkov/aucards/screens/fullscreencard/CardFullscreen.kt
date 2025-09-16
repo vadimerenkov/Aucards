@@ -40,7 +40,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.media3.common.util.UnstableApi
 import kotlinx.coroutines.Dispatchers
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
@@ -56,7 +55,6 @@ import vadimerenkov.aucards.ui.calculateContentColor
 
 private const val TAG = "CardFullscreen"
 
-@UnstableApi
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.CardFullscreen(

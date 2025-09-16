@@ -46,6 +46,7 @@ fun SharedTransitionScope.EditScreen(
 	scope: AnimatedVisibilityScope,
 	id: Int,
 	index: Int?,
+	isWideScreen: Boolean,
 	modifier: Modifier = Modifier,
 	viewModel: CardViewModel = viewModel(factory = ViewModelFactory.Factory(isDarkTheme, id, index))
 ) {
@@ -187,7 +188,8 @@ fun SharedTransitionScope.EditScreen(
 			contentColor = contentColor,
 			clickStealer = source2,
 			onAction = viewModel::onAction,
-			onBackClicked = onBackClicked
+			onBackClicked = onBackClicked,
+			isWideScreen = isWideScreen
 		)
 	}
 }

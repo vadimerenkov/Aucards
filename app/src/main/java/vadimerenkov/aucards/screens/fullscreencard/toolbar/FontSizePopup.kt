@@ -19,8 +19,8 @@ import vadimerenkov.aucards.screens.fullscreencard.CardAction
 import vadimerenkov.aucards.ui.theme.AucardsTheme
 import kotlin.math.roundToInt
 
-private const val MIN_SIZE = 16f
-private const val MAX_SIZE = 72f
+private const val MIN_SIZE = 24f
+private const val MAX_SIZE = 100f
 
 @Composable
 fun FontSizePopup(

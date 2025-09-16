@@ -70,7 +70,7 @@ class SettingsViewModel(
 		Log.i(TAG, "Loaded $locales as saved locale.")
 
 		Language.entries.forEach { it ->
-			if (locales.contains(it.code)) {
+			if (it.code.contains(locales)) {
 				return it
 			}
 		}
