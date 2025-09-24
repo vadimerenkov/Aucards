@@ -187,7 +187,7 @@ fun ColorPickerPopup(
 									.size(200.dp)
 							)
 							Column(
-								verticalArrangement = Arrangement.SpaceBetween,
+								verticalArrangement = Arrangement.spacedBy(16.dp),
 								horizontalAlignment = Alignment.CenterHorizontally,
 								modifier = Modifier
 									.padding(8.dp)
@@ -241,7 +241,6 @@ private fun ColumnScope.PaletteTab(
 		Palette.colors.forEach { color ->
 			Box(
 				modifier = Modifier
-					//.padding(4.dp)
 					.clip(MaterialTheme.shapes.medium)
 					.clickable(
 						onClick = { onAction(CardAction.ColorSelected(color)) }

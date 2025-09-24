@@ -238,7 +238,8 @@ fun SharedTransitionScope.CardFullscreen(
 					} else {
 						stringResource(R.string.play)
 					},
-					iconSize = 72
+					iconSize = 72,
+					tint = contentColor
 				)
 			}
 		}
