@@ -9,6 +9,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -26,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.data.CardLayout
@@ -82,114 +84,124 @@ fun SharedTransitionScope.EditScreen(
 
 	val source = remember { MutableInteractionSource() }
 	val source2 = remember { MutableInteractionSource() }
-	Column(
-		horizontalAlignment = Alignment.CenterHorizontally,
+	Box(
+		contentAlignment = Alignment.Center,
 		modifier = modifier
 			.fillMaxSize()
 			.background(state.aucard.color)
-			.clickable(
-				interactionSource = source,
-				indication = null
-			) {
-				keyboardController?.hide()
-				viewModel.onAction(CardAction.PopupChanged(OpenPopup.NONE))
-			}
-			.sharedBounds(
-				contentState,
-				scope
-			)
 	) {
-		AnimatedContent(
-			contentAlignment = Alignment.Center,
-			targetState = state.aucard.layout,
-			modifier = Modifier
-				.weight(1f)
-				.statusBarsPadding()
-		) {layout ->
-			when (layout) {
-				CardLayout.TITLE_SUBTITLE -> {
-					TitleSubtitleLayout(
-						displayText = {
-							DisplayTextField(
-								textValue = state.aucard.text,
-								onValueChange = {
-									viewModel.updateText(it)
-								},
-								placeholderText = stringResource(R.string.your_text),
-								fontSize = state.aucard.titleFontSize,
-								color = contentColor,
-								interactionSource = viewModel.titleInteractionSource,
-								imeAction = ImeAction.Done,
-								modifier = Modifier
-									.focusRequester(focusRequester)
-									.testTag("TextField")
-									.sharedBounds(
-										sharedContentState = textState,
-										animatedVisibilityScope = scope
-									)
-							)
-						},
-						descriptionText = {
-							DisplayTextField(
-								textValue = state.aucard.description ?: "",
-								fontSize = state.aucard.descriptionFontSize,
-								onValueChange = {
-									viewModel.updateDescription(it)
-								},
-								placeholderText = stringResource(R.string.description),
-								color = contentColor,
-								interactionSource = viewModel.descriptionInteractionSource
-							)
-						}
-					)
+		AsyncImage(
+			model = state.aucard.imagePath,
+			contentDescription = null
+		)
+		Column(
+			horizontalAlignment = Alignment.CenterHorizontally,
+			modifier = modifier
+				.fillMaxSize()
+				.clickable(
+					interactionSource = source,
+					indication = null
+				) {
+					keyboardController?.hide()
+					viewModel.onAction(CardAction.PopupChanged(OpenPopup.NONE))
 				}
+				.sharedBounds(
+					contentState,
+					scope
+				)
+		) {
+			AnimatedContent(
+				contentAlignment = Alignment.Center,
+				targetState = state.aucard.layout,
+				modifier = Modifier
+					.weight(1f)
+					.statusBarsPadding()
+			) { layout ->
+				when (layout) {
+					CardLayout.TITLE_SUBTITLE -> {
+						TitleSubtitleLayout(
+							displayText = {
+								DisplayTextField(
+									textValue = state.aucard.text,
+									onValueChange = {
+										viewModel.updateText(it)
+									},
+									placeholderText = stringResource(R.string.your_text),
+									fontSize = state.aucard.titleFontSize,
+									color = contentColor,
+									interactionSource = viewModel.titleInteractionSource,
+									imeAction = ImeAction.Done,
+									modifier = Modifier
+										.focusRequester(focusRequester)
+										.testTag("TextField")
+										.sharedBounds(
+											sharedContentState = textState,
+											animatedVisibilityScope = scope
+										)
+								)
+							},
+							descriptionText = {
+								DisplayTextField(
+									textValue = state.aucard.description ?: "",
+									fontSize = state.aucard.descriptionFontSize,
+									onValueChange = {
+										viewModel.updateDescription(it)
+									},
+									placeholderText = stringResource(R.string.description),
+									color = contentColor,
+									interactionSource = viewModel.descriptionInteractionSource
+								)
+							}
+						)
+					}
 
-				CardLayout.TWO_HALVES -> {
-					TwoHalvesLayout(
-						contentColor = contentColor,
-						displayText = {
-							DisplayTextField(
-								textValue = state.aucard.text,
-								onValueChange = {
-									viewModel.updateText(it)
-								},
-								placeholderText = stringResource(R.string.your_text),
-								fontSize = state.aucard.titleFontSize,
-								color = contentColor,
-								interactionSource = viewModel.titleInteractionSource,
-								imeAction = ImeAction.Done,
-								modifier = Modifier
-									.focusRequester(focusRequester)
-									.testTag("TextField")
-									.sharedBounds(
-										sharedContentState = textState,
-										animatedVisibilityScope = scope
-									)
-							)
-						},
-						descriptionText = {
-							DisplayTextField(
-								textValue = state.aucard.description ?: "",
-								fontSize = state.aucard.descriptionFontSize,
-								onValueChange = {
-									viewModel.updateDescription(it)
-								},
-								placeholderText = stringResource(R.string.description),
-								color = contentColor,
-								interactionSource = viewModel.descriptionInteractionSource
-							)
-						}
-					)
+					CardLayout.TWO_HALVES -> {
+						TwoHalvesLayout(
+							contentColor = contentColor,
+							displayText = {
+								DisplayTextField(
+									textValue = state.aucard.text,
+									onValueChange = {
+										viewModel.updateText(it)
+									},
+									placeholderText = stringResource(R.string.your_text),
+									fontSize = state.aucard.titleFontSize,
+									color = contentColor,
+									interactionSource = viewModel.titleInteractionSource,
+									imeAction = ImeAction.Done,
+									modifier = Modifier
+										.focusRequester(focusRequester)
+										.testTag("TextField")
+										.sharedBounds(
+											sharedContentState = textState,
+											animatedVisibilityScope = scope
+										)
+								)
+							},
+							descriptionText = {
+								DisplayTextField(
+									textValue = state.aucard.description ?: "",
+									fontSize = state.aucard.descriptionFontSize,
+									onValueChange = {
+										viewModel.updateDescription(it)
+									},
+									placeholderText = stringResource(R.string.description),
+									color = contentColor,
+									interactionSource = viewModel.descriptionInteractionSource
+								)
+							}
+						)
+					}
 				}
 			}
+			Toolbar(
+				state = state,
+				contentColor = contentColor,
+				clickStealer = source2,
+				onAction = viewModel::onAction,
+				onBackClicked = onBackClicked,
+				isWideScreen = isWideScreen
+			)
 		}
-		Toolbar(
-			state = state,
-			contentColor = contentColor,
-			clickStealer = source2,
-			onAction = viewModel::onAction,
-			onBackClicked = onBackClicked,
-			isWideScreen = isWideScreen
-		)
 	}
 }

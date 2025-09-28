@@ -40,6 +40,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
@@ -155,6 +156,10 @@ fun SharedTransitionScope.CardFullscreen(
 			)
 
 	) {
+		AsyncImage(
+			model = state.aucard.imagePath,
+			contentDescription = null
+		)
 		when (state.aucard.layout) {
 			CardLayout.TITLE_SUBTITLE -> {
 				TitleSubtitleLayout(

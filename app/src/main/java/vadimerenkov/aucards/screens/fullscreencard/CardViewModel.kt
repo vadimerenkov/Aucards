@@ -1,6 +1,7 @@
 package vadimerenkov.aucards.screens.fullscreencard
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.interaction.FocusInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -84,9 +85,9 @@ class CardViewModel(
 
 	private fun loadInitialData() {
 		viewModelScope.launch(dispatchers.main) {
-			val brightness = settings.brightness.first() ?: false
+			val brightness = settings.brightness.first() == true
 			val landscape = settings.landscape.first()
-			var playSound = settings.playSound.first() ?: false
+			var playSound = settings.playSound.first() == true
 			val ringtoneUri = settings.soundUri.first()?.toUri()
 			if (id != 0) {
 				val card = aucardDao.getAucardByID(id).first()
@@ -186,6 +187,10 @@ class CardViewModel(
 		}
 	}
 
+	private fun changeImage(uri: Uri?) {
+		card_state.update { it.copy(aucard = cardState.value.aucard.copy(imagePath = uri)) }
+	}
+
 	fun onAction(action: CardAction) {
 		when (action) {
 			is CardAction.Saved -> {
@@ -208,6 +213,9 @@ class CardViewModel(
 			}
 			is CardAction.TextSizeChanged -> {
 				changeTextFontSize(action.size)
+			}
+			is CardAction.ImageUriChanged -> {
+				changeImage(action.uri)
 			}
 		}
 	}
@@ -246,11 +254,13 @@ sealed interface CardAction {
 	data class HexCodeChanged(val hex: String): CardAction
 	data class TextSizeChanged(val size: Int): CardAction
 	data class DescSizeChanged(val size: Int): CardAction
+	data class ImageUriChanged(val uri: Uri?): CardAction
 }
 
 enum class OpenPopup {
 	NONE,
 	PALETTE,
 	FONT_SIZE,
-	LAYOUT
+	LAYOUT,
+	IMAGE
 }

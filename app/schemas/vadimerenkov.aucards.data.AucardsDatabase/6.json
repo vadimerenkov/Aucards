@@ -1,0 +1,88 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 6,
+    "identityHash": "3b86d0754d791688bdaa0c8924502935",
+    "entities": [
+      {
+        "tableName": "Aucard",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `text` TEXT NOT NULL, `isFavourite` INTEGER NOT NULL DEFAULT false, `description` TEXT, `color` INTEGER NOT NULL, `titleFontSize` INTEGER NOT NULL DEFAULT 57, `descriptionFontSize` INTEGER NOT NULL DEFAULT 24, `layout` TEXT NOT NULL DEFAULT 'TITLE_SUBTITLE', `imagePath` TEXT, `index` INTEGER NOT NULL DEFAULT 0)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFavourite",
+            "columnName": "isFavourite",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "false"
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "color",
+            "columnName": "color",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titleFontSize",
+            "columnName": "titleFontSize",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "57"
+          },
+          {
+            "fieldPath": "descriptionFontSize",
+            "columnName": "descriptionFontSize",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "24"
+          },
+          {
+            "fieldPath": "layout",
+            "columnName": "layout",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'TITLE_SUBTITLE'"
+          },
+          {
+            "fieldPath": "imagePath",
+            "columnName": "imagePath",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "index",
+            "columnName": "index",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3b86d0754d791688bdaa0c8924502935')"
+    ]
+  }
+}

@@ -1,5 +1,8 @@
 package vadimerenkov.aucards.screens.fullscreencard.toolbar
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -18,8 +21,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -47,9 +53,16 @@ fun Toolbar(
 	clickStealer: MutableInteractionSource,
 	onAction: (CardAction) -> Unit,
 	onBackClicked: () -> Unit,
-	isWideScreen: Boolean,
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
+	isWideScreen: Boolean = false
 ) {
+	val imagePicker =
+		rememberLauncherForActivityResult(PickVisualMedia()) {
+			if (it != null) {
+				onAction(CardAction.ImageUriChanged(it))
+			}
+		}
+
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
 		modifier = modifier
@@ -79,6 +92,7 @@ fun Toolbar(
 				fadeIn() togetherWith fadeOut()
 			}
 		) { it ->
+
 			when (it) {
 				OpenPopup.NONE -> {
 					Spacer(modifier = Modifier.height(16.dp))
@@ -110,6 +124,30 @@ fun Toolbar(
 							.widthIn(max = 600.dp)
 					)
 				}
+				OpenPopup.IMAGE -> {
+					Row {
+						IconButton(
+							onClick = {
+								imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+							}
+						) {
+							Icon(
+								painter = painterResource(R.drawable.replace),
+								contentDescription = null
+							)
+						}
+						IconButton(
+							onClick = {
+								onAction(CardAction.ImageUriChanged(null))
+							}
+						) {
+							Icon(
+								imageVector = Icons.Default.Clear,
+								contentDescription = null
+							)
+						}
+					}
+				}
 			}
 		}
 
@@ -119,6 +157,15 @@ fun Toolbar(
 				.padding(horizontal = 16.dp)
 		) {
 			Spacer(modifier = Modifier.weight(1f))
+			ActionButton(
+				icon = painterResource(R.drawable.picture),
+				selected = state.openPopup == OpenPopup.IMAGE,
+				contentDescription = "Choose image",
+				onClick = {
+					onAction(CardAction.PopupChanged(OpenPopup.IMAGE))
+					imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+				}
+			)
 			ActionButton(
 				icon = painterResource(R.drawable.format),
 				selected = state.openPopup == OpenPopup.LAYOUT,
@@ -172,20 +219,19 @@ fun Toolbar(
 	}
 }
 
-@Preview(device = "spec:width=1280dp,height=800dp,dpi=240")
+@Preview
 @Composable
 private fun ToolbarPreview() {
 	AucardsTheme {
 		Toolbar(
 			state = CardState(
 				aucard = Aucard(text = ""),
-				openPopup = OpenPopup.PALETTE
+				openPopup = OpenPopup.IMAGE
 			),
 			onAction = {},
 			onBackClicked = {},
 			contentColor = Color.Black,
-			clickStealer = remember { MutableInteractionSource() },
-			isWideScreen = true
+			clickStealer = remember { MutableInteractionSource() }
 		)
 	}
 }

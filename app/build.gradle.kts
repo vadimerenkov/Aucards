@@ -94,6 +94,9 @@ dependencies {
 	implementation(libs.kotlinx.serialization.core)
 	implementation(libs.androidx.adaptive)
 
+	//Coil
+	implementation(libs.coil)
+
 	//Colorpicker Compose by skydoves
 	implementation(libs.compose.colorpicker)
 
