@@ -7,7 +7,8 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -39,6 +41,8 @@ import vadimerenkov.aucards.ui.ContentType
 import vadimerenkov.aucards.ui.SharedContentStateKey
 import vadimerenkov.aucards.ui.Target
 import vadimerenkov.aucards.ui.calculateContentColor
+
+private const val TAG = "EditScreen"
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -84,27 +88,42 @@ fun SharedTransitionScope.EditScreen(
 
 	val source = remember { MutableInteractionSource() }
 	val source2 = remember { MutableInteractionSource() }
+
 	Box(
 		contentAlignment = Alignment.Center,
 		modifier = modifier
 			.fillMaxSize()
 			.background(state.aucard.color)
 	) {
+		val imageState = rememberTransformableState { zoom, pan, spin ->
+			viewModel.transformImage(zoom, pan, spin)
+		}
 		AsyncImage(
 			model = state.aucard.imagePath,
-			contentDescription = null
+			contentDescription = null,
+			modifier = Modifier
+				.graphicsLayer {
+					with(state.aucard) {
+						scaleX = imageScale
+						scaleY = imageScale
+						rotationZ = imageRotation
+						translationX = imageOffset.x
+						translationY = imageOffset.y
+					}
+				}
+				.transformable(imageState)
 		)
 		Column(
 			horizontalAlignment = Alignment.CenterHorizontally,
 			modifier = modifier
 				.fillMaxSize()
-				.clickable(
-					interactionSource = source,
-					indication = null
-				) {
-					keyboardController?.hide()
-					viewModel.onAction(CardAction.PopupChanged(OpenPopup.NONE))
-				}
+//				.clickable(
+//					interactionSource = source,
+//					indication = null
+//				) {
+//					keyboardController?.hide()
+//					viewModel.onAction(CardAction.PopupChanged(OpenPopup.NONE))
+//				}
 				.sharedBounds(
 					contentState,
 					scope

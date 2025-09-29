@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -158,7 +159,17 @@ fun SharedTransitionScope.CardFullscreen(
 	) {
 		AsyncImage(
 			model = state.aucard.imagePath,
-			contentDescription = null
+			contentDescription = null,
+			modifier = Modifier
+				.graphicsLayer {
+					with(state.aucard) {
+						scaleX = imageScale
+						scaleY = imageScale
+						rotationZ = imageRotation
+						translationX = imageOffset.x
+						translationY = imageOffset.y
+					}
+				}
 		)
 		when (state.aucard.layout) {
 			CardLayout.TITLE_SUBTITLE -> {

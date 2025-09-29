@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 6,
-    "identityHash": "3b86d0754d791688bdaa0c8924502935",
+    "identityHash": "ddb8bb4049b0b236eadab8eb0c82ceaf",
     "entities": [
       {
         "tableName": "Aucard",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `text` TEXT NOT NULL, `isFavourite` INTEGER NOT NULL DEFAULT false, `description` TEXT, `color` INTEGER NOT NULL, `titleFontSize` INTEGER NOT NULL DEFAULT 57, `descriptionFontSize` INTEGER NOT NULL DEFAULT 24, `layout` TEXT NOT NULL DEFAULT 'TITLE_SUBTITLE', `imagePath` TEXT, `index` INTEGER NOT NULL DEFAULT 0)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `text` TEXT NOT NULL, `isFavourite` INTEGER NOT NULL DEFAULT false, `description` TEXT, `color` INTEGER NOT NULL, `titleFontSize` INTEGER NOT NULL DEFAULT 57, `descriptionFontSize` INTEGER NOT NULL DEFAULT 24, `layout` TEXT NOT NULL DEFAULT 'TITLE_SUBTITLE', `imagePath` TEXT, `imageScale` REAL NOT NULL DEFAULT 1.0, `imageOffset` INTEGER NOT NULL DEFAULT 0, `imageRotation` REAL NOT NULL DEFAULT 1.0, `index` INTEGER NOT NULL DEFAULT 0)",
         "fields": [
           {
             "fieldPath": "id",
@@ -65,6 +65,27 @@
             "affinity": "TEXT"
           },
           {
+            "fieldPath": "imageScale",
+            "columnName": "imageScale",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "1.0"
+          },
+          {
+            "fieldPath": "imageOffset",
+            "columnName": "imageOffset",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "imageRotation",
+            "columnName": "imageRotation",
+            "affinity": "REAL",
+            "notNull": true,
+            "defaultValue": "1.0"
+          },
+          {
             "fieldPath": "index",
             "columnName": "index",
             "affinity": "INTEGER",
@@ -82,7 +103,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3b86d0754d791688bdaa0c8924502935')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ddb8bb4049b0b236eadab8eb0c82ceaf')"
     ]
   }
 }

@@ -1,5 +1,6 @@
 package vadimerenkov.aucards.screens.fullscreencard.toolbar
 
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
@@ -33,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.res.painterResource
@@ -45,6 +47,8 @@ import vadimerenkov.aucards.screens.fullscreencard.CardAction
 import vadimerenkov.aucards.screens.fullscreencard.CardState
 import vadimerenkov.aucards.screens.fullscreencard.OpenPopup
 import vadimerenkov.aucards.ui.theme.AucardsTheme
+
+private const val TAG = "Toolbar"
 
 @Composable
 fun Toolbar(
@@ -129,6 +133,7 @@ fun Toolbar(
 						IconButton(
 							onClick = {
 								imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+								Log.i(TAG, Offset.Zero.packedValue.toString())
 							}
 						) {
 							Icon(

@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.compose.foundation.interaction.FocusInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
@@ -189,6 +190,24 @@ class CardViewModel(
 
 	private fun changeImage(uri: Uri?) {
 		card_state.update { it.copy(aucard = cardState.value.aucard.copy(imagePath = uri)) }
+	}
+
+	fun transformImage(
+		scale: Float,
+		offset: Offset,
+		rotation: Float
+	) {
+		with (cardState.value.aucard) {
+			card_state.update {
+				it.copy(
+					aucard = cardState.value.aucard.copy(
+						imageScale = imageScale * scale,
+						imageOffset = imageOffset + offset * imageScale,
+						imageRotation = imageRotation + rotation
+					)
+				)
+			}
+		}
 	}
 
 	fun onAction(action: CardAction) {
