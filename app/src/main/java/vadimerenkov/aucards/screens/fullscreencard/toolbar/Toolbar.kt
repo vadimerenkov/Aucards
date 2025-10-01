@@ -1,6 +1,5 @@
 package vadimerenkov.aucards.screens.fullscreencard.toolbar
 
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
@@ -28,13 +27,13 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.res.painterResource
@@ -129,28 +128,35 @@ fun Toolbar(
 					)
 				}
 				OpenPopup.IMAGE -> {
-					Row {
-						IconButton(
-							onClick = {
-								imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
-								Log.i(TAG, Offset.Zero.packedValue.toString())
+					Column {
+						Row {
+							IconButton(
+								onClick = {
+									imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+								}
+							) {
+								Icon(
+									painter = painterResource(R.drawable.replace),
+									contentDescription = null
+								)
 							}
-						) {
-							Icon(
-								painter = painterResource(R.drawable.replace),
-								contentDescription = null
-							)
-						}
-						IconButton(
-							onClick = {
-								onAction(CardAction.ImageUriChanged(null))
+							IconButton(
+								onClick = {
+									onAction(CardAction.ImageUriChanged(null))
+								}
+							) {
+								Icon(
+									imageVector = Icons.Default.Clear,
+									contentDescription = null
+								)
 							}
-						) {
-							Icon(
-								imageVector = Icons.Default.Clear,
-								contentDescription = null
-							)
 						}
+						Slider(
+							value = state.aucard.textBackgroundOpacity,
+							onValueChange = {
+								onAction(CardAction.TextBackgroundChanged(it))
+							}
+						)
 					}
 				}
 			}
@@ -168,7 +174,9 @@ fun Toolbar(
 				contentDescription = "Choose image",
 				onClick = {
 					onAction(CardAction.PopupChanged(OpenPopup.IMAGE))
-					imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+					if (state.aucard.imagePath == null) {
+						imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+					}
 				}
 			)
 			ActionButton(

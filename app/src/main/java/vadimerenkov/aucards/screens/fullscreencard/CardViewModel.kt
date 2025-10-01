@@ -189,7 +189,17 @@ class CardViewModel(
 	}
 
 	private fun changeImage(uri: Uri?) {
-		card_state.update { it.copy(aucard = cardState.value.aucard.copy(imagePath = uri)) }
+		val is_editing = uri != null
+		with (cardState.value.aucard) {
+			card_state.update { it.copy(
+				isEditingImage = is_editing,
+				aucard = copy(
+					imagePath = uri,
+					imageRotation = 0f,
+					imageOffset = Offset.Zero,
+					imageScale = 1f
+			)) }
+		}
 	}
 
 	fun transformImage(
@@ -200,14 +210,23 @@ class CardViewModel(
 		with (cardState.value.aucard) {
 			card_state.update {
 				it.copy(
-					aucard = cardState.value.aucard.copy(
+					aucard = copy(
 						imageScale = imageScale * scale,
 						imageOffset = imageOffset + offset * imageScale,
 						imageRotation = imageRotation + rotation
-					)
+					),
+					isEditingImage = true
 				)
 			}
 		}
+	}
+
+	fun resetSelection() {
+		card_state.update { it.copy(isEditingImage = false) }
+	}
+
+	private fun changeOpacity(opacity: Float) {
+		card_state.update { it.copy(aucard = cardState.value.aucard.copy(textBackgroundOpacity = opacity)) }
 	}
 
 	fun onAction(action: CardAction) {
@@ -236,6 +255,9 @@ class CardViewModel(
 			is CardAction.ImageUriChanged -> {
 				changeImage(action.uri)
 			}
+			is CardAction.TextBackgroundChanged -> {
+				changeOpacity(action.opacity)
+			}
 		}
 	}
 
@@ -249,31 +271,6 @@ class CardViewModel(
 		soundPlayer.release()
 		Log.i(TAG, "Cleared the viewmodel and player")
 	}
-}
-
-data class CardState(
-	val aucard: Aucard,
-	val openPopup: OpenPopup = OpenPopup.NONE,
-	val isMaxBrightness: Boolean = false,
-	val isLandscapeMode: Boolean? = null,
-	val isPlaySoundEnabled: Boolean = false,
-	val isSoundPlaying: Boolean = false,
-	val hexColor: String = "",
-	val isHexCodeValid: Boolean = true
-) {
-	val isValid: Boolean
-		get() = aucard.text.isNotBlank()
-}
-
-sealed interface CardAction {
-	data class PopupChanged(val openPopup: OpenPopup): CardAction
-	data class Saved(val aucard: Aucard): CardAction
-	data class LayoutChanged(val layout: CardLayout): CardAction
-	data class ColorSelected(val color: Color): CardAction
-	data class HexCodeChanged(val hex: String): CardAction
-	data class TextSizeChanged(val size: Int): CardAction
-	data class DescSizeChanged(val size: Int): CardAction
-	data class ImageUriChanged(val uri: Uri?): CardAction
 }
 
 enum class OpenPopup {

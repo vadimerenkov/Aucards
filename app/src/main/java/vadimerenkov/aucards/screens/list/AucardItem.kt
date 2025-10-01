@@ -41,12 +41,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.lerp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import coil3.compose.AsyncImage
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.data.Aucard
@@ -156,6 +158,13 @@ internal fun AucardItem(
 
 		) {
 			Box {
+				AsyncImage(
+					model = aucard.imagePath,
+					contentDescription = null,
+					contentScale = ContentScale.FillWidth,
+					modifier = Modifier
+						.align(Alignment.Center)
+				)
 				this@ElevatedCard.AnimatedVisibility(
 					visible = true
 				) {
@@ -243,7 +252,6 @@ internal fun AucardItem(
 					}
 				}
 
-
 				Column(
 					verticalArrangement = Arrangement.Center,
 					horizontalAlignment = Alignment.CenterHorizontally,
@@ -260,6 +268,9 @@ internal fun AucardItem(
 						color = textColor,
 						textAlign = TextAlign.Center,
 						modifier = Modifier
+							.background(
+								aucard.color.copy(alpha = aucard.textBackgroundOpacity)
+							)
 							.padding(8.dp)
 							.sharedBounds(
 								sharedContentState = if (!isSelectMode) textContentState else editTextContentState,

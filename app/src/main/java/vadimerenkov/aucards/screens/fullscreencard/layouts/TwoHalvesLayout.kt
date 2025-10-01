@@ -55,14 +55,16 @@ private fun TwoHalvesTextPreview() {
 				DisplayText(
 					text = "Display text",
 					textSize = 57,
-					color = Color.Black
+					color = Color.Black,
+					backgroundColor = Color.White
 				)
 			},
 			descriptionText = {
 				DisplayText(
 					text = "Description text",
 					textSize = 57,
-					color = Color.Black
+					color = Color.Black,
+					backgroundColor = Color.White
 				)
 			}
 		)
@@ -79,14 +81,16 @@ private fun TwoHalvesFieldPreview() {
 				DisplayTextField(
 					placeholderText = "Your text...",
 					onValueChange = {},
-					fontSize = 57
+					fontSize = 57,
+					backgroundColor = Color.White
 				)
 			},
 			descriptionText = {
 				DisplayTextField(
 					placeholderText = "Additional text...",
 					fontSize = 57,
-					onValueChange = {}
+					onValueChange = {},
+					backgroundColor = Color.White
 				)
 			}
 		)

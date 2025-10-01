@@ -19,6 +19,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -157,6 +158,7 @@ fun SharedTransitionScope.CardFullscreen(
 			)
 
 	) {
+		val textBackColor = state.aucard.color.copy(alpha = state.aucard.textBackgroundOpacity)
 		AsyncImage(
 			model = state.aucard.imagePath,
 			contentDescription = null,
@@ -170,6 +172,7 @@ fun SharedTransitionScope.CardFullscreen(
 						translationY = imageOffset.y
 					}
 				}
+				.fillMaxWidth()
 		)
 		when (state.aucard.layout) {
 			CardLayout.TITLE_SUBTITLE -> {
@@ -179,6 +182,7 @@ fun SharedTransitionScope.CardFullscreen(
 							text = state.aucard.text,
 							textSize = state.aucard.titleFontSize,
 							color = contentColor,
+							backgroundColor = textBackColor,
 							modifier = Modifier
 								.sharedBounds(
 									sharedContentState = textContentState,
@@ -192,6 +196,7 @@ fun SharedTransitionScope.CardFullscreen(
 								text = it,
 								textSize = state.aucard.descriptionFontSize,
 								color = contentColor,
+								backgroundColor = textBackColor,
 								lineBreak = LineBreak.Paragraph
 							)
 						}
@@ -206,6 +211,7 @@ fun SharedTransitionScope.CardFullscreen(
 							text = state.aucard.text,
 							textSize = state.aucard.titleFontSize,
 							color = contentColor,
+							backgroundColor = textBackColor,
 							modifier = Modifier
 								.sharedBounds(
 									sharedContentState = textContentState,
@@ -218,7 +224,8 @@ fun SharedTransitionScope.CardFullscreen(
 							DisplayText(
 								text = it,
 								textSize = state.aucard.descriptionFontSize,
-								color = contentColor
+								color = contentColor,
+								backgroundColor = textBackColor,
 							)
 						}
 					}

@@ -23,7 +23,8 @@ data class Aucard(
 	val imagePath: Uri? = null,
 	@ColumnInfo(defaultValue = "1.0") val imageScale: Float = 1f,
 	@ColumnInfo(defaultValue = "0") val imageOffset: Offset = Offset.Zero,
-	@ColumnInfo(defaultValue = "1.0") val imageRotation: Float = 1f,
+	@ColumnInfo(defaultValue = "0.0") val imageRotation: Float = 0f,
+	@ColumnInfo(defaultValue = "0.5") val textBackgroundOpacity: Float = 0.5f,
 	@ColumnInfo(defaultValue = "0") var index: Int = 0
 )
 

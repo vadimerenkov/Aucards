@@ -7,12 +7,16 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,13 +24,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
@@ -94,6 +102,18 @@ fun SharedTransitionScope.EditScreen(
 		modifier = modifier
 			.fillMaxSize()
 			.background(state.aucard.color)
+			.clickable(
+				interactionSource = source,
+				indication = null
+			) {
+				keyboardController?.hide()
+				viewModel.onAction(CardAction.PopupChanged(OpenPopup.NONE))
+				viewModel.resetSelection()
+			}
+			.sharedBounds(
+				contentState,
+				scope
+			)
 	) {
 		val imageState = rememberTransformableState { zoom, pan, spin ->
 			viewModel.transformImage(zoom, pan, spin)
@@ -111,23 +131,28 @@ fun SharedTransitionScope.EditScreen(
 						translationY = imageOffset.y
 					}
 				}
+				.zIndex(
+					if (state.isEditingImage) 1f else 0f
+				)
+				.fillMaxWidth()
 				.transformable(imageState)
+				.border(
+					width = 2.dp,
+					color = if (state.isEditingImage) Color.Black else Color.Transparent
+				)
+				.padding(2.dp)
+				.border(
+					width = 2.dp,
+					color = if (state.isEditingImage) Color.White else Color.Transparent
+				)
+				.alpha(
+					if (state.isEditingImage) 0.7f else 1f
+				)
 		)
 		Column(
 			horizontalAlignment = Alignment.CenterHorizontally,
 			modifier = modifier
 				.fillMaxSize()
-//				.clickable(
-//					interactionSource = source,
-//					indication = null
-//				) {
-//					keyboardController?.hide()
-//					viewModel.onAction(CardAction.PopupChanged(OpenPopup.NONE))
-//				}
-				.sharedBounds(
-					contentState,
-					scope
-				)
 		) {
 			AnimatedContent(
 				contentAlignment = Alignment.Center,
@@ -136,6 +161,9 @@ fun SharedTransitionScope.EditScreen(
 					.weight(1f)
 					.statusBarsPadding()
 			) { layout ->
+				val textBackColor = state.aucard.color.copy(
+					alpha = state.aucard.textBackgroundOpacity
+				)
 				when (layout) {
 					CardLayout.TITLE_SUBTITLE -> {
 						TitleSubtitleLayout(
@@ -146,10 +174,12 @@ fun SharedTransitionScope.EditScreen(
 										viewModel.updateText(it)
 									},
 									placeholderText = stringResource(R.string.your_text),
+									enabled = !state.isEditingImage,
 									fontSize = state.aucard.titleFontSize,
 									color = contentColor,
 									interactionSource = viewModel.titleInteractionSource,
 									imeAction = ImeAction.Done,
+									backgroundColor = textBackColor,
 									modifier = Modifier
 										.focusRequester(focusRequester)
 										.testTag("TextField")
@@ -163,11 +193,13 @@ fun SharedTransitionScope.EditScreen(
 								DisplayTextField(
 									textValue = state.aucard.description ?: "",
 									fontSize = state.aucard.descriptionFontSize,
+									enabled = !state.isEditingImage,
 									onValueChange = {
 										viewModel.updateDescription(it)
 									},
 									placeholderText = stringResource(R.string.description),
 									color = contentColor,
+									backgroundColor = textBackColor,
 									interactionSource = viewModel.descriptionInteractionSource
 								)
 							}
@@ -183,11 +215,13 @@ fun SharedTransitionScope.EditScreen(
 									onValueChange = {
 										viewModel.updateText(it)
 									},
+									enabled = !state.isEditingImage,
 									placeholderText = stringResource(R.string.your_text),
 									fontSize = state.aucard.titleFontSize,
 									color = contentColor,
 									interactionSource = viewModel.titleInteractionSource,
 									imeAction = ImeAction.Done,
+									backgroundColor = textBackColor,
 									modifier = Modifier
 										.focusRequester(focusRequester)
 										.testTag("TextField")
@@ -201,11 +235,13 @@ fun SharedTransitionScope.EditScreen(
 								DisplayTextField(
 									textValue = state.aucard.description ?: "",
 									fontSize = state.aucard.descriptionFontSize,
+									enabled = !state.isEditingImage,
 									onValueChange = {
 										viewModel.updateDescription(it)
 									},
 									placeholderText = stringResource(R.string.description),
 									color = contentColor,
+									backgroundColor = textBackColor,
 									interactionSource = viewModel.descriptionInteractionSource
 								)
 							}
@@ -219,7 +255,9 @@ fun SharedTransitionScope.EditScreen(
 				clickStealer = source2,
 				onAction = viewModel::onAction,
 				onBackClicked = onBackClicked,
-				isWideScreen = isWideScreen
+				isWideScreen = isWideScreen,
+				modifier = Modifier
+					.alpha(if (state.isEditingImage) 0.4f else 1f)
 			)
 		}
 	}

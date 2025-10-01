@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
-private const val BUTTON_SIZE = 64
+private const val BUTTON_SIZE = 56
 
 @Composable
 fun ActionButton(
