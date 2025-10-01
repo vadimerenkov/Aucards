@@ -9,6 +9,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -70,8 +71,12 @@ fun SharedTransitionScope.EditScreen(
 	val contentColor by animateColorAsState(calculateContentColor(state.aucard.color))
 	val keyboardController = LocalSoftwareKeyboardController.current
 
-	BackHandler(state.openPopup != OpenPopup.NONE) {
+	BackHandler(
+		enabled = state.openPopup != OpenPopup.NONE
+				|| state.isEditingImage
+	) {
 		viewModel.onAction(CardAction.PopupChanged(OpenPopup.NONE))
+		viewModel.selectImage(false)
 	}
 
 	LaunchedEffect(true) {
@@ -107,8 +112,9 @@ fun SharedTransitionScope.EditScreen(
 				indication = null
 			) {
 				keyboardController?.hide()
+				focusRequester.freeFocus()
 				viewModel.onAction(CardAction.PopupChanged(OpenPopup.NONE))
-				viewModel.resetSelection()
+				viewModel.selectImage(false)
 			}
 			.sharedBounds(
 				contentState,
@@ -116,7 +122,9 @@ fun SharedTransitionScope.EditScreen(
 			)
 	) {
 		val imageState = rememberTransformableState { zoom, pan, spin ->
-			viewModel.transformImage(zoom, pan, spin)
+			if (state.isEditingImage) {
+				viewModel.transformImage(zoom, pan, spin)
+			}
 		}
 		AsyncImage(
 			model = state.aucard.imagePath,
@@ -136,6 +144,16 @@ fun SharedTransitionScope.EditScreen(
 				)
 				.fillMaxWidth()
 				.transformable(imageState)
+				.combinedClickable(
+					interactionSource = null,
+					indication = null,
+					onLongClick = {
+						viewModel.selectImage(true)
+					},
+					onClick = {
+						viewModel.selectImage(false)
+					}
+				)
 				.border(
 					width = 2.dp,
 					color = if (state.isEditingImage) Color.Black else Color.Transparent

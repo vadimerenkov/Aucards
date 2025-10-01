@@ -214,15 +214,14 @@ class CardViewModel(
 						imageScale = imageScale * scale,
 						imageOffset = imageOffset + offset * imageScale,
 						imageRotation = imageRotation + rotation
-					),
-					isEditingImage = true
+					)
 				)
 			}
 		}
 	}
 
-	fun resetSelection() {
-		card_state.update { it.copy(isEditingImage = false) }
+	fun selectImage(value: Boolean) {
+		card_state.update { it.copy(isEditingImage = value) }
 	}
 
 	private fun changeOpacity(opacity: Float) {

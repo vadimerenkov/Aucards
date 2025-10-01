@@ -53,7 +53,7 @@ fun DisplayTextField (
 		decorationBox = { field ->
 			Box(
 				contentAlignment = Alignment.Center,
-				modifier = modifier
+				modifier = Modifier
 					.background(backgroundColor)
 					.padding(8.dp)
 
@@ -69,7 +69,8 @@ fun DisplayTextField (
 				}
 				field()
 			}
-		}
+		},
+		modifier = modifier
 	)
 }
 
