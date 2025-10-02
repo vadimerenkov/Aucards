@@ -1,5 +1,6 @@
 package vadimerenkov.aucards.screens.fullscreencard
 
+import android.content.Context
 import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import vadimerenkov.aucards.data.Aucard
@@ -7,7 +8,7 @@ import vadimerenkov.aucards.data.CardLayout
 
 sealed interface CardAction {
 	data class PopupChanged(val openPopup: OpenPopup): CardAction
-	data class Saved(val aucard: Aucard): CardAction
+	data class Saved(val aucard: Aucard, val context: Context): CardAction
 	data class LayoutChanged(val layout: CardLayout): CardAction
 	data class ColorSelected(val color: Color): CardAction
 	data class HexCodeChanged(val hex: String): CardAction

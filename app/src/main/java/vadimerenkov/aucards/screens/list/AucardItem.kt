@@ -14,9 +14,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
@@ -157,29 +155,26 @@ internal fun AucardItem(
 				)
 
 		) {
-			Box {
+			Box(
+				contentAlignment = Alignment.Center
+			) {
 				AsyncImage(
 					model = aucard.imagePath,
 					contentDescription = null,
-					contentScale = ContentScale.FillWidth,
-					modifier = Modifier
-						.align(Alignment.Center)
+					contentScale = ContentScale.FillWidth
 				)
-				this@ElevatedCard.AnimatedVisibility(
-					visible = true
-				) {
-					Box(
-						modifier = Modifier
-							.fillMaxSize()
-							.background(
-								brush = Brush.horizontalGradient(
-									listOf(
-										Color.Transparent, overlayColor
-									)
+				Box(
+					modifier = Modifier
+						.zIndex(10f)
+						.fillMaxSize()
+						.background(
+							brush = Brush.horizontalGradient(
+								listOf(
+									Color.Transparent, overlayColor
 								)
 							)
-					)
-				}
+						)
+				)
 				this@ElevatedCard.AnimatedVisibility(
 					visible = isSelectMode,
 					enter = scaleIn(),
@@ -251,33 +246,25 @@ internal fun AucardItem(
 						)
 					}
 				}
-
-				Column(
-					verticalArrangement = Arrangement.Center,
-					horizontalAlignment = Alignment.CenterHorizontally,
+				Text(
+					text = aucard.text,
+					style = lerp(
+						start = MaterialTheme.typography.titleMedium,
+						stop = MaterialTheme.typography.titleSmall,
+						fraction = textSize
+					),
+					color = textColor,
+					textAlign = TextAlign.Center,
 					modifier = Modifier
-						.fillMaxSize()
-				) {
-					Text(
-						text = aucard.text,
-						style = lerp(
-							start = MaterialTheme.typography.titleMedium,
-							stop = MaterialTheme.typography.titleSmall,
-							fraction = textSize
-						),
-						color = textColor,
-						textAlign = TextAlign.Center,
-						modifier = Modifier
-							.background(
-								aucard.color.copy(alpha = aucard.textBackgroundOpacity)
-							)
-							.padding(8.dp)
-							.sharedBounds(
-								sharedContentState = if (!isSelectMode) textContentState else editTextContentState,
-								animatedVisibilityScope = animatedVisibilityScope
-							)
-					)
-				}
+						.background(
+							aucard.color.copy(alpha = aucard.textBackgroundOpacity)
+						)
+						.padding(8.dp)
+						.sharedBounds(
+							sharedContentState = if (!isSelectMode) textContentState else editTextContentState,
+							animatedVisibilityScope = animatedVisibilityScope
+						)
+				)
 			}
 		}
 	}

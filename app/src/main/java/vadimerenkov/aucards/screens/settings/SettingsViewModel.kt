@@ -12,6 +12,7 @@ import androidx.core.net.toUri
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
@@ -201,6 +202,7 @@ class SettingsViewModel(
 				Log.i(TAG, "Database path is: ${temp.path}")
 				temp.delete()
 			} catch (e: Exception) {
+				if (e is CancellationException) throw e
 				Log.e(TAG, "Export database error: $e")
 			}
 		}
@@ -273,6 +275,7 @@ class SettingsViewModel(
 				temp.delete()
 
 			} catch (e: Exception) {
+				if (e is CancellationException) throw e
 				Log.e(TAG, "Import database error: $e")
 			}
 		}

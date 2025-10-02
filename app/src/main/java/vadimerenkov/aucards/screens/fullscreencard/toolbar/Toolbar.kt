@@ -32,6 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,6 +56,7 @@ fun Toolbar(
 	modifier: Modifier = Modifier,
 	isWideScreen: Boolean = false
 ) {
+	val context = LocalContext.current
 	val imagePicker =
 		rememberLauncherForActivityResult(PickVisualMedia()) {
 			if (it != null) {
@@ -202,7 +204,7 @@ fun Toolbar(
 				contentDescription = stringResource(R.string.save),
 				tint = if (state.isValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
 				onClick = {
-					onAction(CardAction.Saved(state.aucard))
+					onAction(CardAction.Saved(state.aucard, context))
 					onBackClicked()
 				}
 			)

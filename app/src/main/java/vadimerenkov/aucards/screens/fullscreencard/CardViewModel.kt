@@ -15,6 +15,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
@@ -31,6 +32,8 @@ import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardDao
 import vadimerenkov.aucards.data.CardLayout
 import vadimerenkov.aucards.screens.settings.Settings
+import java.io.File
+import java.util.UUID
 
 private const val TAG = "CardViewModel"
 
@@ -122,11 +125,31 @@ class CardViewModel(
 		}
 	}
 
-	private fun saveAucard(aucard: Aucard) {
+	private fun saveAucard(
+		aucard: Aucard,
+		context: Context
+	) {
 		if (index != null) {
 			aucard.index = index
 		}
 		viewModelScope.launch(dispatchers.main) {
+			aucard.imagePath?.let { path ->
+				try {
+					val file = File(context.filesDir, "${UUID.randomUUID()}")
+					val outputStream = file.outputStream()
+					val inputStream = context.contentResolver.openInputStream(path)
+					inputStream?.copyTo(outputStream)
+					inputStream?.close()
+					outputStream.close()
+					val card = aucard.copy(imagePath = file.toUri())
+					aucardDao.saveAucard(card)
+					return@launch
+				} catch (e: Exception) {
+					if (e is CancellationException) throw e
+					e.printStackTrace()
+					return@launch
+				}
+			}
 			aucardDao.saveAucard(aucard)
 		}
 	}
@@ -246,7 +269,10 @@ class CardViewModel(
 	fun onAction(action: CardAction) {
 		when (action) {
 			is CardAction.Saved -> {
-				saveAucard(action.aucard)
+				saveAucard(
+					aucard = action.aucard,
+					context = action.context
+				)
 			}
 			is CardAction.LayoutChanged -> {
 				changeLayout(action.layout)
