@@ -165,7 +165,7 @@ fun ColorPickerPopup(
 							contentColor = contentColor,
 							onAction = onAction,
 							modifier = Modifier
-								.padding(top = 16.dp)
+								.padding(vertical = 16.dp)
 						)
 					}
 

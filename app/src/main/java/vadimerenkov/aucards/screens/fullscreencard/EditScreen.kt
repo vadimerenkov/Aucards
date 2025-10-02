@@ -126,47 +126,52 @@ fun SharedTransitionScope.EditScreen(
 				viewModel.transformImage(zoom, pan, spin)
 			}
 		}
-		AsyncImage(
-			model = state.aucard.imagePath,
-			contentDescription = null,
-			modifier = Modifier
-				.graphicsLayer {
-					with(state.aucard) {
-						scaleX = imageScale
-						scaleY = imageScale
-						rotationZ = imageRotation
-						translationX = imageOffset.x
-						translationY = imageOffset.y
+		state.aucard.imagePath?.let {
+			AsyncImage(
+				model = it,
+				contentDescription = null,
+				modifier = Modifier
+					.graphicsLayer {
+						with(state.aucard) {
+							scaleX = imageScale
+							scaleY = imageScale
+							rotationZ = imageRotation
+							translationX = imageOffset.x
+							translationY = imageOffset.y
+						}
 					}
-				}
-				.zIndex(
-					if (state.isEditingImage) 1f else 0f
-				)
-				.fillMaxWidth()
-				.transformable(imageState)
-				.combinedClickable(
-					interactionSource = null,
-					indication = null,
-					onLongClick = {
-						viewModel.selectImage(true)
-					},
-					onClick = {
-						viewModel.selectImage(false)
-					}
-				)
-				.border(
-					width = 2.dp,
-					color = if (state.isEditingImage) Color.Black else Color.Transparent
-				)
-				.padding(2.dp)
-				.border(
-					width = 2.dp,
-					color = if (state.isEditingImage) Color.White else Color.Transparent
-				)
-				.alpha(
-					if (state.isEditingImage) 0.7f else 1f
-				)
-		)
+					.zIndex(
+						if (state.isEditingImage) 1f else 0f
+					)
+					.fillMaxWidth()
+					.transformable(imageState)
+					.combinedClickable(
+						interactionSource = null,
+						indication = null,
+						onLongClick = {
+							viewModel.selectImage(true)
+							keyboardController?.hide()
+						},
+						onClick = {
+							viewModel.selectImage(false)
+							viewModel.onAction(CardAction.PopupChanged(OpenPopup.NONE))
+							keyboardController?.hide()
+						}
+					)
+					.border(
+						width = 2.dp,
+						color = if (state.isEditingImage) Color.Black else Color.Transparent
+					)
+					.padding(2.dp)
+					.border(
+						width = 2.dp,
+						color = if (state.isEditingImage) Color.White else Color.Transparent
+					)
+					.alpha(
+						if (state.isEditingImage) 0.7f else 1f
+					)
+			)
+		}
 		Column(
 			horizontalAlignment = Alignment.CenterHorizontally,
 			modifier = modifier

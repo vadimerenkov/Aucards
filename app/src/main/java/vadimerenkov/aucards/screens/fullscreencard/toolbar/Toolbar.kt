@@ -94,7 +94,10 @@ fun Toolbar(
 
 			when (it) {
 				OpenPopup.NONE -> {
-					Spacer(modifier = Modifier.height(16.dp))
+					Spacer(modifier = Modifier
+						.height(16.dp)
+						.fillMaxWidth()
+					)
 				}
 				OpenPopup.PALETTE -> {
 					ColorPickerPopup(
