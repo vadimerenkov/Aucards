@@ -4,6 +4,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.media.RingtoneManager.ACTION_RINGTONE_PICKER
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -338,14 +339,16 @@ fun SettingsScreen(
 								}
 							}
 						}
-						HorizontalDivider()
-						CheckboxSetting(
-							title = "Material You",
-							isChecked = state.materialYou,
-							onCheckedChange = {
-								viewModel.saveMaterialSetting(it)
-							}
-						)
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+							HorizontalDivider()
+							CheckboxSetting(
+								title = "Material You",
+								isChecked = state.materialYou,
+								onCheckedChange = {
+									viewModel.saveMaterialSetting(it)
+								}
+							)
+						}
 						HorizontalDivider()
 						DropdownSetting(
 							options = Theme.entries.map { it.uiText },
