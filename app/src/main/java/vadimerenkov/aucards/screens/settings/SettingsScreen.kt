@@ -339,6 +339,14 @@ fun SettingsScreen(
 							}
 						}
 						HorizontalDivider()
+						CheckboxSetting(
+							title = "Material You",
+							isChecked = state.materialYou,
+							onCheckedChange = {
+								viewModel.saveMaterialSetting(it)
+							}
+						)
+						HorizontalDivider()
 						DropdownSetting(
 							options = Theme.entries.map { it.uiText },
 							icon = R.drawable.theme_mode,

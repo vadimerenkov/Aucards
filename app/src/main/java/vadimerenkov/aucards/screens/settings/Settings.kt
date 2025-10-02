@@ -31,6 +31,10 @@ class Settings(
 		.map { settings ->
 			settings[stringPreferencesKey(RINGTONE_URI)]
 		}
+	val materialYou = dataStore.data
+		.map { settings ->
+			settings[booleanPreferencesKey(MATERIAL_STRING)]
+		}
 
 	suspend fun saveStringSettings(key: String, value: String) {
 		val key = stringPreferencesKey(key)

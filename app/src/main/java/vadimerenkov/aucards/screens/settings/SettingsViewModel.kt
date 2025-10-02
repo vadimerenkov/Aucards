@@ -44,6 +44,7 @@ class SettingsViewModel(
 			val brightness = settings.brightness.first() ?: false
 			val playSound = settings.playSound.first() ?: false
 			val ringtoneUri = settings.soundUri.first()?.toUri()
+			val materialYou = settings.materialYou.first() ?: false
 			val theme = readThemeSetting()
 			val language = readLanguageSetting()
 			state.update { it.copy(
@@ -52,7 +53,8 @@ class SettingsViewModel(
 				isLandscapeMode = landscape,
 				language = language,
 				playSound = playSound,
-				ringtoneUri = ringtoneUri
+				ringtoneUri = ringtoneUri,
+				materialYou = materialYou
 			) }
 		}
 		.launchIn(viewModelScope)
@@ -158,6 +160,15 @@ class SettingsViewModel(
 			settings.saveBoolSettings(
 				key = BRIGHTNESS_STRING,
 				value = brightness
+			)
+		}
+	}
+
+	fun saveMaterialSetting(isDynamic: Boolean) {
+		viewModelScope.launch {
+			settings.saveBoolSettings(
+				key = MATERIAL_STRING,
+				value = isDynamic
 			)
 		}
 	}
@@ -284,6 +295,7 @@ data class SettingsState(
 	val isMaxBrightness: Boolean = false,
 	val isLandscapeMode: Boolean = false,
 	val playSound: Boolean = false,
+	val materialYou: Boolean = false,
 	val ringtoneUri: Uri? = null,
 	val language: Language = Language.ENGLISH,
 	val isDbEmpty: Boolean = true
