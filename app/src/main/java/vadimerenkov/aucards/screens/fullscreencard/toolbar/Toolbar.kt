@@ -21,13 +21,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -128,36 +124,15 @@ fun Toolbar(
 					)
 				}
 				OpenPopup.IMAGE -> {
-					Column {
-						Row {
-							IconButton(
-								onClick = {
-									imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
-								}
-							) {
-								Icon(
-									painter = painterResource(R.drawable.replace),
-									contentDescription = null
-								)
-							}
-							IconButton(
-								onClick = {
-									onAction(CardAction.ImageUriChanged(null))
-								}
-							) {
-								Icon(
-									imageVector = Icons.Default.Clear,
-									contentDescription = null
-								)
-							}
-						}
-						Slider(
-							value = state.aucard.textBackgroundOpacity,
-							onValueChange = {
-								onAction(CardAction.TextBackgroundChanged(it))
-							}
-						)
-					}
+					ImagePopup(
+						onAction = onAction,
+						sliderValue = state.aucard.textBackgroundOpacity,
+						launchImagePicker = {
+							imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+						},
+						modifier = Modifier
+							.widthIn(max = 600.dp)
+					)
 				}
 			}
 		}

@@ -275,7 +275,7 @@ fun SharedTransitionScope.EditScreen(
 				onBackClicked = onBackClicked,
 				isWideScreen = isWideScreen,
 				modifier = Modifier
-					.alpha(if (state.isEditingImage) 0.4f else 1f)
+					.alpha(if (state.isEditingImage) 0.6f else 1f)
 			)
 		}
 	}

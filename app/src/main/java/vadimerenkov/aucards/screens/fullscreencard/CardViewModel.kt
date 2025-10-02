@@ -208,12 +208,27 @@ class CardViewModel(
 		rotation: Float
 	) {
 		with (cardState.value.aucard) {
+			Log.i(TAG, "Rotation is $rotation, total is $imageRotation")
+
+			// Snap rotation to right angles
+			var totalRotation = imageRotation + rotation
+			if (totalRotation in -2.5f..2.5f) totalRotation = 0f
+			if (totalRotation in 87.5f..92.5f) totalRotation = 90f
+			if (totalRotation in 177.5f..182.5f) totalRotation = 180f
+			if (totalRotation in 267.5f..272.5f) totalRotation = 270f
+			if (totalRotation > 360f) totalRotation = 0f
+
+			if (totalRotation in -92.5f..-87.5f) totalRotation = -90f
+			if (totalRotation in -182.5f..-177.5f) totalRotation = -180f
+			if (totalRotation in -272.5f..-267.5f) totalRotation = -270f
+			if (totalRotation < -360f) totalRotation = 0f
+
 			card_state.update {
 				it.copy(
 					aucard = copy(
 						imageScale = imageScale * scale,
 						imageOffset = imageOffset + offset * imageScale,
-						imageRotation = imageRotation + rotation
+						imageRotation = totalRotation
 					)
 				)
 			}
