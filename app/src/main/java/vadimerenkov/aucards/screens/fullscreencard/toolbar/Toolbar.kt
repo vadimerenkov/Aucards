@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -144,10 +146,19 @@ fun Toolbar(
 
 		Row(
 			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.SpaceEvenly,
 			modifier = Modifier
-				.padding(horizontal = 16.dp)
+				.padding(bottom = 16.dp)
+				.fillMaxWidth()
 		) {
-			Spacer(modifier = Modifier.weight(1f))
+			ActionButton(
+				icon = Icons.Default.Close,
+				onClick = {
+					onBackClicked()
+				},
+				contentDescription = stringResource(R.string.cancel)
+			)
+			VerticalDivider(modifier = Modifier.heightIn(max = 50.dp))
 			ActionButton(
 				icon = painterResource(R.drawable.picture),
 				selected = state.openPopup == OpenPopup.IMAGE,
@@ -183,21 +194,7 @@ fun Toolbar(
 					onAction(CardAction.PopupChanged(OpenPopup.PALETTE))
 				}
 			)
-		}
-
-		Row(
-			horizontalArrangement = Arrangement.SpaceBetween,
-			modifier = Modifier
-				.fillMaxWidth()
-				.padding(16.dp)
-		) {
-			ActionButton(
-				icon = Icons.Default.Close,
-				onClick = {
-					onBackClicked()
-				},
-				contentDescription = stringResource(R.string.cancel)
-			)
+			VerticalDivider(modifier = Modifier.heightIn(max = 50.dp))
 			ActionButton(
 				icon = Icons.Default.Done,
 				enabled = state.isValid,
@@ -219,7 +216,7 @@ private fun ToolbarPreview() {
 		Toolbar(
 			state = CardState(
 				aucard = Aucard(text = ""),
-				openPopup = OpenPopup.IMAGE
+				openPopup = OpenPopup.NONE
 			),
 			onAction = {},
 			onBackClicked = {},

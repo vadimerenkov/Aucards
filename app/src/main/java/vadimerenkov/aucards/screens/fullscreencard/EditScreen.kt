@@ -150,11 +150,14 @@ fun SharedTransitionScope.EditScreen(
 						indication = null,
 						onLongClick = {
 							viewModel.selectImage(true)
+							viewModel.onAction(CardAction.PopupChanged(OpenPopup.IMAGE))
 							keyboardController?.hide()
 						},
 						onClick = {
 							viewModel.selectImage(false)
-							viewModel.onAction(CardAction.PopupChanged(OpenPopup.NONE))
+							if (state.openPopup != OpenPopup.IMAGE) {
+								viewModel.onAction(CardAction.PopupChanged(OpenPopup.NONE))
+							}
 							keyboardController?.hide()
 						}
 					)
@@ -272,16 +275,17 @@ fun SharedTransitionScope.EditScreen(
 					}
 				}
 			}
-			Toolbar(
-				state = state,
-				contentColor = contentColor,
-				clickStealer = source2,
-				onAction = viewModel::onAction,
-				onBackClicked = onBackClicked,
-				isWideScreen = isWideScreen,
-				modifier = Modifier
-					.alpha(if (state.isEditingImage) 0.6f else 1f)
-			)
 		}
+		Toolbar(
+			state = state,
+			contentColor = contentColor,
+			clickStealer = source2,
+			onAction = viewModel::onAction,
+			onBackClicked = onBackClicked,
+			isWideScreen = isWideScreen,
+			modifier = Modifier
+				.align(Alignment.BottomCenter)
+				.alpha(if (state.isEditingImage) 0.6f else 1f)
+		)
 	}
 }
