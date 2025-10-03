@@ -18,6 +18,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -37,6 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.round
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -168,11 +170,12 @@ fun SharedTransitionScope.CardFullscreen(
 						scaleX = imageScale
 						scaleY = imageScale
 						rotationZ = imageRotation
-						translationX = imageOffset.x
-						translationY = imageOffset.y
 					}
 				}
 				.fillMaxWidth()
+				.absoluteOffset {
+					state.aucard.imageOffset.round()
+				}
 		)
 		when (state.aucard.layout) {
 			CardLayout.TITLE_SUBTITLE -> {

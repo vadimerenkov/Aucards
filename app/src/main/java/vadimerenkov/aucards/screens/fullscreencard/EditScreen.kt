@@ -15,6 +15,7 @@ import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,6 +36,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.round
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -131,20 +133,22 @@ fun SharedTransitionScope.EditScreen(
 				model = it,
 				contentDescription = null,
 				modifier = Modifier
+
 					.graphicsLayer {
 						with(state.aucard) {
 							scaleX = imageScale
 							scaleY = imageScale
 							rotationZ = imageRotation
-							translationX = imageOffset.x
-							translationY = imageOffset.y
 						}
 					}
 					.zIndex(
 						if (state.isEditingImage) 1f else 0f
 					)
-					.fillMaxWidth()
+					.absoluteOffset {
+						state.aucard.imageOffset.round()
+					}
 					.transformable(imageState)
+					.fillMaxWidth()
 					.combinedClickable(
 						interactionSource = null,
 						indication = null,

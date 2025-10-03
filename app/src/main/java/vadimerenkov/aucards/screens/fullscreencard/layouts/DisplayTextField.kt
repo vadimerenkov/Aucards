@@ -52,7 +52,7 @@ fun DisplayTextField (
 		cursorBrush = SolidColor(color.copy(alpha = 0.5f)),
 		decorationBox = { field ->
 			Box(
-				contentAlignment = Alignment.Center,
+				contentAlignment = Alignment.TopCenter,
 				modifier = Modifier
 					.background(backgroundColor)
 					.padding(8.dp)
