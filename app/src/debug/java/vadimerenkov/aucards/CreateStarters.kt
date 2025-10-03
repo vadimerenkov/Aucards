@@ -9,28 +9,23 @@ import vadimerenkov.aucards.data.Aucard
 fun CreateStarters(): List<Aucard> {
 	return listOf(
 		Aucard(
-			0,
-			stringResource(R.string.yes),
+			text = stringResource(R.string.yes),
 			color = Color.Green
 		),
 		Aucard(
-			0,
-			stringResource(R.string.no),
+			text = stringResource(R.string.no),
 			color = Color(-50334)
 		),
 		Aucard(
-			0,
-			stringResource(R.string.help),
+			text = stringResource(R.string.help),
 			color = Color(-25612)
 		),
 		Aucard(
-			0,
-			stringResource(R.string.hug),
+			text = stringResource(R.string.hug),
 			color = Color.Cyan
 		),
 		Aucard(
-			0,
-			stringResource(R.string.alone),
+			text = stringResource(R.string.alone),
 			description = "If you don't mind",
 			color = Color.Yellow
 		)
