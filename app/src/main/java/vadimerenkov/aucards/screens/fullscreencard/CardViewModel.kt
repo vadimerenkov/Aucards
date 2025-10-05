@@ -135,12 +135,16 @@ class CardViewModel(
 		viewModelScope.launch(dispatchers.main) {
 			aucard.imagePath?.let { path ->
 				try {
-					val file = File(context.filesDir, "${UUID.randomUUID()}")
-					val outputStream = file.outputStream()
-					val inputStream = context.contentResolver.openInputStream(path)
-					inputStream?.copyTo(outputStream)
-					inputStream?.close()
-					outputStream.close()
+					val folder = File(context.filesDir, "images")
+					if (!folder.exists()) {
+						folder.mkdirs()
+					}
+					val file = File(folder, "${UUID.randomUUID()}")
+					file.outputStream().use { output ->
+						context.contentResolver.openInputStream(path).use { input ->
+							input?.copyTo(output)
+						}
+					}
 					val card = aucard.copy(imagePath = file.toUri())
 					aucardDao.saveAucard(card)
 					return@launch

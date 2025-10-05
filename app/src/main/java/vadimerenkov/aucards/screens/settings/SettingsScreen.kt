@@ -234,7 +234,7 @@ fun SettingsScreen(
 					) {
 						val saveLauncher =
 							rememberLauncherForActivityResult(
-							ActivityResultContracts.CreateDocument("application/vnd.sqlite3")
+							ActivityResultContracts.CreateDocument("application/zip")
 						) {
 							if (it != null) {
 								Log.d(TAG, "Path saved: $it")
@@ -346,7 +346,7 @@ fun SettingsScreen(
 							onOptionChosen = { viewModel.saveThemeSetting(it) },
 							chosenOption = stringResource(state.theme.uiText),
 							modifier = Modifier
-							.padding(top = 8.dp)
+								.padding(top = 8.dp)
 						)
 						DropdownSetting(
 							options = Language.entries.map { it.uiText }.sorted(),
@@ -372,7 +372,7 @@ fun SettingsScreen(
 									.ofPattern("yyyy-MM-dd.HH.mm.ss")
 								val now = formatter.format(LocalDateTime.now())
 								val version = BuildConfig.VERSION_NAME
-								saveLauncher.launch("aucards-$version-exported-$now.db")
+								saveLauncher.launch("aucards-$version-exported-$now.zip")
 							},
 							enabled = !state.isDbEmpty,
 							shape = MaterialTheme.shapes.medium
@@ -381,7 +381,7 @@ fun SettingsScreen(
 						}
 						OutlinedButton(
 							onClick = {
-								loadLauncher.launch("application/octet-stream")
+								loadLauncher.launch("application/zip")
 							},
 							shape = MaterialTheme.shapes.medium
 						) {

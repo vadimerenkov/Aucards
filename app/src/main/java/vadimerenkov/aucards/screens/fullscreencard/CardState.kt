@@ -14,5 +14,5 @@ data class CardState(
 	val isEditingImage: Boolean = false
 ) {
 	val isValid: Boolean
-		get() = aucard.text.isNotBlank()
+		get() = aucard.text.isNotBlank() || aucard.imagePath != null
 }
