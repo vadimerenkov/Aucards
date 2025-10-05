@@ -43,7 +43,7 @@ fun DisplayText(
 			lines = it.lineCount
 		},
 		modifier = modifier
-			.background(backgroundColor)
+			.background(if (text.isNotBlank()) backgroundColor else Color.Transparent)
 			.padding(8.dp)
 	)
 }

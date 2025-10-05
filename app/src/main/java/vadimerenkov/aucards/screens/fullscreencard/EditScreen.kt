@@ -7,7 +7,6 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.rememberTransformableState
@@ -18,8 +17,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,13 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -165,15 +160,6 @@ fun SharedTransitionScope.EditScreen(
 							keyboardController?.hide()
 						}
 					)
-					.border(
-						width = 2.dp,
-						color = if (state.isEditingImage) Color.Black else Color.Transparent
-					)
-					.padding(2.dp)
-					.border(
-						width = 2.dp,
-						color = if (state.isEditingImage) Color.White else Color.Transparent
-					)
 					.alpha(
 						if (state.isEditingImage) 0.7f else 1f
 					)
@@ -189,7 +175,6 @@ fun SharedTransitionScope.EditScreen(
 				targetState = state.aucard.layout,
 				modifier = Modifier
 					.weight(1f)
-					.statusBarsPadding()
 			) { layout ->
 				val textBackColor = state.aucard.color.copy(
 					alpha = state.aucard.textBackgroundOpacity

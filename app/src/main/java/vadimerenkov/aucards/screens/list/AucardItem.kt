@@ -246,25 +246,27 @@ internal fun AucardItem(
 						)
 					}
 				}
-				Text(
-					text = aucard.text,
-					style = lerp(
-						start = MaterialTheme.typography.titleMedium,
-						stop = MaterialTheme.typography.titleSmall,
-						fraction = textSize
-					),
-					color = textColor,
-					textAlign = TextAlign.Center,
-					modifier = Modifier
-						.background(
-							aucard.color.copy(alpha = aucard.textBackgroundOpacity)
-						)
-						.padding(8.dp)
-						.sharedBounds(
-							sharedContentState = if (!isSelectMode) textContentState else editTextContentState,
-							animatedVisibilityScope = animatedVisibilityScope
-						)
-				)
+				if (aucard.text.isNotBlank()) {
+					Text(
+						text = aucard.text,
+						style = lerp(
+							start = MaterialTheme.typography.titleMedium,
+							stop = MaterialTheme.typography.titleSmall,
+							fraction = textSize
+						),
+						color = textColor,
+						textAlign = TextAlign.Center,
+						modifier = Modifier
+							.background(
+								aucard.color.copy(alpha = aucard.textBackgroundOpacity)
+							)
+							.padding(8.dp)
+							.sharedBounds(
+								sharedContentState = if (!isSelectMode) textContentState else editTextContentState,
+								animatedVisibilityScope = animatedVisibilityScope
+							)
+					)
+				}
 			}
 		}
 	}
