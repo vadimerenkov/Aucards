@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.screens.fullscreencard.CardAction
@@ -50,7 +51,7 @@ fun ImagePopup(
 				)
 				Spacer(modifier = Modifier.width(4.dp))
 				Text(
-					text = "Change image"
+					text = stringResource(R.string.change_image)
 				)
 			}
 			OutlinedButton(
@@ -64,13 +65,13 @@ fun ImagePopup(
 				)
 				Spacer(modifier = Modifier.width(4.dp))
 				Text(
-					text = "Remove image"
+					text = stringResource(R.string.remove_image)
 				)
 			}
 		}
 		Spacer(modifier = Modifier.height(16.dp))
 		Text(
-			text = "Text background opacity:",
+			text = stringResource(R.string.opacity) ,
 			color = MaterialTheme.colorScheme.onBackground
 		)
 		Spacer(modifier = Modifier.height(8.dp))

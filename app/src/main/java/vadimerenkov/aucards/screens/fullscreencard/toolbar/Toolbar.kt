@@ -162,7 +162,7 @@ fun Toolbar(
 			ActionButton(
 				icon = painterResource(R.drawable.picture),
 				selected = state.openPopup == OpenPopup.IMAGE,
-				contentDescription = "Choose image",
+				contentDescription = stringResource(R.string.choose_image),
 				onClick = {
 					onAction(CardAction.PopupChanged(OpenPopup.IMAGE))
 					if (state.aucard.imagePath == null) {

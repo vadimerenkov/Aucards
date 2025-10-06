@@ -46,4 +46,8 @@
     <string name="layout">Макет</string>
     <string name="title_subtitle">Заголовок и описание</string>
     <string name="two_halves">Два заголовка</string>
+    <string name="change_image">Заменить фото</string>
+    <string name="remove_image">Убрать фото</string>
+    <string name="opacity">Прозрачность подложки текста:</string>
+    <string name="choose_image">Выбрать фото</string>
 </resources>
