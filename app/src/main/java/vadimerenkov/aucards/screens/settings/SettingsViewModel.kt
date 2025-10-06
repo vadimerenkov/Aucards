@@ -235,41 +235,59 @@ class SettingsViewModel(
 				if (!images.exists()) {
 					images.mkdirs()
 				}
-
+				val type = context.contentResolver.getType(uri)
 				val file = context.contentResolver.openInputStream(uri)
-				ZipInputStream(file).use { zip ->
-					var entry = zip.nextEntry
-					do {
-						if (entry.name == "database") {
+
+				when (type) {
+					"application/zip" -> {
+						ZipInputStream(file).use { zip ->
+							var entry = zip.nextEntry
+							do {
+								if (entry.name == "database") {
+									FileOutputStream(dbFile).use { output ->
+										zip.copyTo(output)
+									}
+								} else {
+									val image = File(images, entry.name)
+									FileOutputStream(image).use { imagesOutput ->
+										zip.copyTo(imagesOutput)
+									}
+								}
+								zip.closeEntry()
+								entry = zip.nextEntry
+							} while (entry != null)
+						}
+					}
+					"application/octet-stream" -> {
+						file?.use { input ->
 							FileOutputStream(dbFile).use { output ->
-								zip.copyTo(output)
-							}
-						} else {
-							val image = File(images, entry.name)
-							FileOutputStream(image).use { imagesOutput ->
-								zip.copyTo(imagesOutput)
+								input.copyTo(output)
 							}
 						}
-						zip.closeEntry()
-						entry = zip.nextEntry
-					} while (entry != null)
-				}
-
-				val database = SQLiteDatabase.openDatabase(dbFile.path, null, SQLiteDatabase.OPEN_READONLY)
-				val cursor = database.rawQuery("SELECT * FROM aucard", null)
-
-				cursor.use {
-					if (it.moveToFirst()) {
-						do {
-							val card = importCard(it).copy(index = current_index + 1)
-
-							this@SettingsViewModel.database.aucardDao().saveAucard(card)
-							Log.d(TAG, "We made a new card: $card")
-							current_index++
-
-						} while (it.moveToNext())
+					}
+					else -> {
+						throw IllegalArgumentException("Not a database nor a zip archive.")
 					}
 				}
+
+				SQLiteDatabase
+					.openDatabase(dbFile.path, null, SQLiteDatabase.OPEN_READONLY)
+					.use { database ->
+						database.rawQuery("SELECT * FROM aucard", null)
+							.use {cursor ->
+								if (cursor.moveToFirst()) {
+									do {
+										val card = importCard(cursor).copy(index = current_index + 1)
+
+										this@SettingsViewModel.database.aucardDao().saveAucard(card)
+										Log.d(TAG, "We made a new card: $card")
+										current_index++
+
+									} while (cursor.moveToNext())
+								}
+						}
+					}
+
 				dbFile.delete()
 
 			} catch (e: Exception) {

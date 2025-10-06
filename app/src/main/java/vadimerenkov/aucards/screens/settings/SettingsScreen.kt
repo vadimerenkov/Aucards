@@ -1,5 +1,6 @@
 package vadimerenkov.aucards.screens.settings
 
+import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.media.RingtoneManager.ACTION_RINGTONE_PICKER
@@ -245,7 +246,12 @@ fun SettingsScreen(
 						}
 						val loadLauncher =
 							rememberLauncherForActivityResult(
-							ActivityResultContracts.GetContent()
+							contract = object : ActivityResultContracts.GetContent() {
+								override fun createIntent(context: Context, input: String): Intent {
+									return super.createIntent(context, input)
+										.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/zip", "application/octet-stream"))
+								}
+							}
 						) {
 							if (it != null) {
 								viewModel.importDatabase(it, context)
