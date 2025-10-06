@@ -1,7 +1,9 @@
 package vadimerenkov.aucards.data
 
+import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -18,6 +20,11 @@ data class Aucard(
 	@ColumnInfo(defaultValue = "57") val titleFontSize: Int = 57,
 	@ColumnInfo(defaultValue = "24") val descriptionFontSize: Int = 24,
 	@ColumnInfo(defaultValue = "TITLE_SUBTITLE") val layout: CardLayout = CardLayout.TITLE_SUBTITLE,
+	val imagePath: Uri? = null,
+	@ColumnInfo(defaultValue = "1.0") val imageScale: Float = 1f,
+	@ColumnInfo(defaultValue = "0") val imageOffset: Offset = Offset.Zero,
+	@ColumnInfo(defaultValue = "0.0") val imageRotation: Float = 0f,
+	@ColumnInfo(defaultValue = "0.5") val textBackgroundOpacity: Float = 0.5f,
 	@ColumnInfo(defaultValue = "0") var index: Int = 0
 )
 

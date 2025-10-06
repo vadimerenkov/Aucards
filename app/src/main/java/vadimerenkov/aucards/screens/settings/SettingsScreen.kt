@@ -1,5 +1,6 @@
 package vadimerenkov.aucards.screens.settings
 
+import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.media.RingtoneManager.ACTION_RINGTONE_PICKER
@@ -235,7 +236,7 @@ fun SettingsScreen(
 					) {
 						val saveLauncher =
 							rememberLauncherForActivityResult(
-							ActivityResultContracts.CreateDocument("application/vnd.sqlite3")
+							ActivityResultContracts.CreateDocument("application/zip")
 						) {
 							if (it != null) {
 								Log.d(TAG, "Path saved: $it")
@@ -246,7 +247,12 @@ fun SettingsScreen(
 						}
 						val loadLauncher =
 							rememberLauncherForActivityResult(
-							ActivityResultContracts.GetContent()
+							contract = object : ActivityResultContracts.GetContent() {
+								override fun createIntent(context: Context, input: String): Intent {
+									return super.createIntent(context, input)
+										.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/zip", "application/octet-stream"))
+								}
+							}
 						) {
 							if (it != null) {
 								viewModel.importDatabase(it, context)
@@ -357,7 +363,7 @@ fun SettingsScreen(
 							onOptionChosen = { viewModel.saveThemeSetting(it) },
 							chosenOption = stringResource(state.theme.uiText),
 							modifier = Modifier
-							.padding(top = 8.dp)
+								.padding(top = 8.dp)
 						)
 						DropdownSetting(
 							options = Language.entries.map { it.uiText }.sorted(),
@@ -383,7 +389,7 @@ fun SettingsScreen(
 									.ofPattern("yyyy-MM-dd.HH.mm.ss")
 								val now = formatter.format(LocalDateTime.now())
 								val version = BuildConfig.VERSION_NAME
-								saveLauncher.launch("aucards-$version-exported-$now.db")
+								saveLauncher.launch("aucards-$version-exported-$now.zip")
 							},
 							enabled = !state.isDbEmpty,
 							shape = MaterialTheme.shapes.medium
@@ -392,7 +398,7 @@ fun SettingsScreen(
 						}
 						OutlinedButton(
 							onClick = {
-								loadLauncher.launch("application/octet-stream")
+								loadLauncher.launch("application/zip")
 							},
 							shape = MaterialTheme.shapes.medium
 						) {

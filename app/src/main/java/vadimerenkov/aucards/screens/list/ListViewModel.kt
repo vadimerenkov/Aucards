@@ -1,8 +1,10 @@
 package vadimerenkov.aucards.screens.list
 
 import android.util.Log
+import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flowOn
@@ -86,16 +88,25 @@ class ListViewModel(
 	}
 
 	fun deleteSelected() {
-		val list = list_state.value.selectedList
-		//Log.d("delete items", list.toString())
-			list.forEach { id ->
+		val selected_cards = list_state.value.list.filter {
+			it.id in list_state.value.selectedList
+		}
+			selected_cards.forEach { card ->
 				viewModelScope.launch(dispatchers.main) {
-					aucardDao.deleteById(id)
+					if (card.imagePath != null) {
+						try {
+							val image = card.imagePath.toFile()
+							image.delete()
+						} catch (e: Exception) {
+							if (e is CancellationException) throw e
+							e.printStackTrace()
+						}
+					}
+					aucardDao.deleteById(card.id)
 				}
-				//Log.d("Delete items (view model scope)", "deleted $id")
 			}
 		exitSelectMode()
-		}
+	}
 }
 
 data class ListState(

@@ -1,5 +1,7 @@
 package vadimerenkov.aucards.screens.fullscreencard.layouts
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +15,7 @@ import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import vadimerenkov.aucards.ui.theme.AucardsTheme
 
@@ -21,6 +24,7 @@ fun DisplayText(
 	text: String,
 	textSize: Int,
 	color: Color,
+	backgroundColor: Color,
 	modifier: Modifier = Modifier,
 	lineBreak: LineBreak = LineBreak.Heading
 ) {
@@ -39,6 +43,8 @@ fun DisplayText(
 			lines = it.lineCount
 		},
 		modifier = modifier
+			.background(if (text.isNotBlank()) backgroundColor else Color.Transparent)
+			.padding(8.dp)
 	)
 }
 
@@ -49,7 +55,8 @@ private fun DisplayTextPreview() {
 		DisplayText(
 			text = "Display text",
 			textSize = 48,
-			color = Color.Black
+			color = Color.Black,
+			backgroundColor = Color.White
 		)
 	}
 }

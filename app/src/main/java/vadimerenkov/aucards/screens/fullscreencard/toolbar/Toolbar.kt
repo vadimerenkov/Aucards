@@ -1,5 +1,8 @@
 package vadimerenkov.aucards.screens.fullscreencard.toolbar
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -13,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -21,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,6 +46,8 @@ import vadimerenkov.aucards.screens.fullscreencard.CardState
 import vadimerenkov.aucards.screens.fullscreencard.OpenPopup
 import vadimerenkov.aucards.ui.theme.AucardsTheme
 
+private const val TAG = "Toolbar"
+
 @Composable
 fun Toolbar(
 	state: CardState,
@@ -47,9 +55,17 @@ fun Toolbar(
 	clickStealer: MutableInteractionSource,
 	onAction: (CardAction) -> Unit,
 	onBackClicked: () -> Unit,
-	isWideScreen: Boolean,
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
+	isWideScreen: Boolean = false
 ) {
+	val context = LocalContext.current
+	val imagePicker =
+		rememberLauncherForActivityResult(PickVisualMedia()) {
+			if (it != null) {
+				onAction(CardAction.ImageUriChanged(it))
+			}
+		}
+
 	Column(
 		horizontalAlignment = Alignment.CenterHorizontally,
 		modifier = modifier
@@ -79,9 +95,13 @@ fun Toolbar(
 				fadeIn() togetherWith fadeOut()
 			}
 		) { it ->
+
 			when (it) {
 				OpenPopup.NONE -> {
-					Spacer(modifier = Modifier.height(16.dp))
+					Spacer(modifier = Modifier
+						.height(16.dp)
+						.fillMaxWidth()
+					)
 				}
 				OpenPopup.PALETTE -> {
 					ColorPickerPopup(
@@ -110,15 +130,46 @@ fun Toolbar(
 							.widthIn(max = 600.dp)
 					)
 				}
+				OpenPopup.IMAGE -> {
+					ImagePopup(
+						onAction = onAction,
+						sliderValue = state.aucard.textBackgroundOpacity,
+						launchImagePicker = {
+							imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+						},
+						modifier = Modifier
+							.widthIn(max = 600.dp)
+					)
+				}
 			}
 		}
 
 		Row(
 			verticalAlignment = Alignment.CenterVertically,
+			horizontalArrangement = Arrangement.SpaceEvenly,
 			modifier = Modifier
-				.padding(horizontal = 16.dp)
+				.padding(bottom = 16.dp)
+				.fillMaxWidth()
 		) {
-			Spacer(modifier = Modifier.weight(1f))
+			ActionButton(
+				icon = Icons.Default.Close,
+				onClick = {
+					onBackClicked()
+				},
+				contentDescription = stringResource(R.string.cancel)
+			)
+			VerticalDivider(modifier = Modifier.heightIn(max = 50.dp))
+			ActionButton(
+				icon = painterResource(R.drawable.picture),
+				selected = state.openPopup == OpenPopup.IMAGE,
+				contentDescription = stringResource(R.string.choose_image),
+				onClick = {
+					onAction(CardAction.PopupChanged(OpenPopup.IMAGE))
+					if (state.aucard.imagePath == null) {
+						imagePicker.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly))
+					}
+				}
+			)
 			ActionButton(
 				icon = painterResource(R.drawable.format),
 				selected = state.openPopup == OpenPopup.LAYOUT,
@@ -143,28 +194,14 @@ fun Toolbar(
 					onAction(CardAction.PopupChanged(OpenPopup.PALETTE))
 				}
 			)
-		}
-
-		Row(
-			horizontalArrangement = Arrangement.SpaceBetween,
-			modifier = Modifier
-				.fillMaxWidth()
-				.padding(16.dp)
-		) {
-			ActionButton(
-				icon = Icons.Default.Close,
-				onClick = {
-					onBackClicked()
-				},
-				contentDescription = stringResource(R.string.cancel)
-			)
+			VerticalDivider(modifier = Modifier.heightIn(max = 50.dp))
 			ActionButton(
 				icon = Icons.Default.Done,
 				enabled = state.isValid,
 				contentDescription = stringResource(R.string.save),
 				tint = if (state.isValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
 				onClick = {
-					onAction(CardAction.Saved(state.aucard))
+					onAction(CardAction.Saved(state.aucard, context))
 					onBackClicked()
 				}
 			)
@@ -172,20 +209,19 @@ fun Toolbar(
 	}
 }
 
-@Preview(device = "spec:width=1280dp,height=800dp,dpi=240")
+@Preview
 @Composable
 private fun ToolbarPreview() {
 	AucardsTheme {
 		Toolbar(
 			state = CardState(
 				aucard = Aucard(text = ""),
-				openPopup = OpenPopup.PALETTE
+				openPopup = OpenPopup.NONE
 			),
 			onAction = {},
 			onBackClicked = {},
 			contentColor = Color.Black,
-			clickStealer = remember { MutableInteractionSource() },
-			isWideScreen = true
+			clickStealer = remember { MutableInteractionSource() }
 		)
 	}
 }

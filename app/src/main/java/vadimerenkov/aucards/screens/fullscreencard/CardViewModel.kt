@@ -1,10 +1,12 @@
 package vadimerenkov.aucards.screens.fullscreencard
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.interaction.FocusInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.core.graphics.toColorInt
 import androidx.core.net.toUri
@@ -13,6 +15,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
@@ -29,6 +32,8 @@ import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardDao
 import vadimerenkov.aucards.data.CardLayout
 import vadimerenkov.aucards.screens.settings.Settings
+import java.io.File
+import java.util.UUID
 
 private const val TAG = "CardViewModel"
 
@@ -84,9 +89,9 @@ class CardViewModel(
 
 	private fun loadInitialData() {
 		viewModelScope.launch(dispatchers.main) {
-			val brightness = settings.brightness.first() ?: false
+			val brightness = settings.brightness.first() == true
 			val landscape = settings.landscape.first()
-			var playSound = settings.playSound.first() ?: false
+			var playSound = settings.playSound.first() == true
 			val ringtoneUri = settings.soundUri.first()?.toUri()
 			if (id != 0) {
 				val card = aucardDao.getAucardByID(id).first()
@@ -120,11 +125,35 @@ class CardViewModel(
 		}
 	}
 
-	private fun saveAucard(aucard: Aucard) {
+	private fun saveAucard(
+		aucard: Aucard,
+		context: Context
+	) {
 		if (index != null) {
 			aucard.index = index
 		}
 		viewModelScope.launch(dispatchers.main) {
+			aucard.imagePath?.let { path ->
+				try {
+					val folder = File(context.filesDir, "images")
+					if (!folder.exists()) {
+						folder.mkdirs()
+					}
+					val file = File(folder, "${UUID.randomUUID()}")
+					file.outputStream().use { output ->
+						context.contentResolver.openInputStream(path).use { input ->
+							input?.copyTo(output)
+						}
+					}
+					val card = aucard.copy(imagePath = file.toUri())
+					aucardDao.saveAucard(card)
+					return@launch
+				} catch (e: Exception) {
+					if (e is CancellationException) throw e
+					e.printStackTrace()
+					return@launch
+				}
+			}
 			aucardDao.saveAucard(aucard)
 		}
 	}
@@ -186,10 +215,77 @@ class CardViewModel(
 		}
 	}
 
+	private fun changeImage(uri: Uri?) {
+		val is_editing = uri != null
+		with (cardState.value.aucard) {
+			card_state.update { it.copy(
+				isEditingImage = is_editing,
+				aucard = copy(
+					imagePath = uri,
+					imageRotation = 0f,
+					imageOffset = Offset.Zero,
+					imageScale = 1f
+			)) }
+		}
+	}
+
+	private var realRotation = 0f
+
+	fun transformImage(
+		scale: Float,
+		offset: Offset,
+		rotation: Float
+	) {
+		with (cardState.value.aucard) {
+
+			// Snap rotation to right angles
+			var totalRotation = imageRotation + rotation
+
+			realRotation += rotation
+
+			Log.i(TAG, "scale is $imageScale, offset is $imageOffset, rotation is $imageRotation")
+
+			if (realRotation in -5f..5f) totalRotation = 0f
+			if (realRotation in 85f..90f) totalRotation = 90f
+			if (realRotation in 175f..185f) totalRotation = 180f
+			if (realRotation in 265f..275f) totalRotation = 270f
+
+			if (realRotation > 360f || realRotation < -360f) {
+				totalRotation = 0f
+				realRotation = 0f
+			}
+
+			if (realRotation in -95f..-85f) totalRotation = -90f
+			if (realRotation in -185f..-175f) totalRotation = -180f
+			if (realRotation in -275f..-265f) totalRotation = -270f
+
+			card_state.update {
+				it.copy(
+					aucard = copy(
+						imageScale = imageScale * scale,
+						imageOffset = imageOffset + offset * imageScale,
+						imageRotation = totalRotation
+					)
+				)
+			}
+		}
+	}
+
+	fun selectImage(value: Boolean) {
+		card_state.update { it.copy(isEditingImage = value) }
+	}
+
+	private fun changeOpacity(opacity: Float) {
+		card_state.update { it.copy(aucard = cardState.value.aucard.copy(textBackgroundOpacity = opacity)) }
+	}
+
 	fun onAction(action: CardAction) {
 		when (action) {
 			is CardAction.Saved -> {
-				saveAucard(action.aucard)
+				saveAucard(
+					aucard = action.aucard,
+					context = action.context
+				)
 			}
 			is CardAction.LayoutChanged -> {
 				changeLayout(action.layout)
@@ -209,6 +305,12 @@ class CardViewModel(
 			is CardAction.TextSizeChanged -> {
 				changeTextFontSize(action.size)
 			}
+			is CardAction.ImageUriChanged -> {
+				changeImage(action.uri)
+			}
+			is CardAction.TextBackgroundChanged -> {
+				changeOpacity(action.opacity)
+			}
 		}
 	}
 
@@ -224,33 +326,10 @@ class CardViewModel(
 	}
 }
 
-data class CardState(
-	val aucard: Aucard,
-	val openPopup: OpenPopup = OpenPopup.NONE,
-	val isMaxBrightness: Boolean = false,
-	val isLandscapeMode: Boolean? = null,
-	val isPlaySoundEnabled: Boolean = false,
-	val isSoundPlaying: Boolean = false,
-	val hexColor: String = "",
-	val isHexCodeValid: Boolean = true
-) {
-	val isValid: Boolean
-		get() = aucard.text.isNotBlank()
-}
-
-sealed interface CardAction {
-	data class PopupChanged(val openPopup: OpenPopup): CardAction
-	data class Saved(val aucard: Aucard): CardAction
-	data class LayoutChanged(val layout: CardLayout): CardAction
-	data class ColorSelected(val color: Color): CardAction
-	data class HexCodeChanged(val hex: String): CardAction
-	data class TextSizeChanged(val size: Int): CardAction
-	data class DescSizeChanged(val size: Int): CardAction
-}
-
 enum class OpenPopup {
 	NONE,
 	PALETTE,
 	FONT_SIZE,
-	LAYOUT
+	LAYOUT,
+	IMAGE
 }

@@ -18,7 +18,9 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -30,16 +32,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.round
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
@@ -155,6 +160,23 @@ fun SharedTransitionScope.CardFullscreen(
 			)
 
 	) {
+		val textBackColor = state.aucard.color.copy(alpha = state.aucard.textBackgroundOpacity)
+		AsyncImage(
+			model = state.aucard.imagePath,
+			contentDescription = null,
+			modifier = Modifier
+				.graphicsLayer {
+					with(state.aucard) {
+						scaleX = imageScale
+						scaleY = imageScale
+						rotationZ = imageRotation
+					}
+				}
+				.fillMaxWidth()
+				.absoluteOffset {
+					state.aucard.imageOffset.round()
+				}
+		)
 		when (state.aucard.layout) {
 			CardLayout.TITLE_SUBTITLE -> {
 				TitleSubtitleLayout(
@@ -163,6 +185,7 @@ fun SharedTransitionScope.CardFullscreen(
 							text = state.aucard.text,
 							textSize = state.aucard.titleFontSize,
 							color = contentColor,
+							backgroundColor = textBackColor,
 							modifier = Modifier
 								.sharedBounds(
 									sharedContentState = textContentState,
@@ -176,6 +199,7 @@ fun SharedTransitionScope.CardFullscreen(
 								text = it,
 								textSize = state.aucard.descriptionFontSize,
 								color = contentColor,
+								backgroundColor = textBackColor,
 								lineBreak = LineBreak.Paragraph
 							)
 						}
@@ -190,6 +214,7 @@ fun SharedTransitionScope.CardFullscreen(
 							text = state.aucard.text,
 							textSize = state.aucard.titleFontSize,
 							color = contentColor,
+							backgroundColor = textBackColor,
 							modifier = Modifier
 								.sharedBounds(
 									sharedContentState = textContentState,
@@ -202,7 +227,8 @@ fun SharedTransitionScope.CardFullscreen(
 							DisplayText(
 								text = it,
 								textSize = state.aucard.descriptionFontSize,
-								color = contentColor
+								color = contentColor,
+								backgroundColor = textBackColor,
 							)
 						}
 					}

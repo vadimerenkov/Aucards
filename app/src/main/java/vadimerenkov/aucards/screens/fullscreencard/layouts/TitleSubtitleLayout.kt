@@ -45,14 +45,16 @@ private fun TitleSubtitleTextPreview() {
 					DisplayText(
 						text = "Display text",
 						textSize = 57,
-						color = Color.Black
+						color = Color.Black,
+						backgroundColor = Color.White
 					)
 				},
 				descriptionText = {
 					DisplayText(
 						text = "Description text",
 						textSize = 24,
-						color = Color.Black
+						color = Color.Black,
+						backgroundColor = Color.White
 					)
 				}
 			)
@@ -73,13 +75,15 @@ private fun TitleSubtitleFieldPreview() {
 					DisplayTextField(
 						placeholderText = "Your text...",
 						onValueChange = {},
-						fontSize = 57
+						fontSize = 57,
+						backgroundColor = Color.White
 					)
 				},
 				descriptionText = {
 					DisplayTextField(
 						placeholderText = "Additional text...",
-						onValueChange = {}
+						onValueChange = {},
+						backgroundColor = Color.White
 					)
 				}
 			)

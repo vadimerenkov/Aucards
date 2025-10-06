@@ -1,17 +1,20 @@
 package vadimerenkov.aucards.screens.settings
 
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate.getApplicationLocales
 import androidx.appcompat.app.AppCompatDelegate.setApplicationLocales
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
 import androidx.core.net.toUri
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
@@ -25,6 +28,11 @@ import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardsDatabase
 import vadimerenkov.aucards.data.CardLayout
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
+import java.util.zip.ZipOutputStream
 
 private const val TAG = "SettingsViewModel"
 
@@ -198,20 +206,32 @@ class SettingsViewModel(
 	fun exportDatabase(uri: Uri, context: Context) {
 		viewModelScope.launch {
 			try {
+
 				val temp = File.createTempFile("aucards_export", ".db", context.cacheDir)
+				val folder = File(context.filesDir, "images")
+				val outputStream = context.contentResolver.openOutputStream(uri)
 				
 				val db = database.openHelper.writableDatabase
 				db.execSQL("VACUUM INTO '${temp.absolutePath}'")
+				val inputStream = FileInputStream(temp)
 
-				context.contentResolver.openOutputStream(uri)?.use { output ->
-					temp.inputStream().use { input ->
-						input.copyTo(output)
+				ZipOutputStream(outputStream).use { zip ->
+					val dbEntry = ZipEntry("database")
+					zip.putNextEntry(dbEntry)
+					inputStream.copyTo(zip)
+					zip.closeEntry()
+					folder.listFiles()?.forEach { file ->
+						FileInputStream(file).use { input ->
+							val entry = ZipEntry(file.name)
+							zip.putNextEntry(entry)
+							input.copyTo(zip)
+							zip.closeEntry()
+						}
 					}
 				}
-
-				Log.i(TAG, "Database path is: ${temp.path}")
 				temp.delete()
 			} catch (e: Exception) {
+				if (e is CancellationException) throw e
 				Log.e(TAG, "Export database error: $e")
 			}
 		}
@@ -221,72 +241,134 @@ class SettingsViewModel(
 		viewModelScope.launch {
 			try {
 				var current_index = database.aucardDao().getAllCards().first().size
-
+				val dbFile = File(context.cacheDir, "database.db")
+				val images = File(context.filesDir, "images")
+				if (!images.exists()) {
+					images.mkdirs()
+				}
+				val type = context.contentResolver.getType(uri)
 				val file = context.contentResolver.openInputStream(uri)
-				val temp = File.createTempFile("aucards_import", ".db")
-				val stream = temp.outputStream()
-				file?.copyTo(stream)
 
-				val database = SQLiteDatabase.openDatabase(temp.path, null, SQLiteDatabase.OPEN_READONLY)
-				val cursor = database.rawQuery("SELECT * FROM aucard", null)
-				cursor.use {
-					with (it) {
-						if (moveToFirst()) {
+				when (type) {
+					"application/zip" -> {
+						ZipInputStream(file).use { zip ->
+							var entry = zip.nextEntry
 							do {
-								val text = getColumnIndex("text")
-								val color = getColumnIndex("color")
-								val desc = getColumnIndex("description")
-								val fav = getColumnIndex("isFavourite")
-
-								val textSize = getColumnIndex("titleFontSize")
-								val descSize = getColumnIndex("descriptionFontSize")
-								val layout = getColumnIndex("layout")
-
-								val text_value = getString(text)
-								val color_value = getInt(color)
-								val desc_value = getString(desc)
-								val fav_value = getInt(fav)
-
-								val textSizeValue = if (textSize == -1) 57 else getInt(textSize)
-								val descSizeValue = if (descSize == -1) 24 else getInt(descSize)
-								val layoutValue = if (layout == -1) CardLayout.TITLE_SUBTITLE.name else getString(layout)
-
-								val safeValueLayout = try {
-									CardLayout.valueOf(layoutValue)
-								} catch (e: IllegalArgumentException) {
-									Log.e(TAG, "Invalid layout value: $e")
-									CardLayout.TITLE_SUBTITLE
+								if (entry.name == "database") {
+									FileOutputStream(dbFile).use { output ->
+										zip.copyTo(output)
+									}
+								} else {
+									val image = File(images, entry.name)
+									FileOutputStream(image).use { imagesOutput ->
+										zip.copyTo(imagesOutput)
+									}
 								}
-
-								val card = Aucard(
-									text = text_value,
-									color = Color(color_value).copy(alpha = 1f),
-									description = desc_value,
-									isFavourite = fav_value.toBoolean(),
-									index = current_index + 1,
-
-									titleFontSize = textSizeValue,
-									descriptionFontSize = descSizeValue,
-									layout = safeValueLayout
-								)
-
-								this@SettingsViewModel.database.aucardDao().saveAucard(card)
-								Log.d(TAG, "We made a new card: $card")
-								current_index++
-
-							} while (moveToNext())
+								zip.closeEntry()
+								entry = zip.nextEntry
+							} while (entry != null)
 						}
+					}
+					"application/octet-stream" -> {
+						file?.use { input ->
+							FileOutputStream(dbFile).use { output ->
+								input.copyTo(output)
+							}
+						}
+					}
+					else -> {
+						throw IllegalArgumentException("Not a database nor a zip archive.")
 					}
 				}
 
-				stream.close()
-				file?.close()
-				temp.delete()
+				SQLiteDatabase
+					.openDatabase(dbFile.path, null, SQLiteDatabase.OPEN_READONLY)
+					.use { database ->
+						database.rawQuery("SELECT * FROM aucard", null)
+							.use {cursor ->
+								if (cursor.moveToFirst()) {
+									do {
+										val card = importCard(cursor).copy(index = current_index + 1)
+
+										this@SettingsViewModel.database.aucardDao().saveAucard(card)
+										Log.d(TAG, "We made a new card: $card")
+										current_index++
+
+									} while (cursor.moveToNext())
+								}
+						}
+					}
+
+				dbFile.delete()
 
 			} catch (e: Exception) {
+				if (e is CancellationException) throw e
 				Log.e(TAG, "Import database error: $e")
 			}
 		}
+	}
+}
+
+private fun importCard(cursor: Cursor): Aucard {
+	with(cursor) {
+		// Initial db columns
+		val text = getColumnIndex("text")
+		val color = getColumnIndex("color")
+		val desc = getColumnIndex("description")
+		val fav = getColumnIndex("isFavourite")
+
+		// Columns after layout update
+		val textSize = getColumnIndex("titleFontSize")
+		val descSize = getColumnIndex("descriptionFontSize")
+		val layout = getColumnIndex("layout")
+
+		// Columns after image update
+		val imagePath = getColumnIndex("imagePath")
+		val imageScale = getColumnIndex("imageScale")
+		val imageRotation = getColumnIndex("imageRotation")
+		val imageOffset = getColumnIndex("imageOffset")
+		val textBackgroundOpacity = getColumnIndex("textBackgroundOpacity")
+
+		val text_value = getString(text)
+		val color_value = getInt(color)
+		val desc_value = getString(desc)
+		val fav_value = getInt(fav)
+
+		val textSizeValue = if (textSize == -1) 57 else getInt(textSize)
+		val descSizeValue = if (descSize == -1) 24 else getInt(descSize)
+		val layoutValue = if (layout == -1) CardLayout.TITLE_SUBTITLE.name else getString(layout)
+
+		val path = if (imagePath == -1) null else getString(imagePath)
+		val scale = if (imageScale == -1) 1f else getFloat(imageScale)
+		val rotation = if (imageRotation == -1) 0f else getFloat(imageRotation)
+		val offset = if (imageOffset == -1) Offset.Zero else Offset(getLong(imageOffset))
+		val opacity = if (textBackgroundOpacity == -1) 0.5f else getFloat(textBackgroundOpacity)
+
+		val safeValueLayout = try {
+			CardLayout.valueOf(layoutValue)
+		} catch (e: IllegalArgumentException) {
+			Log.e(TAG, "Invalid layout value: $e")
+			CardLayout.TITLE_SUBTITLE
+		}
+
+		val card = Aucard(
+			text = text_value,
+			color = Color(color_value).copy(alpha = 1f),
+			description = desc_value,
+			isFavourite = fav_value.toBoolean(),
+
+			titleFontSize = textSizeValue,
+			descriptionFontSize = descSizeValue,
+			layout = safeValueLayout,
+
+			imagePath = path?.toUri(),
+			imageScale = scale,
+			imageRotation = rotation,
+			imageOffset = offset,
+			textBackgroundOpacity = opacity
+		)
+
+		return card
 	}
 }
 
