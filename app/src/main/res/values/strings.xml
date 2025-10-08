@@ -55,6 +55,21 @@
     <string name="remove_image">Remove image</string>
     <string name="opacity">Text background opacity:</string>
     <string name="choose_image">Choose image</string>
+    <string name="export_error">Could not export the cards. Error code: %d</string>
+    <string name="import_error">Could not load the cards. Error code: %d</string>
+    <string name="image_error">Could not save the image. Error code: %d</string>
+    <plurals name="import_success">
+        <item quantity="one">Successfully imported %d new card!</item>
+        <item quantity="other">Successfully imported %d new cards!</item>
+    </plurals>
+    <plurals name="export_success">
+        <item quantity="one">Successfully exported %d card!</item>
+        <item quantity="other">Successfully exported %d cards!</item>
+    </plurals>
+    <plurals name="number_deleted">
+        <item quantity="one">Deleted %d card.</item>
+        <item quantity="other">Deleted %d cards.</item>
+    </plurals>
     <plurals name="delete_confirmation">
         <item quantity="one">Are you sure you want to delete this card?</item>
         <item quantity="other">Are you sure you want to delete %s cards?</item>

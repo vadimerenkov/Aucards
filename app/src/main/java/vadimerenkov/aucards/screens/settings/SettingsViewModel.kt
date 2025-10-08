@@ -24,9 +24,13 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import vadimerenkov.aucards.R
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardsDatabase
 import vadimerenkov.aucards.data.CardLayout
+import vadimerenkov.aucards.ui.SnackbarController
+import vadimerenkov.aucards.ui.code
+import vadimerenkov.aucards.ui.getPluralString
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -206,11 +210,11 @@ class SettingsViewModel(
 	fun exportDatabase(uri: Uri, context: Context) {
 		viewModelScope.launch {
 			try {
-
+				val size = database.aucardDao().getAllCards().first().size
 				val temp = File.createTempFile("aucards_export", ".db", context.cacheDir)
 				val folder = File(context.filesDir, "images")
 				val outputStream = context.contentResolver.openOutputStream(uri)
-				
+
 				val db = database.openHelper.writableDatabase
 				db.execSQL("VACUUM INTO '${temp.absolutePath}'")
 				val inputStream = FileInputStream(temp)
@@ -229,10 +233,15 @@ class SettingsViewModel(
 						}
 					}
 				}
+				val message = context.getPluralString(R.plurals.export_success, size, size)
+				SnackbarController.send(message)
 				temp.delete()
+
 			} catch (e: Exception) {
 				if (e is CancellationException) throw e
-				Log.e(TAG, "Export database error: $e")
+				Log.e(TAG, "Error exporting the db: $e")
+				val message = context.getString(R.string.export_error, e.code())
+				SnackbarController.send(message)
 			}
 		}
 	}
@@ -269,6 +278,7 @@ class SettingsViewModel(
 							} while (entry != null)
 						}
 					}
+
 					"application/octet-stream" -> {
 						file?.use { input ->
 							FileOutputStream(dbFile).use { output ->
@@ -276,34 +286,41 @@ class SettingsViewModel(
 							}
 						}
 					}
+
 					else -> {
 						throw IllegalArgumentException("Not a database nor a zip archive.")
 					}
 				}
 
+				val cards = mutableListOf<Aucard>()
+
 				SQLiteDatabase
 					.openDatabase(dbFile.path, null, SQLiteDatabase.OPEN_READONLY)
 					.use { database ->
 						database.rawQuery("SELECT * FROM aucard", null)
-							.use {cursor ->
+							.use { cursor ->
 								if (cursor.moveToFirst()) {
 									do {
-										val card = importCard(cursor).copy(index = current_index + 1)
-
-										this@SettingsViewModel.database.aucardDao().saveAucard(card)
-										Log.d(TAG, "We made a new card: $card")
+										val card =
+											importCard(cursor).copy(index = current_index + 1)
+										cards.add(card)
 										current_index++
 
 									} while (cursor.moveToNext())
 								}
-						}
+							}
 					}
 
+				database.aucardDao().saveAllCards(cards)
+				val message = context.getPluralString(R.plurals.import_success, cards.size, cards.size)
+				SnackbarController.send(message)
 				dbFile.delete()
 
 			} catch (e: Exception) {
 				if (e is CancellationException) throw e
-				Log.e(TAG, "Import database error: $e")
+				Log.e(TAG, "Error importing the db: $e")
+				val message = context.getString(R.string.import_error, e.code())
+				SnackbarController.send(message)
 			}
 		}
 	}

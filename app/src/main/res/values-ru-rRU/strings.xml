@@ -50,4 +50,22 @@
     <string name="remove_image">Убрать фото</string>
     <string name="opacity">Прозрачность подложки текста:</string>
     <string name="choose_image">Выбрать фото</string>
+    <string name="export_error">Не удалось сохранить карточки. Код ошибки: %d</string>
+    <string name="import_error">Не удалось загрузить карточки. Код ошибки: %d</string>
+    <string name="image_error">Не удалось сохранить фото. Код ошибки: %d</string>
+    <plurals name="import_success">
+        <item quantity="one">Успешно загружена %d новая карточка!</item>
+        <item quantity="few">Успешно загружены %d новых карточки!</item>
+        <item quantity="many">Успешно загружены %d новых карточек!</item>
+    </plurals>
+    <plurals name="export_success">
+        <item quantity="one">Успешно сохранена %d карточка!</item>
+        <item quantity="few">Успешно сохранены %d карточки!</item>
+        <item quantity="many">Успешно сохранены %d карточек!</item>
+    </plurals>
+    <plurals name="number_deleted">
+        <item quantity="one">Удалена %s карточка.</item>
+        <item quantity="few">Удалено %s карточки.</item>
+        <item quantity="many">Удалено %s карточек.</item>
+    </plurals>
 </resources>

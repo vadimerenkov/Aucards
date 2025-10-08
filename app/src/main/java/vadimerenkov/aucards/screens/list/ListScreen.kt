@@ -39,6 +39,8 @@ import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -51,6 +53,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -76,11 +79,13 @@ fun ListScreen(
 	animatedVisibilityScope: AnimatedVisibilityScope,
 	sharedTransitionScope: SharedTransitionScope,
 	isWideScreen: Boolean,
+	snackbar: SnackbarHostState,
 	modifier: Modifier = Modifier,
 	initialPage: Int = 0,
 	viewModel: ListViewModel = viewModel(factory = ViewModelFactory.Factory(initialPage = initialPage))
 ) {
 	val listState by viewModel.listState.collectAsState()
+	val context = LocalContext.current
 	var deleteConfirmationOpen by remember { mutableStateOf(false) }
 
 	// Set screen orientation back to user-specified.
@@ -106,7 +111,7 @@ fun ListScreen(
 			confirmButton = {
 				Button(
 					onClick = {
-						viewModel.deleteSelected()
+						viewModel.deleteSelected(context)
 						deleteConfirmationOpen = false
 					},
 					shape = MaterialTheme.shapes.medium
@@ -218,6 +223,9 @@ fun ListScreen(
 					currentPage = listState.currentPage,
 					isShowingSettingsButton = !isWideScreen
 				)
+			},
+			snackbarHost = {
+				SnackbarHost(snackbar)
 			},
 			bottomBar = {
 				if (!isWideScreen) {

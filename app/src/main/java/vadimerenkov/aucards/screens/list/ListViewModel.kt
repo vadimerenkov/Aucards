@@ -1,5 +1,6 @@
 package vadimerenkov.aucards.screens.list
 
+import android.content.Context
 import android.util.Log
 import androidx.core.net.toFile
 import androidx.lifecycle.ViewModel
@@ -14,8 +15,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import vadimerenkov.aucards.DispatchersProvider
+import vadimerenkov.aucards.R
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardDao
+import vadimerenkov.aucards.ui.SnackbarController
+import vadimerenkov.aucards.ui.getPluralString
 
 private const val TAG = "ListViewModel"
 
@@ -63,7 +67,6 @@ class ListViewModel(
 		viewModelScope.launch {
 			aucardDao.saveAllCards(newList)
 		}
-		Log.i(TAG, "Saved new cards: $newList")
 	}
 
 	fun turnPage(number: Int) {
@@ -87,7 +90,7 @@ class ListViewModel(
 		list_state.update { it.copy(selectedList = it.selectedList - id) }
 	}
 
-	fun deleteSelected() {
+	fun deleteSelected(context: Context) {
 		val selected_cards = list_state.value.list.filter {
 			it.id in list_state.value.selectedList
 		}
@@ -99,12 +102,16 @@ class ListViewModel(
 							image.delete()
 						} catch (e: Exception) {
 							if (e is CancellationException) throw e
-							e.printStackTrace()
+							Log.e(TAG, "Error deleting the image: $e")
 						}
 					}
 					aucardDao.deleteById(card.id)
 				}
 			}
+		val message = context.getPluralString(R.plurals.number_deleted, selected_cards.size, selected_cards.size)
+			viewModelScope.launch {
+			SnackbarController.send(message)
+		}
 		exitSelectMode()
 	}
 }

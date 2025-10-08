@@ -5,19 +5,25 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import androidx.window.core.layout.WindowWidthSizeClass
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import vadimerenkov.aucards.screens.fullscreencard.CardFullscreen
 import vadimerenkov.aucards.screens.fullscreencard.EditScreen
 import vadimerenkov.aucards.screens.list.ListScreen
 import vadimerenkov.aucards.screens.settings.SettingsScreen
+import vadimerenkov.aucards.ui.ObserveAsEvents
+import vadimerenkov.aucards.ui.SnackbarController
 
 @Serializable
 data class ListScreen(
@@ -25,7 +31,7 @@ data class ListScreen(
 )
 
 @Serializable
-object SettingsScreen
+data object SettingsScreen
 
 @Serializable
 data class FullscreenCard(
@@ -49,6 +55,13 @@ fun MainNavHost(
 			WindowWidthSizeClass.COMPACT -> false
 			else -> true
 		}
+		val snackbarHost = remember { SnackbarHostState() }
+		val scope = rememberCoroutineScope()
+		ObserveAsEvents(SnackbarController.events) { event ->
+			scope.launch {
+				snackbarHost.showSnackbar(event)
+			}
+		}
 		NavHost(
 			navController = navController,
 			startDestination = ListScreen(0)
@@ -63,7 +76,8 @@ fun MainNavHost(
 					onSettingsClicked = { navController.navigate(SettingsScreen) },
 					animatedVisibilityScope = this,
 					sharedTransitionScope = this@SharedTransitionLayout,
-					isWideScreen = isWideScreen
+					isWideScreen = isWideScreen,
+					snackbar = snackbarHost
 				)
 			}
 			composable<FullscreenCard> {
@@ -103,7 +117,8 @@ fun MainNavHost(
 			) {
 				SettingsScreen(
 					onBackClicked = { navController.navigate(ListScreen(it)) },
-					isWideScreen = isWideScreen
+					isWideScreen = isWideScreen,
+					snackbar = snackbarHost
 				)
 			}
 		}

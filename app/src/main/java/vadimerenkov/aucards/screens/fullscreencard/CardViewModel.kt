@@ -28,10 +28,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import vadimerenkov.aucards.DispatchersProvider
+import vadimerenkov.aucards.R
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardDao
 import vadimerenkov.aucards.data.CardLayout
 import vadimerenkov.aucards.screens.settings.Settings
+import vadimerenkov.aucards.ui.SnackbarController
+import vadimerenkov.aucards.ui.code
 import java.io.File
 import java.util.UUID
 
@@ -150,7 +153,9 @@ class CardViewModel(
 					return@launch
 				} catch (e: Exception) {
 					if (e is CancellationException) throw e
-					e.printStackTrace()
+					Log.e(TAG, "Error saving the image: $e")
+					val message = context.getString(R.string.image_error, e.code())
+					SnackbarController.send(message)
 					return@launch
 				}
 			}
