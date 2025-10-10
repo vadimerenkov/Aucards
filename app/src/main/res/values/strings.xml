@@ -16,6 +16,7 @@
     <string name="dark">Dark</string>
     <string name="device">Device</string>
     <string name="english" translatable="false">English</string>
+    <string name="french" translatable="false">Français</string>
     <string name="russian" translatable="false">Русский</string>
     <string name="ukrainian" translatable="false">Українська</string>
     <string name="georgian" translatable="false">ქართული</string>

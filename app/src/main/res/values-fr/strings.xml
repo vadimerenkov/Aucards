@@ -1,0 +1,67 @@
+<resources>
+    <string name="add_card">Ajouter une carte</string>
+    <string name="save">Sauvegarder</string>
+    <string name="empty_list_prompt">Créez votre première carte !</string>
+    <string name="your_text">Votre texte…</string>
+    <string name="description">Texte additionnel…</string>
+    <string name="choose_color">Choisissez la couleur</string>
+    <string name="delete">Supprimer la carte</string>
+    <string name="edit">Modifier la carte</string>
+    <string name="open_settings">Ouvrir les paramètres</string>
+    <string name="settings">Paramètres</string>
+    <string name="go_back">Retour</string>
+    <string name="light">Clair</string>
+    <string name="dark">Sombre</string>
+    <string name="device">Système</string>
+    <string name="brightness">Réglez la luminosité au maximum lorsque vous ouvrez la carte.</string>
+    <string name="theme">Thème</string>
+    <string name="language">Langue</string>
+    <string name="source_code">Code source : </string>
+    <string name="selected_number">Sélectionnée(s) : %s</string>
+    <string name="delete_button">Supprimer</string>
+    <string name="cancel">Annuler</string>
+    <string name="translator">Traducteur : criticalsool@github</string>
+    <string name="landscape">Passez en mode paysage lorsque vous ouvrez la carte.</string>
+    <string name="all_cards">Toutes les cartes</string>
+    <string name="favourites">Favoris</string>
+    <string name="mark_as_favourite">Ajouter aux favoris</string>
+    <string name="add_to_fav_prompt">Ajoutez n\'importe quelle carte à vos favoris pour la voir ici !</string>
+    <string name="brightness_permission">Cette option nécessite l\'autorisation de l\'application pour modifier les paramètres système.</string>
+    <string name="palette">Palette</string>
+    <string name="custom_color">Personnalisé</string>
+    <string name="import_cards">Importer des cartes à partir d\'un fichier</string>
+    <string name="export">Exporter les cartes vers un fichier</string>
+    <string name="settings_play_sound">Jouer un son à l\'ouverture de la carte</string>
+    <string name="play_sound_description">Jouez une sonnerie pour faire savoir aux autres que vous souhaitez leur dire quelque chose.</string>
+    <string name="ringtone">Sonnerie :</string>
+    <string name="choose_ringtone">Choisissez une sonnerie</string>
+    <string name="pause">Pause</string>
+    <string name="play">Lecture</string>
+    <string name="title_subtitle">Titre et description</string>
+    <string name="two_halves">Deux titres égaux</string>
+    <string name="text_size">Taille du texte</string>
+    <string name="layout">Disposition</string>
+    <string name="change_image">Changer l\'image</string>
+    <string name="remove_image">Supprimer l\'image</string>
+    <string name="opacity">Opacité du texte d\'arrière-plan :</string>
+    <string name="choose_image">Choisissez une image</string>
+    <string name="export_error">Impossible d\'exporter les cartes. Code d\'erreur : %d</string>
+    <string name="import_error">Impossible de charger les cartes. Code d\'erreur : %d</string>
+    <string name="image_error">Impossible d\'enregistrer l\'image. Code d\'erreur : %d</string>
+    <plurals name="import_success">
+        <item quantity="one">Importation réussie de la nouvelle carte !</item>
+        <item quantity="other">Importation réussie de %d nouvelles cartes !</item>
+    </plurals>
+    <plurals name="export_success">
+        <item quantity="one">Exportation réussie de la carte !</item>
+        <item quantity="other">Exportation réussie de %d cartes !</item>
+    </plurals>
+    <plurals name="number_deleted">
+        <item quantity="one">Carte supprimée.</item>
+        <item quantity="other">%d cartes supprimées.</item>
+    </plurals>
+    <plurals name="delete_confirmation">
+        <item quantity="one">Êtes-vous sûr de vouloir supprimer cette carte ?</item>
+        <item quantity="other">Êtes-vous sûr de vouloir supprimer %s cartes ?</item>
+    </plurals>
+</resources>
