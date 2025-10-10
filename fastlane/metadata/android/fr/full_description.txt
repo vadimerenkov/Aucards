@@ -6,7 +6,7 @@
 Elle est conçue pour être aussi fluide que possible afin de minimiser l'effort nécessaire pour exprimer ce que vous ressentez à un moment donné.
 </p>
 
-<p><b>Highlights:</b></p>
+<p><b>Points forts :</b></p>
 
 <li>Créez une quantité infinie de cartes avec des messages uniques</li>
 <li>Choisissez n'importe quelle couleur parmi une riche palette, ou créez la vôtre !</li>
