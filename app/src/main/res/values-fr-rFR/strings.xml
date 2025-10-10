@@ -1,5 +1,5 @@
 <resources>
-    <string name="add_card"Ajouter une carte</string>
+    <string name="add_card">Ajouter une carte</string>
     <string name="save">Sauvegarder</string>
     <string name="empty_list_prompt">Créez votre première carte !</string>
     <string name="your_text">Votre texte…</string>
@@ -25,13 +25,13 @@
     <string name="all_cards">Toutes les cartes</string>
     <string name="favourites">Favoris</string>
     <string name="mark_as_favourite">Ajouter aux favoris</string>
-    <string name="add_to_fav_prompt">Ajoutez n'importe quelle carte à vos favoris pour la voir ici !</string>
-    <string name="brightness_permission">Cette option nécessite l'autorisation de l'application pour modifier les paramètres système.</string>
+    <string name="add_to_fav_prompt">Ajoutez n\'importe quelle carte à vos favoris pour la voir ici !</string>
+    <string name="brightness_permission">Cette option nécessite l\'autorisation de l\'application pour modifier les paramètres système.</string>
     <string name="palette">Palette</string>
     <string name="custom_color">Personnalisé</string>
-    <string name="import_cards">Importer des cartes à partir d'un fichier</string>
+    <string name="import_cards">Importer des cartes à partir d\'un fichier</string>
     <string name="export">Exporter les cartes vers un fichier</string>
-    <string name="settings_play_sound">Jouer un son à l'ouverture de la carte</string>
+    <string name="settings_play_sound">Jouer un son à l\'ouverture de la carte</string>
     <string name="play_sound_description">Jouez une sonnerie pour faire savoir aux autres que vous souhaitez leur dire quelque chose.</string>
     <string name="ringtone">Sonnerie :</string>
     <string name="choose_ringtone">Choisissez une sonnerie</string>
@@ -41,19 +41,19 @@
     <string name="two_halves">Deux titres égaux</string>
     <string name="text_size">Taille du texte</string>
     <string name="layout">Disposition</string>
-    <string name="change_image">Changer l'image</string>
-    <string name="remove_image">Supprimer l'image</string>
-    <string name="opacity">Opacité du texte d'arrière-plan :</string>
+    <string name="change_image">Changer l\'image</string>
+    <string name="remove_image">Supprimer l\'image</string>
+    <string name="opacity">Opacité du texte d\'arrière-plan :</string>
     <string name="choose_image">Choisissez une image</string>
-    <string name="export_error">Impossible d'exporter les cartes. Code d'erreur : %d</string>
-    <string name="import_error">Impossible de charger les cartes. Code d'erreur : %d</string>
-    <string name="image_error">Impossible d'enregistrer l'image. Code d'erreur : %d</string>
+    <string name="export_error">Impossible d\'exporter les cartes. Code d\'erreur : %d</string>
+    <string name="import_error">Impossible de charger les cartes. Code d\'erreur : %d</string>
+    <string name="image_error">Impossible d\'enregistrer l\'image. Code d\'erreur : %d</string>
     <plurals name="import_success">
         <item quantity="one">Importation réussie de %d nouvelles cartes !</item>
         <item quantity="other">Importation réussie de %d nouvelles cartes !</item>
     </plurals>
     <plurals name="export_success">
-        <item quantity="one">Exportation réussie de %d carte !</item>
+        <item quantity="one">Exportation de la carte réussie !</item>
         <item quantity="other">Exportation réussie de %d cartes !</item>
     </plurals>
     <plurals name="number_deleted">
