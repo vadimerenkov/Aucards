@@ -49,19 +49,19 @@
     <string name="import_error">Impossible de charger les cartes. Code d\'erreur : %d</string>
     <string name="image_error">Impossible d\'enregistrer l\'image. Code d\'erreur : %d</string>
     <plurals name="import_success">
-        <item quantity="one">Importation réussie de %d nouvelle carte !</item>
-        <item quantity="many">Importation réussie de %d nouvelles cartes !</item>
+        <item quantity="one">Importation réussie de la nouvelle carte !</item>
+        <item quantity="other">Importation réussie de %d nouvelles cartes !</item>
     </plurals>
     <plurals name="export_success">
-        <item quantity="one">Exportation réussi de %d carte !</item>
-        <item quantity="many">Exportation réussie de %d cartes !</item>
+        <item quantity="one">Exportation réussie de la carte !</item>
+        <item quantity="other">Exportation réussie de %d cartes !</item>
     </plurals>
     <plurals name="number_deleted">
-        <item quantity="one">%d carte supprimée.</item>
-        <item quantity="many">%d cartes supprimées.</item>
+        <item quantity="one">Carte supprimée.</item>
+        <item quantity="other">%d cartes supprimées.</item>
     </plurals>
     <plurals name="delete_confirmation">
         <item quantity="one">Êtes-vous sûr de vouloir supprimer cette carte ?</item>
-        <item quantity="many">Êtes-vous sûr de vouloir supprimer %s cartes ?</item>
+        <item quantity="other">Êtes-vous sûr de vouloir supprimer %s cartes ?</item>
     </plurals>
 </resources>
