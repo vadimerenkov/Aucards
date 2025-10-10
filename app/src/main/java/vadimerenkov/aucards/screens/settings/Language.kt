@@ -9,10 +9,10 @@ enum class Language(
 	@StringRes val translator: Int? = R.string.translator
 ) {
 	ENGLISH(R.string.english, "en-US", null),
-	FRENCH(R.string.french, "fr-FR", null),
 	RUSSIAN(R.string.russian, "ru-RU", null),
 	UKRAINIAN(R.string.ukrainian, "uk-UA"),
 	GEORGIAN(R.string.georgian, "ka-GE"),
 	POLISH(R.string.polish, "pl-PL"),
-	PORTUGUESE_BRAZIL(R.string.portuguese_brazil, "pt-BR")
+	PORTUGUESE_BRAZIL(R.string.portuguese_brazil, "pt-BR"),
+	FRENCH(R.string.french, "fr-FR")
 }
