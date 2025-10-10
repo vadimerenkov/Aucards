@@ -2,7 +2,7 @@
 <resources>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
-    <string name="help">J\'ai besoin d'aide</string>
+    <string name="help">J\'ai besoin d\'aide</string>
     <string name="hug">Calîn ?</string>
     <string name="alone">Je veux être seul un moment</string>
 </resources>
