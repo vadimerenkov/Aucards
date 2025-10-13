@@ -24,6 +24,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.AlertDialog
@@ -238,7 +239,7 @@ fun ListScreen(
 							onClick = { viewModel.turnPage(0) },
 							icon = {
 								Icon(
-									painterResource(R.drawable.grid),
+									painter = painterResource(R.drawable.grid),
 									contentDescription = null
 								)
 							},
@@ -255,7 +256,7 @@ fun ListScreen(
 							onClick = { viewModel.turnPage(1) },
 							icon = {
 								Icon(
-									imageVector = Icons.Outlined.Star,
+									imageVector = Icons.Default.Favorite,
 									contentDescription = null
 								)
 							},
