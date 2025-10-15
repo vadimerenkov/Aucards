@@ -1,0 +1,24 @@
+<p><i>Aucards</i> es una aplicación gratuita y de código abierto en la cuál tu puedes crear tarjetas de comunicación coloridas para ayudarte a comunicarte con los demás.</p>
+
+<p>Esta aplicación esta basada en el concepto de "tarjetas autistas", en el que las personas con necesidades especiales usan para comunicarse rápidamente, expresar sus sentimientos, hacer solicitudes e informar a otros sobre su condición.</p>
+
+<p>Si alguna vez has necesitado decir algo pero no has podido, por ejemplo, durante un bloque autista, cuando estás demasiado abrumado para hablar, entonces esta aplicación es para ti.
+Está diseñada para ser lo más fluido posible, para minimizar el esfuerzo necesario para expresar lo que sientes en este momento.
+</p>
+
+<p><b>Características:</b></p>
+
+<li>Crea un sinfín de tarjetas con mensajes únicos</li>
+<li>¡Escoge cualquier color de una amplia paleta de colores - o crea la tuya propia!</li>
+<li>Organiza tus tarjetas como quieras: arrástralas o agrégalas a favoritos</li>
+<li>Fácil de utilizar: ¡solo toca la tarjeta para abrirla en pantalla completa!</li>
+<li>Lleva tus tarjetas a cualquier dispotivo: exporta y transfiere facilemente a donde quieras</li>
+<li>Reproduce un sonido para hacer saber a otras personas que tienes algo que decir</li>
+<li>Completamente gratis, de código abierto y sin anuncios - ¡nunca!</li>
+
+<p><b>Quien puede beneficiarse de esta aplicación:</b></p>
+
+<li>Personas con autismo/TDAH</li>
+<li>Niños que tienen dificultades para comunicarse verbalmente</li>
+<li>Personas mayores que necestian ayuda</li>
+<li>O cualquier persona que se encuentre en una situación en la que nos pueda hablar: en un concierto ruidoso o en una conferencia</li>

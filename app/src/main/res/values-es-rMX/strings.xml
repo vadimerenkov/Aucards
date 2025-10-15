@@ -1,0 +1,67 @@
+<resources>
+    <string name="add_card">Agregar nueva tarjeta</string>
+    <string name="save">Guardar</string>
+    <string name="empty_list_prompt">Crea tu primera tarjeta!</string>
+    <string name="your_text">Tu texto…</string>
+    <string name="description">Texto adicional…</string>
+    <string name="choose_color">Escoger color</string>
+    <string name="delete">Eliminar tarjeta</string>
+    <string name="edit">Editar tarjetas</string>
+    <string name="open_settings">Abrir configuración</string>
+    <string name="settings">Configuración</string>
+    <string name="go_back">Atrás</string>
+    <string name="light">Claro</string>
+    <string name="dark">Oscuro</string>
+    <string name="device">Dispositivo</string>
+    <string name="brightness">Establece el brillo máximo al abrir la tarjeta</string>
+    <string name="theme">Tema</string>
+    <string name="language">Idioma</string>
+    <string name="source_code">Código fuente: </string>
+    <string name="selected_number">Seleccionada: %s</string>
+    <string name="delete_button">Eliminar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="translator">Traductor: fuan200@github</string>
+    <string name="landscape">Cambiar al modo horizontal al abrir la tarjeta</string>
+    <string name="all_cards">Todas las tarjetas</string>
+    <string name="favourites">Favoritos</string>
+    <string name="mark_as_favourite">Añadir a favoritos</string>
+    <string name="add_to_fav_prompt">¡Añade cualquier tarjeta a favoritos para verla aquí!</string>
+    <string name="brightness_permission">Para usar esta opción, debes permitir que la aplicación modifique los ajustes del sistema.</string>
+    <string name="palette">Paleta</string>
+    <string name="custom_color">Personalizado</string>
+    <string name="import_cards">Importar tarjetas desde un archivo</string>
+    <string name="export">Exportar tarjetas a un archivo</string>
+    <string name="settings_play_sound">Reproduce un sonido al abrir la tarjeta</string>
+    <string name="play_sound_description">Reproduce un tono de llamada para que los demás sepan que quieres decir algo.</string>
+    <string name="ringtone">Tono de llamada:</string>
+    <string name="choose_ringtone">Escoge un tono de llamada</string>
+    <string name="pause">Pausa</string>
+    <string name="play">Reproducir</string>
+    <string name="title_subtitle">Título y descripción</string>
+    <string name="two_halves">Dos títulos iguales</string>
+    <string name="text_size">Tamaño del texto</string>
+    <string name="layout">Diseño</string>
+    <string name="change_image">Cambiar imagen</string>
+    <string name="remove_image">Eliminar imagen</string>
+    <string name="opacity">Opacidad del fondo del texto:</string>
+    <string name="choose_image">Escoge una imagen</string>
+    <string name="export_error">No se pudieron exportar las tarjetas. Código de error: %d</string>
+    <string name="import_error">No se pudieron cargar las tarjetas. Código de error: %d</string>
+    <string name="image_error">No se pudo guardar la imagen. Código de error: %d</string>
+    <plurals name="import_success">
+        <item quantity="one">¡Se importó correctamente %d nueva tarjeta!</item>
+        <item quantity="other">¡Se importaron correctamente %d nuevas tarjetas!</item>
+    </plurals>
+    <plurals name="export_success">
+        <item quantity="one">¡Se exportó correctamente %d tarjeta!</item>
+        <item quantity="other">¡Se exportaron correctamente %d tarjetas!</item>
+    </plurals>
+    <plurals name="number_deleted">
+        <item quantity="one">Se eliminó %d tarjeta.</item>
+        <item quantity="other">Se eliminaron %d tarjetas.</item>
+    </plurals>
+    <plurals name="delete_confirmation">
+        <item quantity="one">¿Estás seguro de que quieres eliminar esta tarjeta?</item>
+        <item quantity="other">¿Estás seguro de que quieres eliminar estas %s tarjetas?</item>
+    </plurals>
+</resources>
