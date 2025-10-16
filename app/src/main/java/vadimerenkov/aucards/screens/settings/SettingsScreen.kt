@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -70,6 +69,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import vadimerenkov.aucards.BuildConfig
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.ViewModelFactory
+import vadimerenkov.aucards.ui.verticalScrollbar
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -226,6 +226,11 @@ fun SettingsScreen(
 				contentAlignment = Alignment.TopStart,
 				modifier = modifier
 					.padding(innerPadding)
+					.verticalScrollbar(
+						scrollState = scroll,
+						verticalPadding = 16.dp,
+						horizontalPadding = 6.dp
+					)
 					.padding(horizontal = 16.dp)
 					.fillMaxSize()
 			) {
@@ -276,6 +281,10 @@ fun SettingsScreen(
 									viewModel.saveSoundUri(uri)
 								}
 							}
+						val languages = Language.entries
+							.map { stringResource(it.uiText) }
+							.sorted()
+
 						CheckboxSetting(
 							title = stringResource(R.string.brightness),
 							description = stringResource(R.string.brightness_permission),
@@ -363,7 +372,8 @@ fun SettingsScreen(
 						}
 						HorizontalDivider()
 						DropdownSetting(
-							options = Theme.entries.map { it.uiText },
+							options = Theme.entries
+								.map { stringResource(it.uiText) },
 							icon = R.drawable.theme_mode,
 							description = stringResource(R.string.theme),
 							onOptionChosen = { viewModel.saveThemeSetting(it) },
@@ -372,10 +382,12 @@ fun SettingsScreen(
 								.padding(top = 8.dp)
 						)
 						DropdownSetting(
-							options = Language.entries.map { it.uiText }.sorted(),
+							options = languages,
 							icon = R.drawable.language,
 							description = stringResource(R.string.language),
-							onOptionChosen = { viewModel.saveLanguageSetting(it) },
+							onOptionChosen = {index ->
+								viewModel.saveLanguageSetting(languages[index], context)
+							},
 							chosenOption = stringResource(state.language.uiText)
 						)
 						state.language.translator?.let { it ->
@@ -448,7 +460,7 @@ fun SettingsScreen(
 								)
 							}
 						}
-						Spacer(modifier = Modifier.height(48.dp))
+						Spacer(modifier = Modifier.weight(1f))
 						Text(
 							text = stringResource(R.string.logo),
 							style = MaterialTheme.typography.bodyLarge,

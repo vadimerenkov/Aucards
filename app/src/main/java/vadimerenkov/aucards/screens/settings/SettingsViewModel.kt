@@ -79,14 +79,15 @@ class SettingsViewModel(
 		)
 
 	private fun readLanguageSetting(): Language {
-		val locales = getApplicationLocales().toLanguageTags()
+		val locales = getApplicationLocales()
+			.toLanguageTags()
 
 		Log.i(TAG, "Loaded $locales as saved locale.")
 
-		Language.entries.forEach { it ->
-			if (it.code.contains(locales)) {
-				return it
-			}
+		val lang = Language.entries.find { it.code == locales }
+
+		if (lang != null) {
+			return lang
 		}
 
 		Log.w(TAG, "Could not load language settings.")
@@ -96,7 +97,7 @@ class SettingsViewModel(
 		Log.i(TAG, "Current locale is $current_locale, defaulting to $default_language.")
 
 		Language.entries.forEach { it ->
-			if (it.code == default_language) {
+			if (it.code.contains(default_language.take(2))) {
 				return it
 			}
 		}
@@ -119,18 +120,9 @@ class SettingsViewModel(
 		return Theme.DEVICE
 	}
 
-	fun saveThemeSetting(theme_string: Int) {
-		var theme: Theme? = null
+	fun saveThemeSetting(themeValue: Int) {
 
-		Theme.entries.forEach { it ->
-			if (it.uiText == theme_string) {
-				theme = it
-			}
-		}
-
-		if (theme == null) {
-			throw InvalidSettingsException(theme_string)
-		}
+		val theme = Theme.entries.find { it.ordinal == themeValue } ?: Theme.DEVICE
 
 		viewModelScope.launch {
 			settings.saveStringSettings(
@@ -141,18 +133,11 @@ class SettingsViewModel(
 
 	}
 
-	fun saveLanguageSetting(lang_string: Int) {
-		var language: Language? = null
+	fun saveLanguageSetting(lang_string: String, context: Context) {
 
-		Language.entries.forEach { it ->
-			if (lang_string == it.uiText) {
-				language = it
-			}
-		}
-
-		if (language == null) {
-			throw InvalidSettingsException(lang_string)
-		}
+		val language = Language.entries.find { lang ->
+			context.getString(lang.uiText) == lang_string
+		} ?: Language.ENGLISH
 
 		val locale = LocaleListCompat.forLanguageTags(language.code)
 		Log.d(TAG, "Saved $locale as new language.")

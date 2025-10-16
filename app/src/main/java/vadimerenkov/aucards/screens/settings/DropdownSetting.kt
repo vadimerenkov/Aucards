@@ -4,7 +4,9 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
@@ -24,13 +26,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import vadimerenkov.aucards.ui.verticalScrollbar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DropdownSetting(
-	options: List<Int>,
+	options: List<String>,
 	description: String,
 	chosenOption: String,
 	onOptionChosen: (Int) -> Unit,
@@ -74,17 +76,24 @@ internal fun DropdownSetting(
 				modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
 				trailingIcon = { Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null) }
 			)
+			val scroll = rememberScrollState()
 			ExposedDropdownMenu(
 				expanded = expanded,
-				onDismissRequest = { expanded = !expanded }
+				scrollState = scroll,
+				onDismissRequest = { expanded = !expanded },
+				modifier = Modifier
+					.verticalScrollbar(
+						scrollState = scroll,
+						verticalPadding = 16.dp,
+						horizontalPadding = 6.dp
+					)
 			) {
-				options.forEach { option ->
-					val text = stringResource(option)
+				options.forEachIndexed { index, option ->
 
 					DropdownMenuItem(
-						text = { Text(text) },
+						text = { Text(option) },
 						trailingIcon = {
-							if (text == chosenOption) {
+							if (option == chosenOption) {
 								Icon(
 									imageVector = Icons.Default.Check,
 									contentDescription = null
@@ -92,9 +101,11 @@ internal fun DropdownSetting(
 							} else null
 						},
 						onClick = {
-							onOptionChosen(option)
+							onOptionChosen(index)
 							expanded = false
-						}
+						},
+						modifier = Modifier
+							.padding(end = 6.dp)
 					)
 				}
 			}
