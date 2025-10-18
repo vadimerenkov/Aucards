@@ -50,18 +50,22 @@
     <string name="image_error">Nie udało się zapisać obrazu. Kod błędu: %d</string>
     <plurals name="import_success">
         <item quantity="one">Pomyślnie zaimportowano %d nową fiszkę!</item>
-        <item quantity="other">Pomyślnie zaimportowano %d nowych fiszek!</item>
+        <item quantity="few">Pomyślnie zaimportowano %d nowe fiszki!</item>
+        <item quantity="many">Pomyślnie zaimportowano %d nowych fiszek!</item>
     </plurals>
     <plurals name="export_success">
         <item quantity="one">Pomyślnie wyeksportowano %d fiszkę!</item>
-        <item quantity="other">Pomyślnie wyeksportowano %d fiszek!</item>
+        <item quantity="few">Pomyślnie wyeksportowano %d fiszki!</item>
+        <item quantity="many">Pomyślnie wyeksportowano %d fiszek!</item>
     </plurals>
     <plurals name="number_deleted">
         <item quantity="one">Usunięto %d fiszkę.</item>
-        <item quantity="other">Usunięto %d fiszek.</item>
+        <item quantity="few">Usunięto %d fiszki.</item>
+        <item quantity="many">Usunięto %d fiszek.</item>
     </plurals>
     <plurals name="delete_confirmation">
         <item quantity="one">Czy na pewno chcesz usunąć tą fiszkę?</item>
-        <item quantity="other">Czy na pewno chcesz usunąć %s fiszek?</item>
+        <item quantity="few">Czy na pewno chcesz usunąć %s fiszki?</item>
+        <item quantity="many">Czy na pewno chcesz usunąć %s fiszek?</item>
     </plurals>
 </resources>
