@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="add_card">Dodaj nową fiszkę</string>
     <string name="save">Zapisz</string>
     <string name="empty_list_prompt">Stwórz swoją pierwszą fiszkę!</string>
     <string name="your_text">Tekst fiszki…</string>
-    <string name="description">Dodatkowy tekst…</string>
+    <string name="description">Dodatkowy opis…</string>
     <string name="choose_color">Wybierz kolor</string>
     <string name="delete">Usuń fiszkę</string>
     <string name="edit">Edytuj fiszkę</string>
@@ -38,10 +37,31 @@
     <string name="choose_ringtone">Wybierz dzwonek</string>
     <string name="pause">Pauza</string>
     <string name="play">Odtwórz</string>
+    <string name="title_subtitle">Tytuł i opis</string>
+    <string name="two_halves">Dwa jednakowe teksty</string>
+    <string name="text_size">Rozmiar tekstu fiszki</string>
+    <string name="layout">Układ fiszki</string>
+    <string name="change_image">Zmień obraz</string>
+    <string name="remove_image">Usuń obraz</string>
+    <string name="opacity">Przezroczystość tła tekstu fiszki:</string>
+    <string name="choose_image">Wybierz obraz</string>
+    <string name="export_error">Nie udało sie wyeksportować fiszek. Kod błędu: %d</string>
+    <string name="import_error">Nie udało się zaimportować fiszek. Kod błędu: %d</string>
+    <string name="image_error">Nie udało się zapisać obrazu. Kod błędu: %d</string>
+    <plurals name="import_success">
+        <item quantity="one">Pomyślnie zaimportowano %d nową fiszkę!</item>
+        <item quantity="other">Pomyślnie zaimportowano %d nowych fiszek!</item>
+    </plurals>
+    <plurals name="export_success">
+        <item quantity="one">Pomyślnie wyeksportowano %d fiszkę!</item>
+        <item quantity="other">Pomyślnie wyeksportowano %d fiszek!</item>
+    </plurals>
+    <plurals name="number_deleted">
+        <item quantity="one">Usunięto %d fiszkę.</item>
+        <item quantity="other">Usunięto %d fiszek.</item>
+    </plurals>
     <plurals name="delete_confirmation">
         <item quantity="one">Czy na pewno chcesz usunąć tą fiszkę?</item>
-        <item quantity="few">Czy na pewno chcesz usunąć %s fiszki?</item>
-        <item quantity="many">Czy na pewno chcesz usunąć %s fiszek?</item>
+        <item quantity="other">Czy na pewno chcesz usunąć %s fiszek?</item>
     </plurals>
-
 </resources>
