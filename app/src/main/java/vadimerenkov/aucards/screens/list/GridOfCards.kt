@@ -37,7 +37,8 @@ internal fun GridOfCards(
 	isSelectMode: Boolean,
 	onSelect: (Int) -> Unit,
 	onDeselect: (Int) -> Unit,
-	onDragStopped: (List<Aucard>) -> Unit
+	onDragStopped: (List<Aucard>) -> Unit,
+	modifier: Modifier = Modifier
 ) {
 
 	var list by remember { mutableStateOf(items) }
@@ -52,11 +53,12 @@ internal fun GridOfCards(
 
 	LazyVerticalGrid(
 		columns = GridCells.Adaptive(minSize = 150.dp),
-		modifier = Modifier.fillMaxSize(),
 		state = lazyGridState,
 		contentPadding = PaddingValues(12.dp),
 		verticalArrangement = Arrangement.spacedBy(12.dp),
 		horizontalArrangement = Arrangement.spacedBy(12.dp),
+		modifier = modifier
+			.fillMaxSize()
 	) {
 		itemsIndexed(list, key = { _, item -> item.id }) { index, item ->
 			ReorderableItem(reorderableLazyGridState, item.id) {

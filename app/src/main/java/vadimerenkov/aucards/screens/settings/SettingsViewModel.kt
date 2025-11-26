@@ -15,6 +15,7 @@ import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
@@ -193,7 +194,7 @@ class SettingsViewModel(
 	}
 
 	fun exportDatabase(uri: Uri, context: Context) {
-		viewModelScope.launch {
+		viewModelScope.launch(Dispatchers.IO) {
 			try {
 				val size = database.aucardDao().getAllCards().first().size
 				val temp = File.createTempFile("aucards_export", ".db", context.cacheDir)
@@ -232,7 +233,7 @@ class SettingsViewModel(
 	}
 
 	fun importDatabase(uri: Uri, context: Context) {
-		viewModelScope.launch {
+		viewModelScope.launch(Dispatchers.IO) {
 			try {
 				var current_index = database.aucardDao().getAllCards().first().size
 				val dbFile = File(context.cacheDir, "database.db")

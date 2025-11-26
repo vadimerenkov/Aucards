@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -30,19 +29,18 @@ class ListViewModel(
 ): ViewModel() {
 	private val list_state: MutableStateFlow<ListState> = MutableStateFlow(ListState(currentPage = initialPage))
 
-	private val all_cards = aucardDao.getAllCards().onEach { list ->
-		list_state.update { it.copy(list = list, isLoading = false) }
-	}
-		.flowOn(dispatchers.main)
-		.launchIn(viewModelScope)
-
-	private val favourite_cards = aucardDao.getFavouriteCards()
-		.onEach { list ->
-			list_state.update { it.copy(favouritesList = list) }
+	init {
+		aucardDao.getAllCards().onEach { list ->
+			list_state.update { it.copy(list = list, isLoading = false) }
 		}
-		.flowOn(dispatchers.main)
-		.launchIn(viewModelScope)
+			.launchIn(viewModelScope)
 
+		aucardDao.getFavouriteCards()
+			.onEach { list ->
+				list_state.update { it.copy(favouritesList = list) }
+			}
+			.launchIn(viewModelScope)
+	}
 	val listState = list_state
 		.stateIn(
 			scope = viewModelScope,
@@ -58,7 +56,7 @@ class ListViewModel(
 	}
 
 	private fun saveAucard(aucard: Aucard) {
-		viewModelScope.launch(dispatchers.main) {
+		viewModelScope.launch(dispatchers.default) {
 			aucardDao.saveAucard(aucard)
 		}
 	}
@@ -95,7 +93,7 @@ class ListViewModel(
 			it.id in list_state.value.selectedList
 		}
 			selected_cards.forEach { card ->
-				viewModelScope.launch(dispatchers.main) {
+				viewModelScope.launch(dispatchers.io) {
 					if (card.imagePath != null) {
 						try {
 							val image = card.imagePath.toFile()
@@ -110,8 +108,8 @@ class ListViewModel(
 			}
 		val message = context.getPluralString(R.plurals.number_deleted, selected_cards.size, selected_cards.size)
 			viewModelScope.launch {
-			SnackbarController.send(message)
-		}
+				SnackbarController.send(message)
+			}
 		exitSelectMode()
 	}
 }
