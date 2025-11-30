@@ -30,16 +30,15 @@ class ListViewModel(
 	private val list_state: MutableStateFlow<ListState> = MutableStateFlow(ListState(currentPage = initialPage))
 
 	init {
-		aucardDao.getAllCards().onEach { list ->
-			list_state.update { it.copy(list = list, isLoading = false) }
-		}
-			.launchIn(viewModelScope)
+		aucardDao.getAllCards()
+			.onEach { list ->
+				list_state.update { it.copy(list = list, isLoading = false) }
+			}.launchIn(viewModelScope)
 
 		aucardDao.getFavouriteCards()
 			.onEach { list ->
 				list_state.update { it.copy(favouritesList = list) }
-			}
-			.launchIn(viewModelScope)
+			}.launchIn(viewModelScope)
 	}
 	val listState = list_state
 		.stateIn(
@@ -49,7 +48,7 @@ class ListViewModel(
 		)
 
 	fun markAsFavourite(id: Int) {
-		val card = list_state.value.list.find { it -> it.id == id }
+		val card = list_state.value.list.find { it.id == id }
 		if (card != null) {
 			saveAucard(card.copy(isFavourite = !card.isFavourite))
 		}

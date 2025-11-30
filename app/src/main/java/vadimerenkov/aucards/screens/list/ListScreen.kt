@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -327,50 +328,22 @@ fun ListScreen(
 					.fillMaxSize()
 					.padding(innerPadding),
 			) { page ->
-				when (page) {
-					0 -> {
-						AnimatedContent(targetState = listState.isLoading) {
-							if (it) {
-								CircularProgressIndicator(
-									modifier = Modifier
-										.fillMaxSize()
-										.wrapContentSize()
-								)
-							} else if (listState.list.isEmpty()) {
-								PromptText(text = stringResource(R.string.empty_list_prompt))
-							} else {
-								GridOfCards(
-									items = listState.list,
-									selectedList = listState.selectedList,
-									sharedTransitionScope = sharedTransitionScope,
-									animatedVisibilityScope = animatedVisibilityScope,
-									onCardClick = onCardClicked,
-									onFavourited = {
-										viewModel.markAsFavourite(it)
-									},
-									onLongPress = {
-										viewModel.enterSelectMode(it)
-									},
-									isSelectMode = listState.isSelectMode,
-									onSelect = { id ->
-										viewModel.selectId(id)
-									},
-									onDeselect = { id ->
-										viewModel.deselectId(id)
-									},
-									onDragStopped = { cards ->
-										viewModel.saveAllCards(cards)
-									}
-								)
-							}
+				AnimatedContent(targetState = listState.isLoading) {loading ->
+					when {
+						loading -> {
+							CircularProgressIndicator(
+								modifier = Modifier
+									.fillMaxSize()
+									.wrapContentSize()
+							)
 						}
-					}
-					1 -> {
-						if (listState.favouritesList.isEmpty()) {
-							PromptText(text = stringResource(R.string.add_to_fav_prompt))
-						} else {
+						listState.list.isEmpty() -> {
+							PromptText(text = stringResource(R.string.empty_list_prompt))
+						}
+						else -> {
+							val lazyGridState = rememberLazyGridState()
 							GridOfCards(
-								items = listState.favouritesList,
+								items = if (page == 0) listState.list else listState.favouritesList,
 								selectedList = listState.selectedList,
 								sharedTransitionScope = sharedTransitionScope,
 								animatedVisibilityScope = animatedVisibilityScope,
@@ -390,7 +363,8 @@ fun ListScreen(
 								},
 								onDragStopped = { cards ->
 									viewModel.saveAllCards(cards)
-								}
+								},
+								lazyGridState = lazyGridState
 							)
 						}
 					}

@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,12 +38,13 @@ internal fun GridOfCards(
 	onSelect: (Int) -> Unit,
 	onDeselect: (Int) -> Unit,
 	onDragStopped: (List<Aucard>) -> Unit,
+	lazyGridState: LazyGridState,
 	modifier: Modifier = Modifier
 ) {
 
 	var list by remember { mutableStateOf(items) }
 	list = items
-	val lazyGridState = rememberLazyGridState()
+
 	val reorderableLazyGridState = rememberReorderableLazyGridState(lazyGridState) { from, to ->
 
 		list = list.toMutableList().apply {
