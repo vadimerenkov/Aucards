@@ -28,6 +28,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import vadimerenkov.aucards.R
@@ -39,6 +40,7 @@ fun AucardsTopBar(
 	onDeleteClick: () -> Unit,
 	onEditClick: () -> Unit,
 	onSettingsClick: () -> Unit,
+	onDuplicateClick: () -> Unit,
 	isEditEnabled: Boolean = true,
 	isSelectMode: Boolean = false,
 	isDeleteEnabled: Boolean = true,
@@ -120,6 +122,20 @@ fun AucardsTopBar(
 				}
 			) {
 				Row {
+					IconButton(
+						enabled = isDeleteEnabled,
+						onClick = {
+							onDuplicateClick()
+						},
+						colors = IconButtonDefaults.iconButtonColors(
+							contentColor = delete_color
+						)
+					) {
+						Icon(
+							painter = painterResource(R.drawable.copy),
+							contentDescription = stringResource(R.string.copy_selected)
+						)
+					}
 					IconButton(
 						enabled = isDeleteEnabled,
 						onClick = { onDeleteClick() },
