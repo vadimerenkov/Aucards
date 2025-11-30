@@ -219,6 +219,10 @@ fun ListScreen(
 						onSettingsClicked()
 						viewModel.exitSelectMode()
 					},
+					onDuplicateClick = {
+						viewModel.duplicateSelected()
+						viewModel.exitSelectMode()
+					},
 					isSelectMode = listState.isSelectMode,
 					isEditEnabled = listState.selectedList.size == 1,
 					isDeleteEnabled = listState.selectedList.isNotEmpty(),

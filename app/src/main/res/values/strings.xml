@@ -60,6 +60,8 @@
     <string name="export_error">Could not export the cards. Error code: %d</string>
     <string name="import_error">Could not load the cards. Error code: %d</string>
     <string name="image_error">Could not save the image. Error code: %d</string>
+    <string name="copy_selected">Duplicate selected cards</string>
+
     <plurals name="import_success">
         <item quantity="one">Successfully imported %d new card!</item>
         <item quantity="other">Successfully imported %d new cards!</item>

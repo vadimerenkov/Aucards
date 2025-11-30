@@ -87,11 +87,16 @@ class ListViewModel(
 		list_state.update { it.copy(selectedList = it.selectedList - id) }
 	}
 
-	fun deleteSelected(context: Context) {
-		val selected_cards = list_state.value.list.filter {
-			it.id in list_state.value.selectedList
+	fun duplicateSelected() {
+		viewModelScope.launch {
+			val duplicatedCards = list_state.value.selectedCards.map { it.copy(id = 0) }
+			aucardDao.saveAllCards(duplicatedCards)
 		}
-			selected_cards.forEach { card ->
+	}
+
+	fun deleteSelected(context: Context) {
+		val selectedCards = list_state.value.selectedCards
+		selectedCards.forEach { card ->
 				viewModelScope.launch(dispatchers.io) {
 					if (card.imagePath != null) {
 						try {
@@ -105,7 +110,7 @@ class ListViewModel(
 					aucardDao.deleteById(card.id)
 				}
 			}
-		val message = context.getPluralString(R.plurals.number_deleted, selected_cards.size, selected_cards.size)
+		val message = context.getPluralString(R.plurals.number_deleted, selectedCards.size, selectedCards.size)
 			viewModelScope.launch {
 				SnackbarController.send(message)
 			}
@@ -120,4 +125,9 @@ data class ListState(
 	val currentPage: Int,
 	val isLoading: Boolean = true,
 	val isSelectMode: Boolean = false
-)
+) {
+	val selectedCards: List<Aucard>
+		get() = list.filter {
+			it.id in selectedList
+		}
+}
