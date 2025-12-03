@@ -2,4 +2,6 @@
 <resources>
 
     <style name="Theme.Aucards" parent="Theme.AppCompat.DayNight.NoActionBar" />
+
+    <style name="Theme.AppCompat" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>
