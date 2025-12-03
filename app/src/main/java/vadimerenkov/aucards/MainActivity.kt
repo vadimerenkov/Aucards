@@ -20,9 +20,10 @@ class MainActivity : AppCompatActivity() {
 		val locales = getApplicationLocales()
 		setApplicationLocales(locales)
 
+		val app = this.application as AucardsApplication
+
 		enableEdgeToEdge()
 		setContent {
-			val app = this.application as AucardsApplication
 			val theme_string by app.settings.themeSetting.collectAsStateWithLifecycle("")
 			val materialYou by app.settings.materialYou.collectAsStateWithLifecycle(false)
 

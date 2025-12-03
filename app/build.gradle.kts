@@ -84,6 +84,10 @@ dependencies {
 	implementation(libs.androidx.lifecycle.viewmodel.savedstate)
 	implementation(libs.androidx.media3.exoplayer)
 
+	//Glance
+	implementation(libs.glance.appwidget)
+	implementation(libs.glance.material3)
+
 	//Room
 	implementation(libs.androidx.room.runtime)
 	ksp(libs.androidx.room.compiler)
