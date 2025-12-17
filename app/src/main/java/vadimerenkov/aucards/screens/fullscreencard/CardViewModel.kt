@@ -41,13 +41,13 @@ import java.util.UUID
 private const val TAG = "CardViewModel"
 
 class CardViewModel(
-	isDarkTheme: Boolean,
 	val soundPlayer: ExoPlayer,
 	private val settings: Settings,
 	private val aucardDao: AucardDao,
 	private val dispatchers: DispatchersProvider,
 	private val id: Int,
-	private val index: Int?
+	private val index: Int?,
+	isDarkTheme: Boolean = false
 ): ViewModel() {
 	private val color = if (isDarkTheme) Color(0xFF263F71) else Color.White
 	val titleInteractionSource = MutableInteractionSource()
@@ -55,14 +55,17 @@ class CardViewModel(
 
 	private val titleInteractions = titleInteractionSource.interactions
 	private val descInteractions = descriptionInteractionSource.interactions
-	private val interactions = merge(titleInteractions, descInteractions)
-		.onEach {
-			Log.i(TAG, "Interaction just interacted: $it")
-			if (it is FocusInteraction.Focus || it is PressInteraction.Press) {
-				changePopup(OpenPopup.NONE)
+
+	init {
+		merge(titleInteractions, descInteractions)
+			.onEach {
+				Log.i(TAG, "Interaction just interacted: $it")
+				if (it is FocusInteraction.Focus || it is PressInteraction.Press) {
+					changePopup(OpenPopup.NONE)
+				}
 			}
-		}
-		.launchIn(viewModelScope)
+			.launchIn(viewModelScope)
+	}
 
 	private var card_state = MutableStateFlow(CardState(
 		aucard = Aucard(

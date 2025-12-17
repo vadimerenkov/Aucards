@@ -47,30 +47,32 @@ class SettingsViewModel(
 ): ViewModel() {
 	private val state = MutableStateFlow(SettingsState())
 
-	private val settings_observer = settings.settingsFlow
-		.onStart {
-			val isEmpty = database.aucardDao().getAllCards().first().isEmpty()
-			state.update { it.copy(isDbEmpty = isEmpty) }
-		}
-		.onEach {
-			val landscape = settings.landscape.first() ?: false
-			val brightness = settings.brightness.first() ?: false
-			val playSound = settings.playSound.first() ?: false
-			val ringtoneUri = settings.soundUri.first()?.toUri()
-			val materialYou = settings.materialYou.first() ?: false
-			val theme = readThemeSetting()
-			val language = readLanguageSetting()
-			state.update { it.copy(
-				theme = theme,
-				isMaxBrightness = brightness,
-				isLandscapeMode = landscape,
-				language = language,
-				playSound = playSound,
-				ringtoneUri = ringtoneUri,
-				materialYou = materialYou
-			) }
-		}
-		.launchIn(viewModelScope)
+	init {
+		settings.settingsFlow
+			.onStart {
+				val isEmpty = database.aucardDao().getAllCards().first().isEmpty()
+				state.update { it.copy(isDbEmpty = isEmpty) }
+			}
+			.onEach {
+				val landscape = settings.landscape.first() ?: false
+				val brightness = settings.brightness.first() ?: false
+				val playSound = settings.playSound.first() ?: false
+				val ringtoneUri = settings.soundUri.first()?.toUri()
+				val materialYou = settings.materialYou.first() ?: false
+				val theme = readThemeSetting()
+				val language = readLanguageSetting()
+				state.update { it.copy(
+					theme = theme,
+					isMaxBrightness = brightness,
+					isLandscapeMode = landscape,
+					language = language,
+					playSound = playSound,
+					ringtoneUri = ringtoneUri,
+					materialYou = materialYou
+				) }
+			}
+			.launchIn(viewModelScope)
+	}
 
 	val settingsState = state
 		.stateIn(

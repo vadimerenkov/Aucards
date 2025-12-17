@@ -43,11 +43,9 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import kotlinx.coroutines.Dispatchers
 import vadimerenkov.aucards.R
-import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.data.CardLayout
 import vadimerenkov.aucards.screens.fullscreencard.layouts.DisplayText
 import vadimerenkov.aucards.screens.fullscreencard.layouts.TitleSubtitleLayout
@@ -63,11 +61,10 @@ private const val TAG = "CardFullscreen"
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.CardFullscreen(
+	viewModel: CardViewModel,
 	onBackClicked: () -> Unit,
 	scope: AnimatedVisibilityScope,
-	id: Int,
-	modifier: Modifier = Modifier,
-	viewModel: CardViewModel = viewModel(factory = ViewModelFactory.Factory(id = id))
+	modifier: Modifier = Modifier
 ) {
 	val state by viewModel.cardState.collectAsStateWithLifecycle(
 		context = Dispatchers.Main.immediate

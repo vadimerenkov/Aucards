@@ -5,10 +5,12 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
 
 class Settings(
-	private val dataStore: DataStore<Preferences>
+	private val dataStore: DataStore<Preferences>,
+	applicationScope: CoroutineScope
 ) {
 	val settingsFlow = dataStore.data
 	val themeSetting = dataStore.data

@@ -37,5 +37,7 @@
     <string name="custom_color">Обрати</string>
     <string name="import_cards">Імпортувати картки</string>
     <string name="export">Експортувати картки</string>
+    <string name="support">Підтримати розробника: </string>
+
 
 </resources>

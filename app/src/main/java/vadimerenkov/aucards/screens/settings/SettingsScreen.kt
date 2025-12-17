@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -54,6 +55,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -65,12 +67,12 @@ import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.androidx.compose.koinViewModel
 import vadimerenkov.aucards.BuildConfig
 import vadimerenkov.aucards.R
-import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.ui.verticalScrollbar
 import java.time.LocalDateTime
+import java.time.Year
 import java.time.format.DateTimeFormatter
 
 private const val TAG = "SettingsScreen"
@@ -82,9 +84,10 @@ fun SettingsScreen(
 	isWideScreen: Boolean,
 	snackbar: SnackbarHostState,
 	modifier: Modifier = Modifier,
-	viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory.Factory())
+	viewModel: SettingsViewModel = koinViewModel()
 ) {
 	val context = LocalContext.current
+	val year = if (Year.now() > Year.of(2025)) "2025–${Year.now()}" else "2025"
 	val version = if (BuildConfig.DEBUG) BuildConfig.VERSION_NAME + "-debug" else BuildConfig.VERSION_NAME
 	val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -431,10 +434,12 @@ fun SettingsScreen(
 							.fillMaxWidth()
 					) {
 						val handler = LocalUriHandler.current
-						val link = stringResource(R.string.source_code_link)
+						val sourceCodeLink = stringResource(R.string.source_code_link)
+						val patreonLink = stringResource(R.string.patreon_link)
+						val portfolioLink = stringResource(R.string.portfolio_link)
 
 						Text(
-							text = stringResource(R.string.about, version),
+							text = stringResource(R.string.about, year, version),
 							style = MaterialTheme.typography.bodyLarge,
 							textAlign = TextAlign.Center,
 							modifier = Modifier
@@ -442,17 +447,68 @@ fun SettingsScreen(
 						)
 						TextButton(
 							onClick = {
-								handler.openUri(link)
+								handler.openUri(sourceCodeLink)
 							}
 						) {
-							Row {
-
+							Icon(
+								painter = painterResource(R.drawable.github),
+								contentDescription = null,
+								modifier = Modifier
+									.size(24.dp)
+							)
+							Text(
+								text = stringResource(R.string.source_code),
+								style = MaterialTheme.typography.bodyLarge,
+								textDecoration = TextDecoration.Underline,
+								modifier = Modifier
+									.padding(horizontal = 8.dp)
+							)
+							Icon(
+								painter = painterResource(R.drawable.open_in_new),
+								contentDescription = null
+							)
+						}
+						TextButton(
+							onClick = {
+								handler.openUri(patreonLink)
+							}
+						) {
+							Icon(
+								painter = painterResource(R.drawable.patreon),
+								contentDescription = null,
+								tint = Color.Unspecified,
+								modifier = Modifier
+									.size(24.dp)
+							)
+							Text(
+								text = stringResource(R.string.support),
+								style = MaterialTheme.typography.bodyLarge,
+								textDecoration = TextDecoration.Underline,
+								modifier = Modifier
+									.padding(horizontal = 8.dp)
+							)
+							Icon(
+								painter = painterResource(R.drawable.open_in_new),
+								contentDescription = null
+							)
+						}
+						Spacer(modifier = Modifier.weight(1f))
+						Row(
+							verticalAlignment = Alignment.CenterVertically
+						) {
+							Text(
+								text = stringResource(R.string.logo),
+								style = MaterialTheme.typography.bodyLarge
+							)
+							TextButton(
+								onClick = {
+									handler.openUri(portfolioLink)
+								}
+							) {
 								Text(
-									text = stringResource(R.string.source_code),
-									style = MaterialTheme.typography.bodyLarge,
+									text = stringResource(R.string.designer),
 									textDecoration = TextDecoration.Underline,
-									modifier = Modifier
-										.padding(end = 4.dp)
+									style = MaterialTheme.typography.bodyLarge
 								)
 								Icon(
 									painter = painterResource(R.drawable.open_in_new),
@@ -460,14 +516,6 @@ fun SettingsScreen(
 								)
 							}
 						}
-						Spacer(modifier = Modifier.weight(1f))
-						Text(
-							text = stringResource(R.string.logo),
-							style = MaterialTheme.typography.bodyLarge,
-							textAlign = TextAlign.Center,
-							modifier = Modifier
-								.padding(8.dp)
-						)
 					}
 				}
 			}

@@ -61,9 +61,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import vadimerenkov.aucards.R
-import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.ui.AucardsTopBar
 import vadimerenkov.aucards.ui.ContentType
 import vadimerenkov.aucards.ui.SharedContentStateKey
@@ -74,6 +72,7 @@ private const val TAG = "ListScreen"
 
 @Composable
 fun ListScreen(
+	viewModel: ListViewModel,
 	onCardClicked: (Int) -> Unit,
 	onCardEditClicked: (Int) -> Unit,
 	onAddButtonClicked: (Int) -> Unit,
@@ -82,9 +81,7 @@ fun ListScreen(
 	sharedTransitionScope: SharedTransitionScope,
 	isWideScreen: Boolean,
 	snackbar: SnackbarHostState,
-	modifier: Modifier = Modifier,
-	initialPage: Int = 0,
-	viewModel: ListViewModel = viewModel(factory = ViewModelFactory.Factory(initialPage = initialPage))
+	modifier: Modifier = Modifier
 ) {
 	val listState by viewModel.listState.collectAsState()
 	val context = LocalContext.current
@@ -102,7 +99,11 @@ fun ListScreen(
 	if (deleteConfirmationOpen) {
 		AlertDialog(
 			onDismissRequest = { deleteConfirmationOpen = false },
-			text = { Text(pluralStringResource(R.plurals.delete_confirmation, listState.selectedList.size, listState.selectedList.size)) },
+			text = {
+				Text(
+					text = pluralStringResource(R.plurals.delete_confirmation, listState.selectedList.size, listState.selectedList.size)
+				)
+		    },
 			dismissButton = {
 				TextButton(
 					onClick = { deleteConfirmationOpen = false }
@@ -341,9 +342,6 @@ fun ListScreen(
 									.wrapContentSize()
 							)
 						}
-						listState.list.isEmpty() -> {
-							PromptText(text = stringResource(R.string.empty_list_prompt))
-						}
 						else -> {
 							val lazyGridState = rememberLazyGridState()
 							GridOfCards(
@@ -370,6 +368,16 @@ fun ListScreen(
 								},
 								lazyGridState = lazyGridState
 							)
+							if (page == 0 && listState.list.isEmpty()) {
+								PromptText(
+									text = stringResource(R.string.empty_list_prompt)
+								)
+							}
+							if (page == 1 && listState.favouritesList.isEmpty()) {
+								PromptText(
+									text = stringResource(R.string.add_to_fav_prompt)
+								)
+							}
 						}
 					}
 				}

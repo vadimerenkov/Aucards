@@ -1,14 +1,6 @@
 package vadimerenkov.aucards
 
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.CreationExtras
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import androidx.media3.exoplayer.ExoPlayer
-import vadimerenkov.aucards.screens.fullscreencard.CardViewModel
-import vadimerenkov.aucards.screens.list.ListViewModel
-import vadimerenkov.aucards.screens.settings.SettingsViewModel
-
+/*
 object ViewModelFactory {
 	fun Factory(
 		isDarkTheme: Boolean = false,
@@ -43,3 +35,5 @@ object ViewModelFactory {
 fun CreationExtras.app(): AucardsApplication {
 	return this[APPLICATION_KEY] as AucardsApplication
 }
+
+ */
