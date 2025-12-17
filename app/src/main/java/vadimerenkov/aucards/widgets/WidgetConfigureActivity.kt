@@ -31,11 +31,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.appwidget.GlanceAppWidgetManager
-import androidx.glance.appwidget.updateAll
 import kotlinx.coroutines.flow.first
-import vadimerenkov.aucards.AucardsApplication
+import org.koin.compose.koinInject
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.data.Aucard
+import vadimerenkov.aucards.data.AucardDao
 import vadimerenkov.aucards.ui.calculateContentColor
 import vadimerenkov.aucards.ui.theme.AucardsTheme
 
@@ -54,14 +54,12 @@ class WidgetConfigureActivity : ComponentActivity() {
 
 		setResult(RESULT_CANCELED)
 
-		val app = this.application as AucardsApplication
-		val database = app.database.aucardDao()
-
 		setContent {
+			val dao = koinInject<AucardDao>()
 			var items: List<Aucard> by remember { mutableStateOf(emptyList()) }
 
 			LaunchedEffect(true) {
-				items = database.getAllCards().first()
+				items = dao.getAllCards().first()
 				println(items)
 			}
 
@@ -91,7 +89,6 @@ class WidgetConfigureActivity : ComponentActivity() {
 							) { card ->
 								ElevatedCard(
 									onClick = {
-										CardWidget().updateAll(this)
 										val resultValue = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
 										setResult(RESULT_OK, resultValue)
 										finish()

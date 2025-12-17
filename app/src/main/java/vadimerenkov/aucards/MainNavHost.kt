@@ -18,6 +18,8 @@ import androidx.navigation.toRoute
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import vadimerenkov.aucards.screens.fullscreencard.CardFullscreen
 import vadimerenkov.aucards.screens.fullscreencard.EditScreen
 import vadimerenkov.aucards.screens.list.ListScreen
@@ -66,10 +68,10 @@ fun MainNavHost(
 			navController = navController,
 			startDestination = ListScreen(0)
 		) {
-			composable<ListScreen> {
-				val route = it.toRoute<ListScreen>()
+			composable<ListScreen> { entry ->
+				val route = entry.toRoute<ListScreen>()
 				ListScreen(
-					initialPage = route.page,
+					viewModel = koinViewModel { parametersOf(route.page) },
 					onCardClicked = { navController.navigate(FullscreenCard(it)) },
 					onAddButtonClicked = { navController.navigate(EditScreen(0, index = it)) },
 					onCardEditClicked = { navController.navigate(EditScreen(it)) },
@@ -83,19 +85,21 @@ fun MainNavHost(
 			composable<FullscreenCard> {
 				val route = it.toRoute<FullscreenCard>()
 				CardFullscreen(
+					viewModel = koinViewModel { parametersOf(
+						route.id, isDarkTheme
+					) },
 					onBackClicked = { navController.navigateUp() },
 					scope = this,
-					id = route.id
 				)
 			}
 			composable<EditScreen> {
 				val route = it.toRoute<EditScreen>()
 				EditScreen(
-					isDarkTheme = isDarkTheme,
+					viewModel = koinViewModel {
+						parametersOf(isDarkTheme, route.id, route.index)
+					},
 					onBackClicked = { navController.navigateUp() },
 					scope = this,
-					id = route.id,
-					index = route.index,
 					isWideScreen = isWideScreen
 				)
 			}

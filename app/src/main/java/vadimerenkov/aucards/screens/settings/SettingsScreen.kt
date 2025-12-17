@@ -67,12 +67,12 @@ import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.androidx.compose.koinViewModel
 import vadimerenkov.aucards.BuildConfig
 import vadimerenkov.aucards.R
-import vadimerenkov.aucards.ViewModelFactory
 import vadimerenkov.aucards.ui.verticalScrollbar
 import java.time.LocalDateTime
+import java.time.Year
 import java.time.format.DateTimeFormatter
 
 private const val TAG = "SettingsScreen"
@@ -84,9 +84,10 @@ fun SettingsScreen(
 	isWideScreen: Boolean,
 	snackbar: SnackbarHostState,
 	modifier: Modifier = Modifier,
-	viewModel: SettingsViewModel = viewModel(factory = ViewModelFactory.Factory())
+	viewModel: SettingsViewModel = koinViewModel()
 ) {
 	val context = LocalContext.current
+	val year = if (Year.now() > Year.of(2025)) "2025–${Year.now()}" else "2025"
 	val version = if (BuildConfig.DEBUG) BuildConfig.VERSION_NAME + "-debug" else BuildConfig.VERSION_NAME
 	val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -438,7 +439,7 @@ fun SettingsScreen(
 						val portfolioLink = stringResource(R.string.portfolio_link)
 
 						Text(
-							text = stringResource(R.string.about, version),
+							text = stringResource(R.string.about, year, version),
 							style = MaterialTheme.typography.bodyLarge,
 							textAlign = TextAlign.Center,
 							modifier = Modifier

@@ -107,6 +107,9 @@ dependencies {
 	//Reorderable by Calvin-LL
 	implementation(libs.reorderable)
 
+	//Koin
+	implementation(libs.bundles.koin)
+
 	testImplementation(libs.junit)
 	testImplementation(libs.androidx.truth)
 	testImplementation(libs.turbine)
