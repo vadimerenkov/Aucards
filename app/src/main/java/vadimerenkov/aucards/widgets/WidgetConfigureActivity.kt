@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.data.Aucard
@@ -45,18 +47,21 @@ class WidgetConfigureActivity : ComponentActivity() {
 		super.onCreate(savedInstanceState)
 		enableEdgeToEdge()
 
-		GlanceAppWidgetManager(this)
+		val manager = GlanceAppWidgetManager(this)
 
 		val widgetId = intent?.extras?.getInt(
 			AppWidgetManager.EXTRA_APPWIDGET_ID,
 			AppWidgetManager.INVALID_APPWIDGET_ID
 		) ?: AppWidgetManager.INVALID_APPWIDGET_ID
 
+		val glanceId = manager.getGlanceIdBy(widgetId)
+
 		setResult(RESULT_CANCELED)
 
 		setContent {
 			val dao = koinInject<AucardDao>()
 			var items: List<Aucard> by remember { mutableStateOf(emptyList()) }
+			val scope = rememberCoroutineScope()
 
 			LaunchedEffect(true) {
 				items = dao.getAllCards().first()
@@ -89,9 +94,14 @@ class WidgetConfigureActivity : ComponentActivity() {
 							) { card ->
 								ElevatedCard(
 									onClick = {
-										val resultValue = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-										setResult(RESULT_OK, resultValue)
-										finish()
+										scope.launch {
+											val widget = CardWidget()
+											widget.cardId = card.id
+											widget.update(this@WidgetConfigureActivity, glanceId)
+											val resultValue = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+											setResult(RESULT_OK, resultValue)
+											finish()
+										}
 									},
 									colors = CardDefaults.cardColors(
 										containerColor = card.color
