@@ -7,7 +7,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,11 +29,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.appwidget.GlanceAppWidgetManager
+import coil3.compose.AsyncImage
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -98,7 +103,9 @@ class WidgetConfigureActivity : ComponentActivity() {
 											val widget = CardWidget()
 											widget.cardId = card.id
 											widget.update(this@WidgetConfigureActivity, glanceId)
-											val resultValue = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+											val resultValue = Intent()
+												.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
+												.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 											setResult(RESULT_OK, resultValue)
 											finish()
 										}
@@ -109,13 +116,26 @@ class WidgetConfigureActivity : ComponentActivity() {
 									modifier = Modifier
 										.heightIn(max = 100.dp)
 								) {
-									Text(
-										text = card.text,
-										color = calculateContentColor(card.color),
-										modifier = Modifier
-											.fillMaxSize()
-											.wrapContentSize()
-									)
+									Box(
+										contentAlignment = Alignment.Center
+									) {
+										card.imagePath?.let { uri ->
+											AsyncImage(
+												model = uri,
+												contentDescription = null,
+												contentScale = ContentScale.Crop
+											)
+										}
+										Text(
+											text = card.text,
+											color = calculateContentColor(card.color),
+											modifier = Modifier
+												.fillMaxSize()
+												.wrapContentSize()
+												.background(card.color.copy(alpha = 0.6f))
+												.padding(16.dp)
+										)
+									}
 								}
 							}
 						}
