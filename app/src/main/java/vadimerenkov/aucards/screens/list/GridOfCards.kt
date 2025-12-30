@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,7 +29,6 @@ import vadimerenkov.aucards.data.Aucard
 @Composable
 internal fun GridOfCards(
 	items: List<Aucard>,
-	selectedList: List<Int>,
 	animatedVisibilityScope: AnimatedVisibilityScope,
 	sharedTransitionScope: SharedTransitionScope,
 	onCardClick: (Int) -> Unit,
@@ -38,8 +38,9 @@ internal fun GridOfCards(
 	onSelect: (Int) -> Unit,
 	onDeselect: (Int) -> Unit,
 	onDragStopped: (List<Aucard>) -> Unit,
-	lazyGridState: LazyGridState,
-	modifier: Modifier = Modifier
+	modifier: Modifier = Modifier,
+	selectedList: List<Int> = emptyList(),
+	lazyGridState: LazyGridState = rememberLazyGridState()
 ) {
 
 	var list by remember { mutableStateOf(items) }

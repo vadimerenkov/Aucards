@@ -9,7 +9,9 @@ import androidx.appcompat.app.AppCompatDelegate.setApplicationLocales
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
+import org.koin.compose.koinInject
+import vadimerenkov.aucards.data.AucardDao
+import vadimerenkov.aucards.screens.settings.Settings
 import vadimerenkov.aucards.screens.settings.Theme
 import vadimerenkov.aucards.ui.theme.AucardsTheme
 
@@ -22,9 +24,10 @@ class MainActivity : AppCompatActivity() {
 
 		enableEdgeToEdge()
 		setContent {
-			val app = this.application as AucardsApplication
-			val theme_string by app.settings.themeSetting.collectAsStateWithLifecycle("")
-			val materialYou by app.settings.materialYou.collectAsStateWithLifecycle(false)
+			val settings = koinInject<Settings>()
+			val dao = koinInject<AucardDao>()
+			val theme_string by settings.themeSetting.collectAsStateWithLifecycle("")
+			val materialYou by settings.materialYou.collectAsStateWithLifecycle(false)
 
 			val isDarkTheme = when (theme_string) {
 				Theme.LIGHT.name -> false
@@ -34,12 +37,15 @@ class MainActivity : AppCompatActivity() {
 
 			val isDynamicTheme = materialYou == true
 
+			/*
 			if (BuildConfig.DEBUG) {
 				SetInitialState(
 					scope = lifecycleScope,
-					dao = app.database.aucardDao()
+					dao = dao
 				)
 			}
+
+			 */
 
 			AucardsTheme(
 				darkTheme = isDarkTheme,
