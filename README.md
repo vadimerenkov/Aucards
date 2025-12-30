@@ -6,7 +6,7 @@
 
 Aucards is a free and open-source app where you can create colorful communication cards to help you communicate with others.
 
-App is based on the concept of "autistic cards", which people with special needs use to quickly communicate their feelings, their requests or inform others of their conditions.
+App is based on the concept of "communication cards", which people with special needs use to quickly communicate their feelings, their requests or inform others of their conditions.
 
 If you've ever experienced the need to say something when you couldn't, for example, in a moment of autistic shutdown, when you are too overwhelmed to speak, then this app is for you.
 It is designed to be as frictionless as possible to minimize the effort needed to express what you feel right now.
@@ -66,7 +66,7 @@ Who can benefit from this app:
 
 - categories
 
-- widgets for your most used cards
+- widgets for your most used cards ✅
 
 ## Used libraries
 
@@ -84,6 +84,6 @@ The code of Aucards is distributed under GPL-3.0 license.
 
 2025 © [Vadim Erenkov](https://github.com/vadimerenkov) 
 
-Logo design: Olga Prilutskaia
+Logo design: [Olga Prilutskaia](https://readymag.website/u257758645/5213733/)
 
 </div>
