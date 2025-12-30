@@ -7,8 +7,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.createdAtStart
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.module.dsl.withOptions
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import vadimerenkov.aucards.DefaultDispatchers
@@ -21,12 +23,12 @@ import vadimerenkov.aucards.screens.settings.Settings
 import vadimerenkov.aucards.screens.settings.SettingsViewModel
 
 val appModule = module {
-	single { AucardsDatabase.getDatabase(androidContext()) }
-	single { get<AucardsDatabase>().aucardDao() }
+	single { AucardsDatabase.getDatabase(androidContext()) }.withOptions { createdAtStart() }
+	single { get<AucardsDatabase>().aucardDao() }.withOptions { createdAtStart() }
 	single { CoroutineScope(Dispatchers.Default + SupervisorJob()) }
 	single<DataStore<Preferences>> { androidContext().dataStore }
-	single { ExoPlayer.Builder(androidContext()).build() }
 
+	factory { ExoPlayer.Builder(androidContext()).build() }
 	factory { DefaultDispatchers() }.bind<DispatchersProvider>()
 
 	singleOf(::Settings)

@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatDelegate.setApplicationLocales
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import org.koin.compose.koinInject
 import vadimerenkov.aucards.data.AucardDao
 import vadimerenkov.aucards.screens.settings.Settings
@@ -38,12 +37,15 @@ class MainActivity : AppCompatActivity() {
 
 			val isDynamicTheme = materialYou == true
 
+			/*
 			if (BuildConfig.DEBUG) {
 				SetInitialState(
 					scope = lifecycleScope,
 					dao = dao
 				)
 			}
+
+			 */
 
 			AucardsTheme(
 				darkTheme = isDarkTheme,

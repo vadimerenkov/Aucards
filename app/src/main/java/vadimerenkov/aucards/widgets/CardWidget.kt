@@ -1,15 +1,17 @@
 package vadimerenkov.aucards.widgets
 
 import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.core.net.toUri
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -19,41 +21,44 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import kotlinx.coroutines.flow.first
-import org.koin.compose.koinInject
+import org.koin.core.context.GlobalContext.get
+import vadimerenkov.aucards.MainActivity
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardDao
 import vadimerenkov.aucards.ui.calculateContentColor
 
 class CardWidget: GlanceAppWidget() {
 
-	var cardId: Int = 0
+	var cardId: Int by mutableStateOf(0)
 
 	override suspend fun provideGlance(
 		context: Context,
 		id: GlanceId
 	) {
+		val dao: AucardDao = get().get()
+		val card = dao.getAucardByID(cardId).first()
 		provideContent {
-			WidgetCard(cardId)
+			WidgetCard(card, context)
 		}
 	}
 }
 
 @Composable
 private fun WidgetCard(
-	cardId: Int
+	card: Aucard,
+	context: Context
 ) {
-	val dao = koinInject<AucardDao>()
-	var card by remember { mutableStateOf(Aucard(text = "")) }
-
-	LaunchedEffect(cardId) {
-		card = dao.getAucardByID(cardId).first()
+	val activityIntent = Intent(context, MainActivity::class.java).apply {
+		data = "vadimerenkov://aucards/${card.id}".toUri()
 	}
-
 	Box(
 		contentAlignment = Alignment.Center,
 		modifier = GlanceModifier
 			.fillMaxSize()
 			.background(card.color)
+			.clickable(
+				onClick = actionStartActivity(activityIntent)
+			)
 	) {
 		Text(
 			text = card.text,

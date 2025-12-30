@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import androidx.window.core.layout.WindowWidthSizeClass
 import kotlinx.coroutines.launch
@@ -82,7 +83,13 @@ fun MainNavHost(
 					snackbar = snackbarHost
 				)
 			}
-			composable<FullscreenCard> {
+			composable<FullscreenCard>(
+				deepLinks = listOf(
+					navDeepLink<FullscreenCard>(
+						basePath = "vadimerenkov://aucards"
+					)
+				)
+			) {
 				val route = it.toRoute<FullscreenCard>()
 				CardFullscreen(
 					viewModel = koinViewModel { parametersOf(
