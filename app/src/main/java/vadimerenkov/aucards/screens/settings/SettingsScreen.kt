@@ -107,8 +107,10 @@ fun SettingsScreen(
 		val observer = LifecycleEventObserver { _, event ->
 			if (event == Lifecycle.Event.ON_RESUME) {
 				if (viewModel.hasPermission(context)) {
-					viewModel.saveBrightnessSetting(true)
-					showBrightnessContext = false
+					if (didWeClickOnBrightness) {
+						viewModel.saveBrightnessSetting(true)
+						showBrightnessContext = false
+					}
 				} else {
 					if (didWeClickOnBrightness) {
 						showBrightnessContext = true
