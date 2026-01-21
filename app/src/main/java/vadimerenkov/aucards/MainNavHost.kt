@@ -8,6 +8,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
@@ -21,6 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
+import vadimerenkov.aucards.data.CardCategory
 import vadimerenkov.aucards.screens.fullscreencard.CardFullscreen
 import vadimerenkov.aucards.screens.fullscreencard.EditScreen
 import vadimerenkov.aucards.screens.list.ListScreen
@@ -60,6 +63,8 @@ fun MainNavHost(
 		}
 		val snackbarHost = remember { SnackbarHostState() }
 		val scope = rememberCoroutineScope()
+		val categories by remember { mutableStateOf(emptyList<CardCategory>()) }
+
 		ObserveAsEvents(SnackbarController.events) { event ->
 			scope.launch {
 				snackbarHost.showSnackbar(event)

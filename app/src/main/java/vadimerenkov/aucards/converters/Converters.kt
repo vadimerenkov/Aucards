@@ -38,4 +38,18 @@ class Converters {
 	fun offsetToLong(offset: Offset): Long {
 		return offset.packedValue
 	}
+
+	@TypeConverter
+	fun categoryIdsToString(ids: List<Int>): String {
+		return ids.joinToString(
+			separator = ","
+		)
+	}
+
+	@TypeConverter
+	fun stringToCategoryIds(string: String): List<Int> {
+		return string
+			.split(',')
+			.mapNotNull { it.toIntOrNull() }
+	}
 }

@@ -17,6 +17,7 @@ data class Aucard(
 	@ColumnInfo(defaultValue = "false") val isFavourite: Boolean = false,
 	val description: String? = null,
 	val color: Color = Color.White,
+	@ColumnInfo(defaultValue = "") val categories: List<Int> = emptyList(),
 	@ColumnInfo(defaultValue = "57") val titleFontSize: Int = 57,
 	@ColumnInfo(defaultValue = "24") val descriptionFontSize: Int = 24,
 	@ColumnInfo(defaultValue = "TITLE_SUBTITLE") val layout: CardLayout = CardLayout.TITLE_SUBTITLE,

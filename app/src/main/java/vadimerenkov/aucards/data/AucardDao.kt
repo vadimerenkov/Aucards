@@ -24,4 +24,11 @@ interface AucardDao {
 
 	@Query("SELECT * FROM aucard WHERE isFavourite = 1 ORDER BY `index`")
 	fun getFavouriteCards(): Flow<List<Aucard>>
+
+
+	@Upsert
+	suspend fun saveCategory(category: CardCategory)
+
+	@Query("SELECT * FROM cardcategory ORDER BY `index`")
+	fun getAllCategories(): Flow<List<CardCategory>>
 }

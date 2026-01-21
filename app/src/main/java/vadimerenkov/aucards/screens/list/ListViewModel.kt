@@ -17,6 +17,7 @@ import vadimerenkov.aucards.DispatchersProvider
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardDao
+import vadimerenkov.aucards.data.CardCategory
 import vadimerenkov.aucards.ui.SnackbarController
 import vadimerenkov.aucards.ui.getPluralString
 
@@ -38,6 +39,11 @@ class ListViewModel(
 		aucardDao.getFavouriteCards()
 			.onEach { list ->
 				list_state.update { it.copy(favouritesList = list) }
+			}.launchIn(viewModelScope)
+
+		aucardDao.getAllCategories()
+			.onEach { list ->
+				list_state.update { it.copy(categories = list) }
 			}.launchIn(viewModelScope)
 	}
 	val listState = list_state
@@ -116,12 +122,41 @@ class ListViewModel(
 			}
 		exitSelectMode()
 	}
+
+	fun enterNewCategoryName(name: String) {
+		list_state.update { it.copy(newCategoryName = name) }
+	}
+
+	fun createNewCategory() {
+		val category = CardCategory(
+			name = listState.value.newCategoryName,
+			index = listState.value.categories.size + 1
+		)
+		viewModelScope.launch {
+			aucardDao.saveCategory(category)
+		}
+		list_state.update { it.copy(
+			newCategoryName = ""
+		) }
+	}
+
+	fun selectCategory(category: CardCategory?) {
+		list_state.update { it.copy(selectedCategory = category) }
+	}
+
+	fun updateCategories(categories: List<Int>) {
+		val card = listState.value.selectedCards.first()
+		saveAucard(card.copy(categories = categories))
+	}
 }
 
 data class ListState(
 	val list: List<Aucard> = emptyList(),
 	val selectedList: List<Int> = emptyList(),
 	val favouritesList: List<Aucard> = emptyList(),
+	val categories: List<CardCategory> = emptyList(),
+	val selectedCategory: CardCategory? = null,
+	val newCategoryName: String = "",
 	val currentPage: Int,
 	val isLoading: Boolean = true,
 	val isSelectMode: Boolean = false

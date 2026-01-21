@@ -55,6 +55,11 @@
     <string name="image_error">Не удалось сохранить фото. Код ошибки: %d</string>
     <string name="copy_selected">Скопировать выбранные карточки</string>
     <string name="support">Поддержать разработчика: </string>
+    <string name="open_menu">Открыть меню</string>
+    <string name="choose_categories">Выбрать категории</string>
+    <string name="new_category">Новая категория</string>
+    <string name="all">Все</string>
+    <string name="category_name">Название категории</string>
 
 
     <plurals name="import_success">

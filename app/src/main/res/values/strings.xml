@@ -84,4 +84,9 @@
         <item quantity="other">Are you sure you want to delete %s cards?</item>
     </plurals>
     <string name="title_activity_widget_configure">WidgetConfigureActivity</string>
+    <string name="open_menu">Open menu</string>
+    <string name="choose_categories">Choose categories</string>
+    <string name="new_category">New category</string>
+    <string name="all">All</string>
+    <string name="category_name">Category name</string>
 </resources>

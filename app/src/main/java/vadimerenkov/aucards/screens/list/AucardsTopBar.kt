@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package vadimerenkov.aucards.ui
+package vadimerenkov.aucards.screens.list
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -14,9 +14,10 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,7 +40,8 @@ fun AucardsTopBar(
 	selectedNumber: Int,
 	onDeleteClick: () -> Unit,
 	onEditClick: () -> Unit,
-	onSettingsClick: () -> Unit,
+	onDrawerClick: () -> Unit,
+	onCategoryClick: () -> Unit,
 	onDuplicateClick: () -> Unit,
 	isEditEnabled: Boolean = true,
 	isSelectMode: Boolean = false,
@@ -47,10 +49,10 @@ fun AucardsTopBar(
 	isShowingSettingsButton: Boolean = true
 ) {
 	val delete_color by animateColorAsState(
-		if (isDeleteEnabled) MaterialTheme.colorScheme.onPrimaryContainer else Color.Companion.Gray
+		if (isDeleteEnabled) MaterialTheme.colorScheme.onPrimaryContainer else Color.Gray
 	)
 	val edit_color by animateColorAsState(
-		if (isEditEnabled) MaterialTheme.colorScheme.onPrimaryContainer else Color.Companion.Gray
+		if (isEditEnabled) MaterialTheme.colorScheme.onPrimaryContainer else Color.Gray
 	)
 	TopAppBar(
 		title = {
@@ -101,11 +103,11 @@ fun AucardsTopBar(
 		navigationIcon = {
 			if (isShowingSettingsButton) {
 				IconButton(
-					onClick = onSettingsClick
+					onClick = onDrawerClick
 				) {
 					Icon(
-						imageVector = Icons.Default.Settings,
-						contentDescription = stringResource(R.string.open_settings),
+						imageVector = Icons.Default.Menu,
+						contentDescription = stringResource(R.string.open_menu),
 						tint = MaterialTheme.colorScheme.onPrimaryContainer
 					)
 				}
@@ -158,6 +160,18 @@ fun AucardsTopBar(
 						Icon(
 							imageVector = Icons.Default.Edit,
 							contentDescription = stringResource(R.string.edit)
+						)
+					}
+					IconButton(
+						enabled = isEditEnabled,
+						onClick = onCategoryClick,
+						colors = IconButtonDefaults.iconButtonColors(
+							contentColor = edit_color
+						)
+					) {
+						Icon(
+							imageVector = Icons.AutoMirrored.Filled.List,
+							contentDescription = stringResource(R.string.choose_categories)
 						)
 					}
 				}

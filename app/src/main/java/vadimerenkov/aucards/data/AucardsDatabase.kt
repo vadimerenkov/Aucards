@@ -11,16 +11,18 @@ import androidx.room.migration.AutoMigrationSpec
 import vadimerenkov.aucards.converters.Converters
 
 @Database(
-	entities = [Aucard::class],
+	entities = [Aucard::class,
+		CardCategory::class],
 	exportSchema = true,
-	version = 6,
+	version = 7,
 	autoMigrations = [
 		AutoMigration(2, 3,
 			spec = AucardsDatabase.Migrations::class
 		),
 		AutoMigration(3, 4),
 		AutoMigration(4, 5),
-		AutoMigration(5, 6)
+		AutoMigration(5, 6),
+		AutoMigration(6, 7)
 	]
 )
 @TypeConverters(Converters::class)
