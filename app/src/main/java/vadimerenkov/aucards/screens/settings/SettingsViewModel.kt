@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 import vadimerenkov.aucards.R
 import vadimerenkov.aucards.data.Aucard
 import vadimerenkov.aucards.data.AucardsDatabase
+import vadimerenkov.aucards.data.CardCategory
 import vadimerenkov.aucards.data.CardLayout
 import vadimerenkov.aucards.ui.SnackbarController
 import vadimerenkov.aucards.ui.code
@@ -281,6 +282,8 @@ class SettingsViewModel(
 				}
 
 				val cards = mutableListOf<Aucard>()
+				val categories = mutableListOf<CardCategory>()
+				var index = database.aucardDao().getAllCategories().first().size
 
 				SQLiteDatabase
 					.openDatabase(dbFile.path, null, SQLiteDatabase.OPEN_READONLY)
@@ -289,17 +292,32 @@ class SettingsViewModel(
 							.use { cursor ->
 								if (cursor.moveToFirst()) {
 									do {
-										val card =
-											importCard(cursor).copy(index = current_index + 1)
+										val card = importCard(cursor).copy(index = current_index + 1)
 										cards.add(card)
 										current_index++
 
 									} while (cursor.moveToNext())
 								}
 							}
+						database.rawQuery("SELECT * FROM cardcategory", null)
+							.use { cursor ->
+								if (cursor.moveToFirst()) {
+									do {
+										val name = cursor.getColumnIndex("name")
+										val name_value = cursor.getString(name)
+										val category = CardCategory(name = name_value, index = index + 1)
+										index++
+										categories.add(category)
+									} while (cursor.moveToNext())
+								}
+							}
 					}
 
 				database.aucardDao().saveAllCards(cards)
+				categories.forEach {
+					database.aucardDao().saveCategory(it)
+				}
+
 				val message = context.getPluralString(R.plurals.import_success, cards.size, cards.size)
 				SnackbarController.send(message)
 				dbFile.delete()
