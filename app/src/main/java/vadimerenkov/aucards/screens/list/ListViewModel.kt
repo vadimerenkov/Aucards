@@ -140,8 +140,31 @@ class ListViewModel(
 		) }
 	}
 
+	suspend fun saveCategories(categories: List<CardCategory>) {
+		categories.forEach {
+			aucardDao.saveCategory(it)
+			Log.i(TAG, "Saved category $it")
+		}
+	}
+
 	fun selectCategory(category: CardCategory?) {
 		list_state.update { it.copy(selectedCategory = category) }
+	}
+
+	fun deleteCategory(category: CardCategory) {
+		val cards = listState.value.list
+			.filter { it.categories.contains(category.id) }
+			.map { it.copy(categories = it.categories.minus(category.id)) }
+		viewModelScope.launch {
+			aucardDao.deleteCategory(category)
+			aucardDao.saveAllCards(cards)
+		}
+	}
+
+	fun renameCategory(category: CardCategory, name: String) {
+		viewModelScope.launch {
+			aucardDao.saveCategory(category.copy(name = name))
+		}
 	}
 
 	fun updateCategories(categories: List<Int>) {

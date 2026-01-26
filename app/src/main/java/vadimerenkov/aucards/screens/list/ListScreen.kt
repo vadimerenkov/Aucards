@@ -14,7 +14,6 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,9 +24,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
@@ -43,12 +40,10 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.NavigationRailItemDefaults
@@ -57,7 +52,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -104,7 +98,6 @@ fun ListScreen(
 	val listState by viewModel.listState.collectAsStateWithLifecycle()
 	val context = LocalContext.current
 	var deleteConfirmationOpen by remember { mutableStateOf(false) }
-	var newCategoryDialogOpen by remember { mutableStateOf(false) }
 	var chooseCategoriesDialogOpen by remember { mutableStateOf(false) }
 
 	// Set screen orientation back to user-specified.
@@ -152,44 +145,6 @@ fun ListScreen(
 			},
 			shape = MaterialTheme.shapes.medium
 		)
-	}
-
-	if (newCategoryDialogOpen) {
-		Dialog(
-			onDismissRequest = { newCategoryDialogOpen = false }
-		) {
-			Column(
-				verticalArrangement = Arrangement.spacedBy(16.dp),
-				modifier = Modifier
-					.clip(MaterialTheme.shapes.medium)
-					.background(MaterialTheme.colorScheme.background)
-					.padding(16.dp)
-			) {
-				Text(
-					text = stringResource(R.string.new_category),
-					fontSize = 18.sp
-				)
-				TextField(
-					value = listState.newCategoryName,
-					onValueChange = viewModel::enterNewCategoryName,
-					placeholder = {
-						Text(
-							text = stringResource(R.string.category_name)
-						)
-					}
-				)
-				Button(
-					shape = MaterialTheme.shapes.medium,
-					onClick = viewModel::createNewCategory,
-					modifier = Modifier
-						.align(Alignment.End)
-				) {
-					Text(
-						text = stringResource(R.string.save)
-					)
-				}
-			}
-		}
 	}
 
 	if (chooseCategoriesDialogOpen) {
@@ -342,82 +297,30 @@ fun ListScreen(
 		ModalNavigationDrawer(
 			drawerState = drawerState,
 			drawerContent = {
-				ModalDrawerSheet() {
-					NavigationDrawerItem(
-						label = {
-							val string = stringResource(R.string.all)
-							Text(
-								text = "$string (${listState.list.size})"
-							)
-						},
-						onClick = {
-							scope.launch {
-								drawerState.close()
-							}
-							viewModel.selectCategory(null)
-						},
-						selected = listState.selectedCategory == null
-					)
-					LazyColumn(
-
-					) {
-						items(
-							items = listState.categories
-						) { category ->
-							NavigationDrawerItem(
-								label = {
-									Text(
-										text = "${category.name} (${listState.list.count { it.categories.contains(category.id) }})"
-									)
-								},
-								onClick = {
-									scope.launch {
-										drawerState.close()
-									}
-									viewModel.selectCategory(category)
-								},
-								selected = listState.selectedCategory == category
-							)
+				CategoriesDrawer(
+					listState = listState,
+					onCategoryClick = {
+						viewModel.selectCategory(it)
+						scope.launch {
+							drawerState.close()
+						}
+					},
+					onSettingsClick = {
+						onSettingsClicked()
+						scope.launch {
+							drawerState.close()
+						}
+					},
+					onNewCategoryClick = viewModel::createNewCategory,
+					onNewCategoryNameChange = viewModel::enterNewCategoryName,
+					onDeleteCategory = viewModel::deleteCategory,
+					onRenameCategory = viewModel::renameCategory,
+					onCategoriesReorder = {
+						this.launch {
+							viewModel.saveCategories(it)
 						}
 					}
-					NavigationDrawerItem(
-						icon = {
-							Icon(
-								imageVector = Icons.Default.Add,
-								contentDescription = null
-							)
-						},
-						label = {
-							Text(
-								text = stringResource(R.string.new_category)
-							)
-						},
-						onClick = { newCategoryDialogOpen = true },
-						selected = false
-					)
-					Spacer(modifier = Modifier.weight(1f))
-					NavigationDrawerItem(
-						icon = {
-							Icon(
-								imageVector = Icons.Default.Settings,
-								contentDescription = null
-							)
-						},
-						label = {
-							Text(
-								text = stringResource(R.string.settings)
-							)
-						},
-						onClick = {
-							scope.launch {
-								drawerState.close()
-							}
-							onSettingsClicked()
-
-						},
-						selected = false
-					)
-				}
+				)
 			}
 		) {
 			Scaffold(

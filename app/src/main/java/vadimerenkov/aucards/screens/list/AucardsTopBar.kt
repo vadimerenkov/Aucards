@@ -14,7 +14,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
@@ -170,7 +169,7 @@ fun AucardsTopBar(
 						)
 					) {
 						Icon(
-							imageVector = Icons.AutoMirrored.Filled.List,
+							painter = painterResource(R.drawable.tag),
 							contentDescription = stringResource(R.string.choose_categories)
 						)
 					}

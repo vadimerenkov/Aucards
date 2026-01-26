@@ -60,6 +60,9 @@
     <string name="new_category">Новая категория</string>
     <string name="all">Все</string>
     <string name="category_name">Название категории</string>
+    <string name="rename">Rename</string>
+    <string name="delete_category">Delete</string>
+    <string name="delete_category_confirmation">Are you sure you want to delete category \"%s\"? Cards in this category will not be deleted.</string>
 
 
     <plurals name="import_success">

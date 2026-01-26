@@ -1,6 +1,7 @@
 package vadimerenkov.aucards.data
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
@@ -28,6 +29,9 @@ interface AucardDao {
 
 	@Upsert
 	suspend fun saveCategory(category: CardCategory)
+
+	@Delete
+	suspend fun deleteCategory(category: CardCategory)
 
 	@Query("SELECT * FROM cardcategory ORDER BY `index`")
 	fun getAllCategories(): Flow<List<CardCategory>>
