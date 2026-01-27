@@ -45,7 +45,8 @@ fun AucardsTopBar(
 	isEditEnabled: Boolean = true,
 	isSelectMode: Boolean = false,
 	isDeleteEnabled: Boolean = true,
-	isShowingSettingsButton: Boolean = true
+	isShowingSettingsButton: Boolean = true,
+	titleText: String? = null
 ) {
 	val delete_color by animateColorAsState(
 		if (isDeleteEnabled) MaterialTheme.colorScheme.onPrimaryContainer else Color.Gray
@@ -80,7 +81,7 @@ fun AucardsTopBar(
 					when (currentPage) {
 						0 -> {
 							Text(
-								stringResource(R.string.app_name),
+								text = titleText ?: stringResource(R.string.app_name),
 								color = MaterialTheme.colorScheme.onPrimaryContainer
 							)
 						}

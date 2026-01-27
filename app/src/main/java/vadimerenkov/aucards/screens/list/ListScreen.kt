@@ -99,6 +99,7 @@ fun ListScreen(
 	val context = LocalContext.current
 	var deleteConfirmationOpen by remember { mutableStateOf(false) }
 	var chooseCategoriesDialogOpen by remember { mutableStateOf(false) }
+	var newCategoryDialogOpen by remember { mutableStateOf(false) }
 
 	// Set screen orientation back to user-specified.
 	val activity = LocalActivity.current
@@ -189,6 +190,20 @@ fun ListScreen(
 							text = category.name
 						)
 					}
+				}
+				TextButton(
+					onClick = {
+						newCategoryDialogOpen = true
+						chooseCategoriesDialogOpen = false
+					}
+				) {
+					Icon(
+						imageVector = Icons.Default.Add,
+						contentDescription = null
+					)
+					Text(
+						text = stringResource(R.string.new_category)
+					)
 				}
 				Button(
 					shape = MaterialTheme.shapes.medium,
@@ -311,7 +326,9 @@ fun ListScreen(
 							drawerState.close()
 						}
 					},
-					onNewCategoryClick = viewModel::createNewCategory,
+					onNewCategoryClick = {
+						viewModel.createNewCategory()
+					},
 					onNewCategoryNameChange = viewModel::enterNewCategoryName,
 					onDeleteCategory = viewModel::deleteCategory,
 					onRenameCategory = viewModel::renameCategory,
@@ -319,6 +336,13 @@ fun ListScreen(
 						this.launch {
 							viewModel.saveCategories(it)
 						}
+					},
+					newCategoryDialogOpen = newCategoryDialogOpen,
+					onDismissNewCategory = {
+						newCategoryDialogOpen = false
+					},
+					onAddCategoryClick = {
+						newCategoryDialogOpen = true
 					}
 				)
 			}
@@ -350,7 +374,8 @@ fun ListScreen(
 						isEditEnabled = listState.selectedList.size == 1,
 						isDeleteEnabled = listState.selectedList.isNotEmpty(),
 						currentPage = listState.currentPage,
-						isShowingSettingsButton = !isWideScreen
+						isShowingSettingsButton = !isWideScreen,
+						titleText = listState.selectedCategory?.name
 					)
 				},
 				snackbarHost = {

@@ -63,6 +63,7 @@
     <string name="rename">Переименовать</string>
     <string name="delete_category">Удалить</string>
     <string name="delete_category_confirmation">Вы уверены, что хотите удалить категорию \"%s\"? Карточки в этой категории не будут удалены.</string>
+    <string name="categories">Категории</string>
 
 
     <plurals name="import_success">

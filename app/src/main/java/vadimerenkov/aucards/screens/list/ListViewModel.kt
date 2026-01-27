@@ -159,6 +159,9 @@ class ListViewModel(
 			aucardDao.deleteCategory(category)
 			aucardDao.saveAllCards(cards)
 		}
+		if (listState.value.selectedCategory == category) {
+			list_state.update { it.copy(selectedCategory = null) }
+		}
 	}
 
 	fun renameCategory(category: CardCategory, name: String) {

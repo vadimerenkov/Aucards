@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +35,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,15 +50,17 @@ import vadimerenkov.aucards.data.CardCategory
 @Composable
 fun CategoriesDrawer(
 	listState: ListState,
+	newCategoryDialogOpen: Boolean = false,
+	onDismissNewCategory: () -> Unit,
 	onCategoryClick: (CardCategory?) -> Unit,
 	onSettingsClick: () -> Unit,
 	onCategoriesReorder: CoroutineScope.(List<CardCategory>) -> Unit,
 	onNewCategoryNameChange: (String) -> Unit,
 	onNewCategoryClick: () -> Unit,
+	onAddCategoryClick: () -> Unit,
 	onDeleteCategory: (CardCategory) -> Unit,
 	onRenameCategory: (CardCategory, String) -> Unit
 ) {
-	var newCategoryDialogOpen by remember { mutableStateOf(false) }
 	var deleteConfirmationOpen by remember { mutableStateOf(false) }
 	var renameDialogOpen by remember { mutableStateOf(false) }
 
@@ -64,8 +69,14 @@ fun CategoriesDrawer(
 
 	if (newCategoryDialogOpen) {
 		Dialog(
-			onDismissRequest = { newCategoryDialogOpen = false }
+			onDismissRequest = onDismissNewCategory
 		) {
+			val focusRequester = remember { FocusRequester() }
+
+			LaunchedEffect(true) {
+				focusRequester.requestFocus()
+			}
+
 			Column(
 				verticalArrangement = Arrangement.spacedBy(16.dp),
 				modifier = Modifier
@@ -84,13 +95,15 @@ fun CategoriesDrawer(
 						Text(
 							text = stringResource(R.string.category_name)
 						)
-					}
+					},
+					modifier = Modifier
+						.focusRequester(focusRequester)
 				)
 				Button(
 					shape = MaterialTheme.shapes.medium,
 					onClick = {
 						onNewCategoryClick()
-						newCategoryDialogOpen = false
+						onDismissNewCategory()
 					},
 					modifier = Modifier
 						.align(Alignment.End)
@@ -118,9 +131,9 @@ fun CategoriesDrawer(
 					text = stringResource(R.string.delete_category_confirmation, selectedCategory?.name ?: "NULL")
 				)
 				Row(
-					horizontalArrangement = Arrangement.SpaceBetween,
+					horizontalArrangement = Arrangement.spacedBy(16.dp),
 					modifier = Modifier
-						.fillMaxWidth()
+						.align(Alignment.End)
 				) {
 					TextButton(
 						onClick = {
@@ -155,6 +168,12 @@ fun CategoriesDrawer(
 		Dialog(
 			onDismissRequest = { renameDialogOpen = false }
 		) {
+			val focusRequester = remember { FocusRequester() }
+
+			LaunchedEffect(true) {
+				focusRequester.requestFocus()
+			}
+
 			Column(
 				verticalArrangement = Arrangement.spacedBy(16.dp),
 				modifier = Modifier
@@ -169,7 +188,9 @@ fun CategoriesDrawer(
 					value = textFieldName,
 					onValueChange = {
 						textFieldName = it
-					}
+					},
+					modifier = Modifier
+						.focusRequester(focusRequester)
 				)
 				Button(
 					shape = MaterialTheme.shapes.medium,
@@ -193,6 +214,12 @@ fun CategoriesDrawer(
 	}
 
 	ModalDrawerSheet() {
+		Text(
+			text = stringResource(R.string.categories),
+			fontSize = 24.sp,
+			modifier = Modifier
+				.padding(16.dp)
+		)
 		NavigationDrawerItem(
 			label = {
 				val string = stringResource(R.string.all)
@@ -230,6 +257,7 @@ fun CategoriesDrawer(
 					state = reorderableState,
 					key = { category.id }
 				) {
+					val cardsInCategory = listState.list.count { it.categories.contains(category.id) }
 					NavigationDrawerItem(
 						label = {
 							Row(
@@ -239,7 +267,7 @@ fun CategoriesDrawer(
 									.fillMaxWidth()
 							) {
 								Text(
-									text = "${category.name} (${listState.list.count { it.categories.contains(category.id) }})",
+									text = "${category.name} (${cardsInCategory})",
 									fontSize = 16.sp,
 									modifier = Modifier
 //									.longPressDraggableHandle(
@@ -272,7 +300,12 @@ fun CategoriesDrawer(
 											onClick = {
 												selectedCategory = category
 												menuOpen = false
-												deleteConfirmationOpen = true
+												if (cardsInCategory == 0) {
+													onDeleteCategory(category)
+													selectedCategory = null
+												} else {
+													deleteConfirmationOpen = true
+												}
 											}
 										)
 										DropdownMenuItem(
@@ -313,7 +346,7 @@ fun CategoriesDrawer(
 					fontSize = 16.sp
 				)
 			},
-			onClick = { newCategoryDialogOpen = true },
+			onClick = onAddCategoryClick,
 			selected = false
 		)
 		Spacer(modifier = Modifier.weight(1f))
