@@ -60,6 +60,7 @@ fun MainNavHost(
 		}
 		val snackbarHost = remember { SnackbarHostState() }
 		val scope = rememberCoroutineScope()
+
 		ObserveAsEvents(SnackbarController.events) { event ->
 			scope.launch {
 				snackbarHost.showSnackbar(event)
