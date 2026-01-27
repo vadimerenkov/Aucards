@@ -41,6 +41,32 @@
     <string name="two_halves">Dois títulos iguais</string>
     <string name="text_size">Tamanho do texto</string>
     <string name="layout">Organização</string>
+    <string name="change_image">Alterar imagem</string>
+    <string name="remove_image">Remover imagem</string>
+    <string name="opacity">Opacidade do fundo do texto:</string>
+    <string name="choose_image">Escolher imagem</string>
+    <string name="export_error">Não foi possível exportar os cartões. Código do erro: %d</string>
+    <string name="import_error">Não foi possível carregar os cartões. Código do erro: %d</string>
+    <string name="image_error">Não foi possível salvar a imagem. Código do erro: %d</string>
+    <string name="copy_selected">Duplicar cartões selecionados</string>
+    <string name="support">Apoie o desenvolvedor:</string>
+    <string name="choose_card">Escolha um cartão:</string>
+
+    <plurals name="import_success">
+        <item quantity="one">%d cartão importado com sucesso!</item>
+        <item quantity="many">%d de cartões importados com sucesso!</item>
+        <item quantity="other">%d cartões importados com sucesso!</item>
+    </plurals>
+    <plurals name="export_success">
+        <item quantity="one">%d cartão exportado com sucesso!</item>
+        <item quantity="many">%d de cartões exportados com sucesso!</item>
+        <item quantity="other">%d cartões exportados com sucesso!</item>
+    </plurals>
+    <plurals name="number_deleted">
+        <item quantity="one">%d cartão foi apagado.</item>
+        <item quantity="many">%d de cartões foram apagados.</item>
+        <item quantity="other">%d cartões foram apagados.</item>
+    </plurals>
     <plurals name="delete_confirmation">
         <item quantity="one">Tem certeza que quer apagar %d cartão?</item>
 	    <item quantity="many">Tem certeza que quer apagar %d de cartões?</item>
