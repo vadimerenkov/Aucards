@@ -64,7 +64,7 @@ Who can benefit from this app:
 
 - mark as favourites ✅
 
-- categories
+- categories ✅
 
 - widgets for your most used cards ✅
 
