@@ -51,6 +51,7 @@
     <string name="copy_selected">Duplicar cartões selecionados</string>
     <string name="support">Apoie o desenvolvedor:</string>
     <string name="choose_card">Escolha um cartão:</string>
+    <string name="categories">Categorias</string>
 
     <plurals name="import_success">
         <item quantity="one">%d cartão importado com sucesso!</item>
