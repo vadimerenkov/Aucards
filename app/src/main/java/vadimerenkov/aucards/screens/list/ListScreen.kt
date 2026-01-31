@@ -30,6 +30,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.AlertDialog
@@ -227,6 +228,47 @@ fun ListScreen(
 			}
 		}
 	}
+	val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+	val scope = rememberCoroutineScope()
+
+	ModalNavigationDrawer(
+		drawerState = drawerState,
+		drawerContent = {
+			CategoriesDrawer(
+				listState = listState,
+				onCategoryClick = {
+					viewModel.selectCategory(it)
+					scope.launch {
+						drawerState.close()
+					}
+				},
+				onSettingsClick = {
+					onSettingsClicked()
+					scope.launch {
+						drawerState.close()
+					}
+				},
+				onNewCategoryClick = {
+					viewModel.createNewCategory()
+				},
+				onNewCategoryNameChange = viewModel::enterNewCategoryName,
+				onDeleteCategory = viewModel::deleteCategory,
+				onRenameCategory = viewModel::renameCategory,
+				onCategoriesReorder = {
+					this.launch {
+						viewModel.saveCategories(it)
+					}
+				},
+				newCategoryDialogOpen = newCategoryDialogOpen,
+				onDismissNewCategory = {
+					newCategoryDialogOpen = false
+				},
+				onAddCategoryClick = {
+					newCategoryDialogOpen = true
+				}
+			)
+		}
+	) {
 
 	Row {
 		if (isWideScreen) {
@@ -234,6 +276,29 @@ fun ListScreen(
 				containerColor = MaterialTheme.colorScheme.primaryContainer,
 				contentColor = MaterialTheme.colorScheme.onPrimaryContainer
 			) {
+				NavigationRailItem(
+					selected = false,
+					onClick = {
+						scope.launch {
+							drawerState.open()
+						}
+					},
+					icon = {
+						Icon(
+							imageVector = Icons.Default.Menu,
+							contentDescription = null
+						)
+					},
+					label = {
+						Text(
+							text = stringResource(R.string.categories),
+							modifier = Modifier
+								.padding(horizontal = 8.dp)
+						)
+					},
+					modifier = Modifier
+						.displayCutoutPadding()
+				)
 				NavigationRailItem(
 					selected = listState.currentPage == 0,
 					onClick = { viewModel.turnPage(0) },
@@ -306,47 +371,7 @@ fun ListScreen(
 				)
 			}
 		}
-		val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-		val scope = rememberCoroutineScope()
 
-		ModalNavigationDrawer(
-			drawerState = drawerState,
-			drawerContent = {
-				CategoriesDrawer(
-					listState = listState,
-					onCategoryClick = {
-						viewModel.selectCategory(it)
-						scope.launch {
-							drawerState.close()
-						}
-					},
-					onSettingsClick = {
-						onSettingsClicked()
-						scope.launch {
-							drawerState.close()
-						}
-					},
-					onNewCategoryClick = {
-						viewModel.createNewCategory()
-					},
-					onNewCategoryNameChange = viewModel::enterNewCategoryName,
-					onDeleteCategory = viewModel::deleteCategory,
-					onRenameCategory = viewModel::renameCategory,
-					onCategoriesReorder = {
-						this.launch {
-							viewModel.saveCategories(it)
-						}
-					},
-					newCategoryDialogOpen = newCategoryDialogOpen,
-					onDismissNewCategory = {
-						newCategoryDialogOpen = false
-					},
-					onAddCategoryClick = {
-						newCategoryDialogOpen = true
-					}
-				)
-			}
-		) {
 			Scaffold(
 				topBar = {
 					AucardsTopBar(
@@ -527,6 +552,12 @@ fun ListScreen(
 									PromptText(
 										text = stringResource(R.string.empty_list_prompt)
 									)
+								} else if (listState.selectedCategory != null
+									&& listState.list.count { it.categories.contains(listState.selectedCategory!!.id) } == 0
+									) {
+									PromptText(
+										text = stringResource(R.string.no_cards_in_category, listState.selectedCategory!!.name)
+									)
 								}
 								if (page == 1 && listState.favouritesList.isEmpty()) {
 									PromptText(
@@ -538,9 +569,7 @@ fun ListScreen(
 					}
 				}
 			}
-
 		}
-
 	}
 }
 

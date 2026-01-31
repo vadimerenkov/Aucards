@@ -93,4 +93,5 @@
     <string name="delete_category">Delete</string>
     <string name="delete_category_confirmation">Are you sure you want to delete category \"%s\"? Cards in this category will not be deleted.</string>
     <string name="categories">Categories</string>
+    <string name="no_cards_in_category">There are no cards in \"%s\".</string>
 </resources>

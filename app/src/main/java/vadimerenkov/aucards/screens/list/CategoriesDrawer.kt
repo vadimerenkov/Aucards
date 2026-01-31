@@ -5,9 +5,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -59,7 +60,8 @@ fun CategoriesDrawer(
 	onNewCategoryClick: () -> Unit,
 	onAddCategoryClick: () -> Unit,
 	onDeleteCategory: (CardCategory) -> Unit,
-	onRenameCategory: (CardCategory, String) -> Unit
+	onRenameCategory: (CardCategory, String) -> Unit,
+	modifier: Modifier = Modifier
 ) {
 	var deleteConfirmationOpen by remember { mutableStateOf(false) }
 	var renameDialogOpen by remember { mutableStateOf(false) }
@@ -213,7 +215,10 @@ fun CategoriesDrawer(
 		}
 	}
 
-	ModalDrawerSheet() {
+	ModalDrawerSheet(
+		windowInsets = WindowInsets.safeContent,
+		modifier = modifier
+	) {
 		Text(
 			text = stringResource(R.string.categories),
 			fontSize = 24.sp,
@@ -245,7 +250,9 @@ fun CategoriesDrawer(
 		}
 
 		LazyColumn(
-			state = lazyListState
+			state = lazyListState,
+			modifier = Modifier
+				.weight(1f)
 		) {
 			itemsIndexed(
 				items = categories,
@@ -332,24 +339,25 @@ fun CategoriesDrawer(
 					)
 				}
 			}
+			item {
+				NavigationDrawerItem(
+					icon = {
+						Icon(
+							imageVector = Icons.Default.Add,
+							contentDescription = null
+						)
+					},
+					label = {
+						Text(
+							text = stringResource(R.string.new_category),
+							fontSize = 16.sp
+						)
+					},
+					onClick = onAddCategoryClick,
+					selected = false
+				)
+			}
 		}
-		NavigationDrawerItem(
-			icon = {
-				Icon(
-					imageVector = Icons.Default.Add,
-					contentDescription = null
-				)
-			},
-			label = {
-				Text(
-					text = stringResource(R.string.new_category),
-					fontSize = 16.sp
-				)
-			},
-			onClick = onAddCategoryClick,
-			selected = false
-		)
-		Spacer(modifier = Modifier.weight(1f))
 		NavigationDrawerItem(
 			icon = {
 				Icon(
@@ -366,7 +374,9 @@ fun CategoriesDrawer(
 			onClick = {
 				onSettingsClick()
 			},
-			selected = false
+			selected = false,
+			modifier = Modifier
+//				.weight(1f)
 		)
 	}
 }
