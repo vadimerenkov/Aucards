@@ -271,7 +271,7 @@ class CardViewModel(
 				it.copy(
 					aucard = copy(
 						imageScale = imageScale * scale,
-						imageOffset = imageOffset + offset * imageScale,
+						imageOffset = imageOffset + offset * imageScale.coerceAtLeast(1f),
 						imageRotation = totalRotation
 					)
 				)
