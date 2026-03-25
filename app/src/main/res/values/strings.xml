@@ -28,7 +28,7 @@
     <string name="language">Language</string>
     <string name="source_code">Source code:</string>
     <string name="source_code_link" translatable="false">https://github.com/vadimerenkov/Aucards</string>
-    <string name="patreon_link" translatable="false">https://www.patreon.com/cw/VadimErenkov</string>
+    <string name="patreon_link" translatable="false">https://ko-fi.com/vadimerenkov</string>
     <string name="portfolio_link" translatable="false">https://readymag.website/u257758645/5213733/</string>
     <string name="selected_number">Selected: %s</string>
     <string name="delete_button">Delete</string>

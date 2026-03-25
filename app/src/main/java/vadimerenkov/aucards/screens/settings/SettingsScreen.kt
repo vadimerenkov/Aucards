@@ -476,7 +476,7 @@ fun SettingsScreen(
 							}
 						) {
 							Icon(
-								painter = painterResource(R.drawable.patreon),
+								painter = painterResource(R.drawable.kofi_symbol),
 								contentDescription = null,
 								tint = Color.Unspecified,
 								modifier = Modifier
