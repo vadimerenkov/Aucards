@@ -256,7 +256,7 @@ fun SettingsScreen(
 						) {
 							if (it != null) {
 								Log.d(TAG, "Path saved: $it")
-								viewModel.exportDatabase(it, context)
+								viewModel.exportDatabase(it)
 							} else {
 								Log.d(TAG, "Path not saved.")
 							}
@@ -271,7 +271,7 @@ fun SettingsScreen(
 							}
 						) {
 							if (it != null) {
-								viewModel.importDatabase(it, context)
+								viewModel.importDatabase(it)
 								onBackClicked(0)
 							}
 						}
