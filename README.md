@@ -19,6 +19,7 @@ Highlights:
 - Easy to use: just tap on the card to open it in fullscreen!
 - Bring your cards to any device: easily export and transfer them wherever you like
 - Play a sound to let others know you want to say something
+- Voice your cards with text-to-speech tool
 - Completely free, open source and no ads – ever!
 
 Who can benefit from this app:
@@ -84,7 +85,7 @@ The code of Aucards is distributed under GPL-3.0 license.
 
 <div align="center">
 
-2025 © [Vadim Erenkov](https://github.com/vadimerenkov) 
+2025–2026 © [Vadim Erenkov](https://github.com/vadimerenkov) 
 
 Logo design: [Olga Prilutskaia](https://readymag.website/u257758645/5213733/)
 
