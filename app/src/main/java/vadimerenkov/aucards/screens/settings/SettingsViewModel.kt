@@ -42,6 +42,7 @@ class SettingsViewModel(
 				val playSound = settings.playSound.first() ?: false
 				val ringtoneUri = settings.soundUri.first()?.toUri()
 				val materialYou = settings.materialYou.first() ?: false
+				val voice = settings.voice.first() ?: false
 				val theme = readThemeSetting()
 				val language = readLanguageSetting()
 				state.update { it.copy(
@@ -51,7 +52,8 @@ class SettingsViewModel(
 					language = language,
 					playSound = playSound,
 					ringtoneUri = ringtoneUri,
-					materialYou = materialYou
+					materialYou = materialYou,
+					voiceCard = voice
 				) }
 			}
 			.launchIn(viewModelScope)
@@ -170,6 +172,15 @@ class SettingsViewModel(
 			settings.saveStringSettings(
 				key = RINGTONE_URI,
 				value = uri.toString()
+			)
+		}
+	}
+
+	fun saveVoiceSetting(voice: Boolean) {
+		viewModelScope.launch {
+			settings.saveBoolSettings(
+				key = VOICE_CARD,
+				value = voice
 			)
 		}
 	}

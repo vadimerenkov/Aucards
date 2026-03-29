@@ -8,6 +8,7 @@ data class CardState(
 	val isMaxBrightness: Boolean = false,
 	val isLandscapeMode: Boolean? = null,
 	val isPlaySoundEnabled: Boolean = false,
+	val isVoicingEnabled: Boolean = false,
 	val isSoundPlaying: Boolean = false,
 	val hexColor: String = "",
 	val isHexCodeValid: Boolean = true,

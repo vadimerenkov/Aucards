@@ -2,6 +2,8 @@ package vadimerenkov.aucards.screens.fullscreencard
 
 import android.content.pm.ActivityInfo
 import android.provider.Settings
+import android.speech.tts.TextToSpeech
+import android.speech.tts.TextToSpeech.QUEUE_ADD
 import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
@@ -75,6 +77,21 @@ fun SharedTransitionScope.CardFullscreen(
 	var controller: WindowInsetsControllerCompat? by remember { mutableStateOf(null) }
 	var current_brightness by remember { mutableIntStateOf(0) }
 
+	var isBound by remember { mutableStateOf(false) }
+	val textToSpeech = remember {
+		TextToSpeech(context) { status ->
+			if (status == TextToSpeech.SUCCESS) {
+				Log.d(TAG, "Initialized tts")
+				isBound = true
+			}
+		}
+	}
+	LaunchedEffect(isBound, viewModel.soundPlayer.isPlaying, state.isVoicingEnabled) {
+		if (isBound && !viewModel.soundPlayer.isPlaying && state.isVoicingEnabled) {
+			textToSpeech.speak(state.aucard.text, QUEUE_ADD, null, "")
+			textToSpeech.speak(state.aucard.description, QUEUE_ADD, null, "")
+		}
+	}
 
 	LaunchedEffect(viewModel.hasPermission(context)) {
 		if (viewModel.hasPermission(context)) {
@@ -117,6 +134,7 @@ fun SharedTransitionScope.CardFullscreen(
 					current_brightness
 				)
 			}
+			textToSpeech.shutdown()
 		}
 	}
 
@@ -232,6 +250,7 @@ fun SharedTransitionScope.CardFullscreen(
 				)
 			}
 		}
+
 		if (state.isPlaySoundEnabled) {
 			AnimatedContent(
 				targetState = state.isSoundPlaying,

@@ -21,11 +21,11 @@ import androidx.compose.ui.unit.dp
 @Composable
 internal fun CheckboxSetting(
 	title: String,
+	isChecked: Boolean,
 	onCheckedChange: (Boolean) -> Unit,
 	modifier: Modifier = Modifier,
 	description: String? = null,
-	isDescVisible: Boolean = true,
-	isChecked: Boolean = false
+	isDescVisible: Boolean = true
 ) {
 	Column(
 		verticalArrangement = Arrangement.spacedBy(8.dp),
