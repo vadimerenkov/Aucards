@@ -19,8 +19,8 @@
         <item quantity="few">Ви впевнені, що бажаєте видалити %s картки?</item>
         <item quantity="many">Ви впевнені, що бажаєте видалити %s карток?</item>
     </plurals>
-    <string name="brightness">Підвищити яскравість до максимуму у момент відкриття картки</string>
-    <string name="landscape">Змінити орієнтацію сторінки на альбомну у момент відкриття картки</string>
+    <string name="brightness">Підвищити яскравість до максимуму</string>
+    <string name="landscape">Змінити орієнтацію сторінки на альбомну</string>
     <string name="theme">Тема</string>
     <string name="language">Мова</string>
     <string name="translator">Автор перекладу: Хітч Хайк</string>
@@ -38,6 +38,8 @@
     <string name="import_cards">Імпортувати картки</string>
     <string name="export">Експортувати картки</string>
     <string name="support">Підтримати розробника: </string>
+    <string name="when_opening_the_card">У момент відкриття картки:</string>
+
 
 
 </resources>

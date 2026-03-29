@@ -48,6 +48,7 @@
     <string name="export_error">Impossible d\'exporter les cartes. Code d\'erreur : %d</string>
     <string name="import_error">Impossible de charger les cartes. Code d\'erreur : %d</string>
     <string name="image_error">Impossible d\'enregistrer l\'image. Code d\'erreur : %d</string>
+
     <plurals name="import_success">
         <item quantity="one">Importation réussie de la nouvelle carte !</item>
         <item quantity="other">Importation réussie de %d nouvelles cartes !</item>
