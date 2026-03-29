@@ -63,6 +63,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -289,81 +290,100 @@ fun SettingsScreen(
 						val languages = Language.entries
 							.map { stringResource(it.uiText) }
 							.sorted()
-
-						CheckboxSetting(
-							title = stringResource(R.string.brightness),
-							description = stringResource(R.string.brightness_permission),
-							isDescVisible = showBrightnessContext,
-							onCheckedChange = {
-								if (!viewModel.hasPermission(context)) {
-									val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
-										data = "package:${context.packageName}".toUri()
-										addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-									}
-									context.startActivity(intent)
-									didWeClickOnBrightness = true
-								}
-								else{
-									viewModel.saveBrightnessSetting(it)
-								}
-							},
-							isChecked = state.isMaxBrightness
+						Text(
+							text = stringResource(R.string.when_opening_the_card),
+							fontSize = 18.sp,
+							modifier = Modifier
+								.padding(top = 8.dp)
+								.align(Alignment.Start)
 						)
-						HorizontalDivider()
-						CheckboxSetting(
-							title = stringResource(R.string.landscape),
-							onCheckedChange = { viewModel.saveLandscapeSetting(it) },
-							isChecked = state.isLandscapeMode
-						)
-						HorizontalDivider()
-						CheckboxSetting(
-							isChecked = state.playSound,
-							title = stringResource(R.string.settings_play_sound) ,
-							description = stringResource(R.string.play_sound_description),
-							onCheckedChange = {
-								viewModel.saveSoundSetting(it)
-								if (state.ringtoneUri == null) {
-									try {
-										val uri = RingtoneManager.getActualDefaultRingtoneUri(
-											context,
-											RingtoneManager.TYPE_NOTIFICATION
-										)
-										viewModel.saveSoundUri(uri)
-									} catch (e: Exception) {
-										Log.e(TAG, "Error when getting default ringtone: $e")
-									}
-								}
-							}
-						)
-						AnimatedVisibility(
-							visible = state.playSound
+						Column(
+							modifier = Modifier
+								.padding(start = 16.dp)
 						) {
-							Row(
-								verticalAlignment = Alignment.CenterVertically,
-								modifier = Modifier
-									.fillMaxWidth()
-							) {
-								Text(
-									text = stringResource(R.string.ringtone)
-								)
-								TextButton(
-									onClick = {
-										val intent = Intent(ACTION_RINGTONE_PICKER)
-										pickSoundLauncher.launch(intent)
+							CheckboxSetting(
+								title = stringResource(R.string.brightness),
+								description = stringResource(R.string.brightness_permission),
+								isDescVisible = showBrightnessContext,
+								onCheckedChange = {
+									if (!viewModel.hasPermission(context)) {
+										val intent =
+											Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
+												data = "package:${context.packageName}".toUri()
+												addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+											}
+										context.startActivity(intent)
+										didWeClickOnBrightness = true
+									} else {
+										viewModel.saveBrightnessSetting(it)
 									}
+								},
+								isChecked = state.isMaxBrightness
+							)
+							HorizontalDivider()
+							CheckboxSetting(
+								title = stringResource(R.string.landscape),
+								onCheckedChange = { viewModel.saveLandscapeSetting(it) },
+								isChecked = state.isLandscapeMode
+							)
+							HorizontalDivider()
+							CheckboxSetting(
+								isChecked = state.playSound,
+								title = stringResource(R.string.settings_play_sound),
+								description = stringResource(R.string.play_sound_description),
+								onCheckedChange = {
+									viewModel.saveSoundSetting(it)
+									if (state.ringtoneUri == null) {
+										try {
+											val uri = RingtoneManager.getActualDefaultRingtoneUri(
+												context,
+												RingtoneManager.TYPE_NOTIFICATION
+											)
+											viewModel.saveSoundUri(uri)
+										} catch (e: Exception) {
+											Log.e(TAG, "Error when getting default ringtone: $e")
+										}
+									}
+								}
+							)
+							AnimatedVisibility(
+								visible = state.playSound
+							) {
+								Row(
+									verticalAlignment = Alignment.CenterVertically,
+									modifier = Modifier
+										.fillMaxWidth()
 								) {
 									Text(
-										text = ringtoneName,
-										style = MaterialTheme.typography.bodyLarge,
-										textDecoration = TextDecoration.Underline
+										text = stringResource(R.string.ringtone)
 									)
-									Spacer(modifier = Modifier.width(4.dp))
-									Icon(
-										painter = painterResource(R.drawable.open_in_new),
-										contentDescription = stringResource(R.string.choose_ringtone)
-									)
+									TextButton(
+										onClick = {
+											val intent = Intent(ACTION_RINGTONE_PICKER)
+											pickSoundLauncher.launch(intent)
+										}
+									) {
+										Text(
+											text = ringtoneName,
+											style = MaterialTheme.typography.bodyLarge,
+											textDecoration = TextDecoration.Underline
+										)
+										Spacer(modifier = Modifier.width(4.dp))
+										Icon(
+											painter = painterResource(R.drawable.open_in_new),
+											contentDescription = stringResource(R.string.choose_ringtone)
+										)
+									}
 								}
 							}
+							HorizontalDivider()
+							CheckboxSetting(
+								title = stringResource(R.string.play_tts),
+								isChecked = state.voiceCard,
+								onCheckedChange = {
+									viewModel.saveVoiceSetting(it)
+								}
+							)
 						}
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 							HorizontalDivider()

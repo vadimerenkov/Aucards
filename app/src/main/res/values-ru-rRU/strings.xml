@@ -19,14 +19,14 @@
         <item quantity="few">Вы уверены, что хотите удалить %s карточки?</item>
         <item quantity="many">Вы уверены, что хотите удалить %s карточек?</item>
     </plurals>
-    <string name="brightness">Повысить яркость до максимума при открытии карточки</string>
+    <string name="brightness">Повысить яркость до максимума</string>
     <string name="theme">Тема</string>
     <string name="language">Язык</string>
     <string name="source_code">Исходный код: </string>
     <string name="selected_number">Выбрано: %s</string>
     <string name="delete_button">Удалить</string>
     <string name="cancel">Отмена</string>
-    <string name="landscape">Перейти в горизонтальный режим при открытии карточки</string>
+    <string name="landscape">Перейти в горизонтальный режим</string>
     <string name="all_cards">Все карточки</string>
     <string name="favourites">Избранное</string>
     <string name="mark_as_favourite">Добавить в избранное</string>
@@ -36,7 +36,7 @@
     <string name="custom_color">Свой цвет</string>
     <string name="import_cards">Загрузить карточки из файла</string>
     <string name="export">Сохранить карточки в файл</string>
-    <string name="settings_play_sound">Воспроизвести звук при открытии карточки</string>
+    <string name="settings_play_sound">Воспроизвести звук</string>
     <string name="play_sound_description">Проиграть мелодию, чтобы привлечь внимание к тому, что вы хотите сказать.</string>
     <string name="ringtone">Мелодия:</string>
     <string name="choose_ringtone">Выбрать мелодию</string>
@@ -65,6 +65,7 @@
     <string name="delete_category_confirmation">Вы уверены, что хотите удалить категорию \"%s\"? Карточки в этой категории не будут удалены.</string>
     <string name="categories">Категории</string>
     <string name="no_cards_in_category">В категории \"%s\" нет карточек.</string>
+    <string name="when_opening_the_card">При открытии карточки:</string>
 
 
     <plurals name="import_success">

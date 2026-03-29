@@ -98,6 +98,7 @@ class CardViewModel(
 			val brightness = settings.brightness.first() == true
 			val landscape = settings.landscape.first()
 			var playSound = settings.playSound.first() == true
+			val voiceCard = settings.voice.first() == true
 			val ringtoneUri = settings.soundUri.first()?.toUri()
 			if (id != 0) {
 				val card = aucardDao.getAucardByID(id).first()
@@ -119,6 +120,7 @@ class CardViewModel(
 						isMaxBrightness = brightness,
 						isLandscapeMode = landscape,
 						isPlaySoundEnabled = playSound,
+						isVoicingEnabled = voiceCard
 					)
 				}
 			} else {

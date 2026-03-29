@@ -37,6 +37,10 @@ class Settings(
 		.map { settings ->
 			settings[booleanPreferencesKey(MATERIAL_STRING)]
 		}
+	val voice = dataStore.data
+		.map { settings ->
+			settings[booleanPreferencesKey(VOICE_CARD)]
+		}
 
 	suspend fun saveStringSettings(key: String, value: String) {
 		val key = stringPreferencesKey(key)

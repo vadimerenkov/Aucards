@@ -86,8 +86,8 @@ fun SharedTransitionScope.CardFullscreen(
 			}
 		}
 	}
-	LaunchedEffect(isBound, viewModel.soundPlayer.isPlaying) {
-		if (isBound && !viewModel.soundPlayer.isPlaying) {
+	LaunchedEffect(isBound, viewModel.soundPlayer.isPlaying, state.isVoicingEnabled) {
+		if (isBound && !viewModel.soundPlayer.isPlaying && state.isVoicingEnabled) {
 			textToSpeech.speak(state.aucard.text, QUEUE_ADD, null, "")
 			textToSpeech.speak(state.aucard.description, QUEUE_ADD, null, "")
 		}

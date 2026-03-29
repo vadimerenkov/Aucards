@@ -23,7 +23,7 @@
     <string name="polish" translatable="false">Polski</string>
     <string name="portuguese_brazil" translatable="false">Português (Brasil)</string>
     <string name="spanish" translatable="false">Español</string>
-    <string name="brightness">Set brightness to max when opening the card</string>
+    <string name="brightness">Set brightness to max</string>
     <string name="theme">Theme</string>
     <string name="language">Language</string>
     <string name="source_code">Source code:</string>
@@ -34,7 +34,7 @@
     <string name="delete_button">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="translator">Translator: %your name%</string>
-    <string name="landscape">Switch to landscape mode when opening the card</string>
+    <string name="landscape">Switch to landscape mode</string>
     <string name="all_cards">All cards</string>
     <string name="favourites">Favourites</string>
     <string name="mark_as_favourite">Mark as favourite</string>
@@ -44,7 +44,7 @@
     <string name="custom_color">Custom</string>
     <string name="import_cards">Import cards from file</string>
     <string name="export">Export cards to file</string>
-    <string name="settings_play_sound">Play a sound when opening the card</string>
+    <string name="settings_play_sound">Play a sound</string>
     <string name="play_sound_description">Play a ringtone to let others know you want to say something.</string>
     <string name="ringtone">Ringtone:</string>
     <string name="choose_ringtone">Choose a ringtone</string>
@@ -66,6 +66,7 @@
     <string name="copy_selected">Duplicate selected cards</string>
     <string name="support">Support the developer:</string>
     <string name="choose_card">Choose a card:</string>
+    <string name="when_opening_the_card">When opening the card:</string>
 
     <plurals name="import_success">
         <item quantity="one">Successfully imported %d new card!</item>
@@ -94,4 +95,5 @@
     <string name="delete_category_confirmation">Are you sure you want to delete category \"%s\"? Cards in this category will not be deleted.</string>
     <string name="categories">Categories</string>
     <string name="no_cards_in_category">There are no cards in \"%s\".</string>
+    <string name="play_tts">Voice the card text with Google Text-To-Speech tool</string>
 </resources>

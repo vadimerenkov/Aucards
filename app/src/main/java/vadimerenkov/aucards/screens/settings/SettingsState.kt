@@ -7,6 +7,7 @@ data class SettingsState(
 	val isMaxBrightness: Boolean = false,
 	val isLandscapeMode: Boolean = false,
 	val playSound: Boolean = false,
+	val voiceCard: Boolean = false,
 	val materialYou: Boolean = false,
 	val ringtoneUri: Uri? = null,
 	val language: Language = Language.ENGLISH,
