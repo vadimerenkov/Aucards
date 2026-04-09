@@ -3,6 +3,7 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
             android:name=".AucardsApplication"
@@ -57,6 +58,15 @@
             <meta-data
                     android:name="android.appwidget.provider"
                     android:resource="@xml/widget_info" />
+        </receiver>
+
+        <receiver
+                android:name=".widgets.BootReceiver"
+                android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_UNLOCKED" />
+            </intent-filter>
         </receiver>
     </application>
 
