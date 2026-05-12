@@ -14,8 +14,8 @@ android {
 		applicationId = "vadimerenkov.aucards"
 		minSdk = 26
 		targetSdk = 36
-		versionCode = 20
-		versionName = "2.5.0"
+		versionCode = 21
+		versionName = "2.6.1"
 
 		testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 	}
@@ -41,9 +41,7 @@ android {
 		buildConfig = true
 		compose = true
 	}
-	room {
-		schemaDirectory("$projectDir/schemas")
-	}
+
 	bundle {
 		language {
 			enableSplit = false
@@ -55,6 +53,10 @@ android {
 		// Disables dependency metadata when building Android App Bundles (for Google Play)
 		includeInBundle = false
 	}
+}
+
+room {
+	schemaDirectory("$projectDir/schemas")
 }
 
 dependencies {
