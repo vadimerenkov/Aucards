@@ -8,8 +8,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
@@ -18,12 +20,14 @@ import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.state.getAppWidgetState
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
+import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
@@ -39,17 +43,29 @@ import vadimerenkov.aucards.ui.calculateContentColor
 
 class CardWidget: GlanceAppWidget() {
 
-	var cardId: Int by mutableStateOf(0)
+	override val stateDefinition = PreferencesGlanceStateDefinition
 
 	override suspend fun provideGlance(
 		context: Context,
 		id: GlanceId
 	) {
-		val dao: AucardDao = get().get()
-		val card = dao.getAucardByID(cardId).first()
-		provideContent {
-			WidgetCard(card, context)
+		val prefs = getAppWidgetState(context, PreferencesGlanceStateDefinition, id)
+		val cardId = prefs[CARD_ID_KEY]
+		val card = cardId?.let {
+			val dao: AucardDao = get().get()
+			runCatching { dao.getAucardByID(it).first() }.getOrNull()
 		}
+		provideContent {
+			if (card != null) {
+				WidgetCard(card, context)
+			} else {
+				MissingCardWidget()
+			}
+		}
+	}
+
+	companion object {
+		val CARD_ID_KEY = intPreferencesKey("card_id")
 	}
 }
 
@@ -93,6 +109,24 @@ private fun WidgetCard(
 			modifier = GlanceModifier
 				.background(card.color.copy(alpha = 0.6f))
 				.padding(16.dp)
+		)
+	}
+}
+
+@Composable
+private fun MissingCardWidget() {
+	Box(
+		contentAlignment = Alignment.Center,
+		modifier = GlanceModifier
+			.fillMaxSize()
+			.background(Color.DarkGray)
+			.padding(16.dp)
+	) {
+		Text(
+			text = "Card not found",
+			style = TextStyle(
+				color = ColorProvider(Color.White)
+			)
 		)
 	}
 }
