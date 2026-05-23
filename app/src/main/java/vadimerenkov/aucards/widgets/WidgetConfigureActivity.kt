@@ -36,6 +36,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.state.updateAppWidgetState
+import androidx.glance.state.PreferencesGlanceStateDefinition
 import coil3.compose.AsyncImage
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -100,9 +102,16 @@ class WidgetConfigureActivity : ComponentActivity() {
 								ElevatedCard(
 									onClick = {
 										scope.launch {
-											val widget = CardWidget()
-											widget.cardId = card.id
-											widget.update(this@WidgetConfigureActivity, glanceId)
+											updateAppWidgetState(
+												context = this@WidgetConfigureActivity,
+												definition = PreferencesGlanceStateDefinition,
+												glanceId = glanceId
+											) { prefs ->
+												prefs.toMutablePreferences().apply {
+													this[CardWidget.CARD_ID_KEY] = card.id
+												}
+											}
+											CardWidget().update(this@WidgetConfigureActivity, glanceId)
 											val resultValue = Intent()
 												.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
 												.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
