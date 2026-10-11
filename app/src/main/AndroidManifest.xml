@@ -3,6 +3,9 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:remove="android:usesPermissionFlags"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" tools:remove="android:usesPermissionFlags"/>
+
 
     <application
             android:name=".AucardsApplication"
