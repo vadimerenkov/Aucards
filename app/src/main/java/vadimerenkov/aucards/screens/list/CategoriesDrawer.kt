@@ -88,7 +88,8 @@ fun CategoriesDrawer(
 			) {
 				Text(
 					text = stringResource(R.string.new_category),
-					fontSize = 18.sp
+					fontSize = 18.sp,
+					color = MaterialTheme.colorScheme.onBackground
 				)
 				TextField(
 					value = listState.newCategoryName,
@@ -130,7 +131,8 @@ fun CategoriesDrawer(
 					.padding(16.dp)
 			) {
 				Text(
-					text = stringResource(R.string.delete_category_confirmation, selectedCategory?.name ?: "NULL")
+					text = stringResource(R.string.delete_category_confirmation, selectedCategory?.name ?: "NULL"),
+					color = MaterialTheme.colorScheme.onBackground
 				)
 				Row(
 					horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -184,7 +186,8 @@ fun CategoriesDrawer(
 					.padding(16.dp)
 			) {
 				Text(
-					text = stringResource(R.string.rename)
+					text = stringResource(R.string.rename),
+					color = MaterialTheme.colorScheme.onBackground
 				)
 				TextField(
 					value = textFieldName,

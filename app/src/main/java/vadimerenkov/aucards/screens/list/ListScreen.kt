@@ -1,7 +1,3 @@
-@file:OptIn( ExperimentalAnimationApi::class,
-	ExperimentalSharedTransitionApi::class
-)
-
 package vadimerenkov.aucards.screens.list
 
 import android.content.pm.ActivityInfo
@@ -9,8 +5,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -165,6 +159,7 @@ fun ListScreen(
 				Text(
 					text = stringResource(R.string.choose_categories),
 					fontSize = 18.sp,
+					color = MaterialTheme.colorScheme.onBackground,
 					modifier = Modifier
 						.padding(bottom = 16.dp)
 				)
@@ -188,7 +183,8 @@ fun ListScreen(
 							}
 						)
 						Text(
-							text = category.name
+							text = category.name,
+							color = MaterialTheme.colorScheme.onBackground
 						)
 					}
 				}
