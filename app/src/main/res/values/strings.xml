@@ -96,4 +96,5 @@
     <string name="categories">Categories</string>
     <string name="no_cards_in_category">There are no cards in \"%s\".</string>
     <string name="play_tts">Voice the card text with Google Text-To-Speech tool</string>
+    <string name="widget_card_not_found">Card not found</string>
 </resources>
