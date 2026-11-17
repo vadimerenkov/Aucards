@@ -1,0 +1,100 @@
+<resources>
+    <string name="app_name" translatable="false">Aucards</string>
+    <string name="add_card">Neue Karte hinzufügen</string>
+    <string name="save">Speichern</string>
+    <string name="empty_list_prompt">Erstelle deine erste Karte!</string>
+    <string name="your_text">Dein Text…</string>
+    <string name="description">Zusätzlicher Text…</string>
+    <string name="choose_color">Wähle die Farbe</string>
+    <string name="delete">Lösche die Karte</string>
+    <string name="edit">Editiere Karten</string>
+    <string name="open_settings">Öffne die Einstellungen</string>
+    <string name="settings">Einstelunngen</string>
+    <string name="go_back">Zurück</string>
+    <string name="about" translatable="false">Aucards\nVadim Erenkov © %s\nv. %s</string>
+    <string name="light">Hell</string>
+    <string name="dark">Dunkel</string>
+    <string name="device">Gerät</string>
+    <string name="english" translatable="false">English</string>
+    <string name="french" translatable="false">Français</string>
+    <string name="russian" translatable="false">Русский</string>
+    <string name="ukrainian" translatable="false">Українська</string>
+    <string name="georgian" translatable="false">ქართული</string>
+    <string name="polish" translatable="false">Polski</string>
+    <string name="portuguese_brazil" translatable="false">Português (Brasil)</string>
+    <string name="spanish" translatable="false">Español</string>
+    <string name="german" translatable="false">Deutsch</string>
+    <string name="brightness">Maximale Helligkeit</string>
+    <string name="theme">Thema</string>
+    <string name="language">Sprache</string>
+    <string name="source_code">Quellcode:</string>
+    <string name="source_code_link" translatable="false">https://github.com/vadimerenkov/Aucards</string>
+    <string name="patreon_link" translatable="false">https://ko-fi.com/vadimerenkov</string>
+    <string name="portfolio_link" translatable="false">https://readymag.website/u257758645/5213733/</string>
+    <string name="selected_number">Ausgewählt: %s</string>
+    <string name="delete_button">Löschen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="translator">Übersetzer: Harvey</string>
+    <string name="landscape">Querformatmodus</string>
+    <string name="all_cards">Alle Karten</string>
+    <string name="favourites">Favoriten</string>
+    <string name="mark_as_favourite">Als Favorit markieren</string>
+    <string name="add_to_fav_prompt">Füge eine Karte den Favoriten hinzu, um sie hier zu sehen!</string>
+    <string name="brightness_permission">Diese Option erfordert die App-Berechtigung zum Ändern von Systemeinstellungen.</string>
+    <string name="palette">Palette</string>
+    <string name="custom_color">Individuell</string>
+    <string name="import_cards">Karten aus Datei importieren</string>
+    <string name="export">Karten als Datei exportieren</string>
+    <string name="settings_play_sound">Ton abspielen</string>
+    <string name="play_sound_description">Signalton, dass du etwas sagen möchtest.</string>
+    <string name="ringtone">Signalton:</string>
+    <string name="choose_ringtone">Wähle einen Signalton</string>
+    <string name="pause">Pause</string>
+    <string name="play">Wiedergabe</string>
+    <string name="logo" translatable="false">logo:</string>
+    <string name="designer" translatable="false">Olga Prilutskaia </string>
+    <string name="title_subtitle">Titel und Beschreibung</string>
+    <string name="two_halves">Zwei gleiche Titel</string>
+    <string name="text_size">Textgröße</string>
+    <string name="layout">Layout</string>
+    <string name="change_image">Bild ändern</string>
+    <string name="remove_image">Bild entfernen</string>
+    <string name="opacity">Transparenz des Texthintergrunds:</string>
+    <string name="choose_image">Wähle ein Bild</string>
+    <string name="export_error">Die Karten konnten nicht exportiert werden. Fehlercode: %d</string>
+    <string name="import_error">Die Karten konnten nicht geladen werden. Fehlercode: %d</string>
+    <string name="image_error">Das Bild konnte nicht gespeichert werden. Fehlercode: %d</string>
+    <string name="copy_selected">Ausgewählte Karten duplizieren</string>
+    <string name="support">Unterstütze die Entwickler:</string>
+    <string name="choose_card">Wähle eine Karte:</string>
+    <string name="when_opening_the_card">Beim Öffnen der Karte:</string>
+
+    <plurals name="import_success">
+        <item quantity="one">%d neue Karte erfolgreich importiert!</item>
+        <item quantity="other">%d neue Karten erfolgreich importiert!</item>
+    </plurals>
+    <plurals name="export_success">
+        <item quantity="one">%d Karte erfolgreich exportiert!</item>
+        <item quantity="other">%d Karten erfolgreich exportiert!</item>
+    </plurals>
+    <plurals name="number_deleted">
+        <item quantity="one">%d Karte gelöscht.</item>
+        <item quantity="other">%d Karten gelöscht.</item>
+    </plurals>
+    <plurals name="delete_confirmation">
+        <item quantity="one">Sind Sie sicher, dass Sie diese Karte löschen möchten?item>
+        <item quantity="other">Sind Sie sicher, dass Sie %s Karten löschen möchten?</item>
+    </plurals>
+    <string name="title_activity_widget_configure">WidgetConfigureActivity</string>
+    <string name="open_menu">Menü öffnen</string>
+    <string name="choose_categories">Kategorien auswählen</string>
+    <string name="new_category">Neue Kategorie</string>
+    <string name="all">Alle</string>
+    <string name="category_name">Kategoriename</string>
+    <string name="rename">Umbenennen</string>
+    <string name="delete_category">Löschen</string>
+    <string name="delete_category_confirmation">Sind Sie sicher, dass Sie die Kategorie \"%s\ löschen möchten? Karten in dieser Kategorie werden nicht gelöscht.</string>
+    <string name="categories">Kategorien</string>
+    <string name="no_cards_in_category">Es gibt keine Karten in \"%s\".</string>
+    <string name="play_tts">Lasse die Karte mit dem Google-Text-zu-Sprache-Tool vorlesen.</string>
+</resources>
