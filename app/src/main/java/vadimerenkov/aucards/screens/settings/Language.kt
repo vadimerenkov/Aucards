@@ -15,5 +15,6 @@ enum class Language(
 	POLISH(R.string.polish, "pl-PL"),
 	PORTUGUESE_BRAZIL(R.string.portuguese_brazil, "pt-BR"),
 	FRENCH(R.string.french, "fr-FR"),
-	SPANISH(R.string.spanish, "es-MX")
+	SPANISH(R.string.spanish, "es-MX"),
+	GERMAN(R.string.german, "de-DE")
 }

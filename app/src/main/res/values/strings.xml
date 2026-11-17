@@ -23,6 +23,7 @@
     <string name="polish" translatable="false">Polski</string>
     <string name="portuguese_brazil" translatable="false">Português (Brasil)</string>
     <string name="spanish" translatable="false">Español</string>
+    <string name="german" translatable="false">Deutsch</string>
     <string name="brightness">Set brightness to max</string>
     <string name="theme">Theme</string>
     <string name="language">Language</string>

@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">Aucards</string>
     <string name="add_card">Neue Karte hinzufügen</string>
     <string name="save">Speichern</string>
     <string name="empty_list_prompt">Erstelle deine erste Karte!</string>
@@ -11,26 +10,13 @@
     <string name="open_settings">Öffne die Einstellungen</string>
     <string name="settings">Einstelunngen</string>
     <string name="go_back">Zurück</string>
-    <string name="about" translatable="false">Aucards\nVadim Erenkov © %s\nv. %s</string>
     <string name="light">Hell</string>
     <string name="dark">Dunkel</string>
     <string name="device">Gerät</string>
-    <string name="english" translatable="false">English</string>
-    <string name="french" translatable="false">Français</string>
-    <string name="russian" translatable="false">Русский</string>
-    <string name="ukrainian" translatable="false">Українська</string>
-    <string name="georgian" translatable="false">ქართული</string>
-    <string name="polish" translatable="false">Polski</string>
-    <string name="portuguese_brazil" translatable="false">Português (Brasil)</string>
-    <string name="spanish" translatable="false">Español</string>
-    <string name="german" translatable="false">Deutsch</string>
     <string name="brightness">Maximale Helligkeit</string>
     <string name="theme">Thema</string>
     <string name="language">Sprache</string>
     <string name="source_code">Quellcode:</string>
-    <string name="source_code_link" translatable="false">https://github.com/vadimerenkov/Aucards</string>
-    <string name="patreon_link" translatable="false">https://ko-fi.com/vadimerenkov</string>
-    <string name="portfolio_link" translatable="false">https://readymag.website/u257758645/5213733/</string>
     <string name="selected_number">Ausgewählt: %s</string>
     <string name="delete_button">Löschen</string>
     <string name="cancel">Abbrechen</string>
@@ -51,8 +37,6 @@
     <string name="choose_ringtone">Wähle einen Signalton</string>
     <string name="pause">Pause</string>
     <string name="play">Wiedergabe</string>
-    <string name="logo" translatable="false">logo:</string>
-    <string name="designer" translatable="false">Olga Prilutskaia </string>
     <string name="title_subtitle">Titel und Beschreibung</string>
     <string name="two_halves">Zwei gleiche Titel</string>
     <string name="text_size">Textgröße</string>
@@ -82,7 +66,7 @@
         <item quantity="other">%d Karten gelöscht.</item>
     </plurals>
     <plurals name="delete_confirmation">
-        <item quantity="one">Sind Sie sicher, dass Sie diese Karte löschen möchten?item>
+        <item quantity="one">Sind Sie sicher, dass Sie diese Karte löschen möchten?</item>
         <item quantity="other">Sind Sie sicher, dass Sie %s Karten löschen möchten?</item>
     </plurals>
     <string name="title_activity_widget_configure">WidgetConfigureActivity</string>

@@ -67,6 +67,7 @@
     <string name="no_cards_in_category">В категории \"%s\" нет карточек.</string>
     <string name="when_opening_the_card">При открытии карточки:</string>
     <string name="play_tts">Озвучить текст карточки с помощью Google Text-To-Speech</string>
+    <string name="choose_card">Выберите карточку:</string>
 
     <plurals name="import_success">
         <item quantity="one">Успешно загружена %d новая карточка!</item>
