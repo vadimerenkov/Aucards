@@ -48,7 +48,10 @@
     <string name="export_error">No se pudieron exportar las tarjetas. Código de error: %d</string>
     <string name="import_error">No se pudieron cargar las tarjetas. Código de error: %d</string>
     <string name="image_error">No se pudo guardar la imagen. Código de error: %d</string>
-    <string name="when_opening_the_card">Al brir la tarjeta:</string>
+    <string name="copy_selected">Duplicar las tarjetas seleccionadas</string>
+    <string name="support">Apoya al desarrollador:</string>
+    <string name="choose_card">Escoge una tarjeta:</string>
+    <string name="when_opening_the_card">Al abrir la tarjeta:</string>
 
     <plurals name="import_success">
         <item quantity="one">¡Se importó correctamente %d nueva tarjeta!</item>
@@ -66,4 +69,17 @@
         <item quantity="one">¿Estás seguro de que quieres eliminar esta tarjeta?</item>
         <item quantity="other">¿Estás seguro de que quieres eliminar estas %s tarjetas?</item>
     </plurals>
+    <string name="title_activity_widget_configure">WidgetConfigureActivity</string>
+    <string name="open_menu">Abrir el menú</string>
+    <string name="choose_categories">Selecciona las categorías</string>
+    <string name="new_category">Nueva categoría</string>
+    <string name="all">Todas</string>
+    <string name="category_name">Nombre de la categoría</string>
+    <string name="rename">Renombrar</string>
+    <string name="delete_category">Eliminar</string>
+    <string name="delete_category_confirmation">¿Estás seguro de que quieres eliminar la categoría \"%s\"? Las tarjetas en esta categoría no serán borradas.</string>
+    <string name="categories">Categorías</string>
+    <string name="no_cards_in_category">No hay tarjetas en \"%s\".</string>
+    <string name="play_tts">Usa la herramienta de Google Text-To-Speech para que lea la tarjeta en voz alta</string>
+    <string name="widget_card_not_found">Tarjeta no encontrada</string>
 </resources>
